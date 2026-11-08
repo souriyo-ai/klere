@@ -36,6 +36,7 @@ const S = window.SOURIYO, $ = (id) => document.getElementById(id), q = new URLSe
 let saved = {}; try { saved = JSON.parse(localStorage.getItem('souriyo_peman') || '{}'); } catch {}
 const tx = q.get('transactionId') || q.get('transaction_id') || '', ord = q.get('orderId') || saved.order || '';
 const TXT = {
+  tes: () => 'Tès la reyisi : MonCash mache ak Souriyo ✅',
   potre: (n) => `${n} pòtrè IA debloke sou nimewo w la. Ou ka fè yo kounya !`,
   pake_org: (n) => `${n} pòtrè IA ajoute nan kanpay ou a.`,
   plas: () => 'Yon plas responsab ajoute nan ekip ou. Ou ka envite moun nan kounya.',

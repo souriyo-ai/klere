@@ -243,6 +243,8 @@
       <label class="tog"><input type="checkbox" id="pmOn" /> <b>Peman otomatik aktif</b> : bouton « Peye ak MonCash » yo parèt sou sit la</label>
       <div class="grid3"><div><label class="f" for="pmMin">Retrè minimòm (G)</label><input class="t" id="pmMin" type="number" min="0" step="50" /></div></div>
       <button class="btn main" type="button" id="pmSave" style="margin-top:10px">Anrejistre</button><p class="msg" id="pmMsg"></p>
+      <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><b>🧪 Tès peman</b> <span class="sub">(admin sèlman, pa gen okenn efè : jis pou verifye MonCash mache)</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px"><input class="t" id="tesM" type="number" min="1" max="100" value="1" style="width:110px" /> <span>goud</span> <button class="btn main" type="button" id="tesGo">Peye ak MonCash</button></div><p class="msg" id="tesMsg"></p></div>
     </section>
     <div class="stats" id="pmStats"></div>
     <section class="card"><h2>💸 Demann retrè</h2><p class="sub">Voye kòb la sou MonCash moun nan, epi klike « ✓ Voye ». Balans yo kalkile otomatikman (komisyon + revni konsèp − retrè).</p>
@@ -748,7 +750,7 @@ $('kpSave').addEventListener('click', async () => {
 });
 
 /* ---------- Peman ---------- */
-const PTIPA = { potre: '✨ Pòtrè (piblik)', pake_org: '📦 Pakè òganizasyon', plas: '👥 Plas responsab', lisans: '🔑 Lisans konsèp', konsep_of: '🤝 Achte konsèp' };
+const PTIPA = { tes: '🧪 Tès admin', potre: '✨ Pòtrè (piblik)', pake_org: '📦 Pakè òganizasyon', plas: '👥 Plas responsab', lisans: '🔑 Lisans konsèp', konsep_of: '🤝 Achte konsèp' };
 const PSTA = { peye: '<span class="pill ok">✓ Peye</span>', kreye: '<span class="pill w">⏳ Pa fini</span>', echwe: '<span class="pill">✖ Echwe</span>' };
 async function pBadge() { const { count } = await sb.from('retre').select('id', { count: 'exact', head: true }).eq('estati', 'ap_tann'); $('pBadge').textContent = count ? `(${count})` : ''; }
 async function loadPeman() {
@@ -769,6 +771,12 @@ async function loadPeman() {
   pBadge();
 }
 $('pmF').addEventListener('change', loadPeman);
+$('tesGo').addEventListener('click', async () => {
+  $('tesGo').disabled = true; msg('tesMsg', 'N ap kreye peman an…', 'ok');
+  const { data: ss } = await sb.auth.getSession();
+  const e = await S.peye({ tip: 'tes', montan: +$('tesM').value || 1 }, ss.session?.access_token, location.href);
+  $('tesGo').disabled = false; if (e) msg('tesMsg', { pa_disponib: 'Sekrè MonCash yo pa la.', moncash: 'MonCash refize kreye peman an (gade jounal la).', auth: 'Se admin sèlman.' }[e] || 'Erè : ' + e);
+});
 $('pmSave').addEventListener('click', async () => {
   const v = { peman_otomatik: $('pmOn').checked, min_retre_htg: Math.max(0, parseInt($('pmMin').value || '500', 10)) };
   const { error } = await sb.from('paramet').update(v).eq('id', 1); if (error) return msg('pmMsg', friendly(error)); msg('pmMsg', '✓ Anrejistre.', 'ok'); loadPeman();
