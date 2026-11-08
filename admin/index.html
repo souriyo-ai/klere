@@ -88,8 +88,14 @@
   <h2>Koneksyon admin</h2>
   <form id="loginForm"><label class="f" for="le">Imèl</label><input class="t" id="le" type="email" autocomplete="username" required />
     <label class="f" for="lp">Modpas</label><input class="t" id="lp" type="password" autocomplete="current-password" required />
-    <button class="btn main" type="submit" style="width:100%;justify-content:center;margin-top:14px">Konekte</button><p class="msg err" id="loginMsg"></p></form>
+    <button class="btn main" type="submit" style="width:100%;justify-content:center;margin-top:14px">Konekte</button><p class="msg err" id="loginMsg"></p>
+    <p style="text-align:center;margin:8px 0 0"><a href="#" id="forgot" class="sub">Mwen bliye modpas mwen</a></p></form>
 </section>
+
+<section class="card login hidden" id="reset"><h2>🔑 Nouvo modpas</h2>
+  <label class="f" for="rsP">Nouvo modpas (8 karaktè omwen)</label><input class="t" id="rsP" type="password" autocomplete="new-password" />
+  <label class="f" for="rsP2">Tape l ankò</label><input class="t" id="rsP2" type="password" autocomplete="new-password" />
+  <button class="btn main" type="button" id="rsGo" style="width:100%;justify-content:center;margin-top:14px">Anrejistre</button><p class="msg" id="rsMsg"></p></section>
 
 <main class="hidden" id="app">
   <!-- ===== GWOUP ===== -->
@@ -185,7 +191,8 @@
     <section class="card"><h2>Paramèt jeneral</h2>
       <div class="grid3">
         <div><label class="f" for="pKom">Komisyon òganizasyon yo (%)</label><input class="t" id="pKom" type="number" min="0" max="100" step="0.5" /></div>
-        <div style="grid-column:span 2"><label class="f" for="pPake">Pakè pòtrè pou òganizasyon yo (kantite:pri, separe ak vigil)</label><input class="t" id="pPake" placeholder="100:6000, 500:25000" /></div>
+        <div><label class="f" for="pPake">Pakè pòtrè pou òganizasyon yo (kantite:pri, separe ak vigil)</label><input class="t" id="pPake" placeholder="100:6000, 500:25000" /></div>
+        <div><label class="f" for="pPlas">Pri yon plas responsab anplis (G, yon sèl fwa)</label><input class="t" id="pPlas" type="number" min="0" step="50" /></div>
       </div>
       <button class="btn main" type="button" id="pSave" style="margin-top:10px">Anrejistre</button><p class="msg" id="pMsg"></p>
     </section>
@@ -481,7 +488,7 @@ async function loadOrgs() {
   VERS = {}; (v.data || []).forEach((x) => { if (!VERS[x.org_id]) VERS[x.org_id] = x; });
   if (o.error) return msg('pMsg', friendly(o.error));
   ORGS = o.data || []; PARAM = p.data;
-  $('pKom').value = PARAM.komisyon_pct; $('pPake').value = pakeTxt(PARAM.pake_org);
+  $('pKom').value = PARAM.komisyon_pct; $('pPake').value = pakeTxt(PARAM.pake_org); $('pPlas').value = PARAM.pri_plas_htg ?? 500;
   const n = ORGS.filter((x) => x.estati === 'ap_tann' || VERS[x.id]?.estati === 'ap_tann').length; $('oBadge').textContent = n ? `(${n})` : '';
   renderOrgs();
   const MS = ['nouvo', 'an_kou', 'fini', 'refize'];
@@ -530,7 +537,7 @@ document.addEventListener('click', async (e) => {
 document.addEventListener('click', (e) => { const b = e.target.closest('[data-oid]'); if (b) showOrg(ORGS.find((x) => x.id === b.dataset.oid)); });
 async function showOrg(o) {
   OCUR = o; renderOrgs();
-  const g = await sb.from('groupes').select('nom, slug, aktif, mod_ia, mod_pey').eq('org_id', o.id);
+  const [g, tm] = await Promise.all([sb.from('groupes').select('nom, slug, aktif, mod_ia, mod_pey').eq('org_id', o.id), sb.from('org_users').select('wol, non, imel').eq('org_id', o.id)]);
   const waN = wa(o.kontak_tel);
   $('oDet').innerHTML = `<h2>${esc(o.non)} <span class="pill ${o.estati === 'apwouve' ? 'ok' : 'w'}">${OST[o.estati]}</span></h2>
     <p class="sub">${o.tip_kont === 'moun' ? '🙋 Kont moun' : '🏢 Òganizasyon'} · ${OKAL[o.kalite] || ''}${o.kalite_presizyon ? ' (' + esc(o.kalite_presizyon) + ')' : ''} · enskri ${fmt(o.kreye_le)}${o.apwouve_le ? ' · apwouve ' + fmt(o.apwouve_le) : ''}${o.verifye ? ' · <b style="color:var(--ok)">✓ Verifye</b>' : ''}</p>
@@ -548,6 +555,9 @@ async function showOrg(o) {
     <label class="tog"><input type="checkbox" id="oVer" ${o.verifye ? 'checked' : ''} /> Badj ✓ Verifye</label>
     <label class="f" for="oNota">Nòt admin (prive)</label><textarea class="t" id="oNota" maxlength="2000">${esc(o.nota_admin || '')}</textarea>
     <button class="btn main" type="button" id="oSave" style="margin-top:10px">Anrejistre</button><p class="msg" id="oMsg"></p>
+    <h2 style="margin-top:16px">Ekip (${(tm.data || []).length} / ${1 + (o.plas_peye || 0)} plas)</h2>
+    ${(tm.data || []).map((m) => `<div class="sub">${m.wol === 'pwopriyete' ? '👑' : '✏️'} <b>${esc(m.non || '—')}</b> · ${esc(m.imel || '')}</div>`).join('')}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px"><input class="t" id="plasNote" placeholder="N° tranzaksyon MonCash" style="max-width:240px" /><button class="btn" type="button" id="plasAdd">➕ 1 plas peye (${(PARAM.pri_plas_htg ?? 500).toLocaleString('fr-FR')} G)</button></div>
     <h2 style="margin-top:16px">Kanpay (${(g.data || []).length})</h2>
     ${(g.data || []).map((c) => `<div class="sub">${c.aktif ? '🟢' : '⚪'} <b>${esc(c.nom)}</b> · <a href="${esc(S.groupUrl(c.slug))}" target="_blank" rel="noopener">/${esc(c.slug)}</a> · ${c.mod_ia ? 'IA ' + c.mod_pey : 'kad sèlman'}</div>`).join('') || '<p class="sub">Pa gen kanpay ankò.</p>'}`;
   await renderVer(o);
@@ -564,8 +574,14 @@ document.addEventListener('click', async (e) => {
   const { error } = await sb.from('organizations').update(v).eq('id', OCUR.id); if (error) return msg('oMsg', friendly(error));
   await loadOrgs(); await showOrg(ORGS.find((x) => x.id === OCUR.id)); msg('oMsg', '✓ Anrejistre.', 'ok');
 });
+document.addEventListener('click', async (e) => {
+  if (e.target.id !== 'plasAdd' || !OCUR) return; e.target.disabled = true;
+  const { error } = await sb.from('org_plas_acha').insert({ org_id: OCUR.id, kantite: 1, pri_htg: PARAM.pri_plas_htg ?? 500, note: ($('plasNote').value || '').trim() || null });
+  if (error) { e.target.disabled = false; return msg('oMsg', friendly(error)); }
+  await loadOrgs(); await showOrg(ORGS.find((x) => x.id === OCUR.id)); msg('oMsg', '✓ 1 plas ajoute. Òganizasyon an ka envite yon responsab kounya.', 'ok');
+});
 $('pSave').addEventListener('click', async () => {
-  const v = { komisyon_pct: Math.max(0, Math.min(100, +$('pKom').value)), pake_org: pakeParse($('pPake').value) || PARAM.pake_org };
+  const v = { komisyon_pct: Math.max(0, Math.min(100, +$('pKom').value)), pake_org: pakeParse($('pPake').value) || PARAM.pake_org, pri_plas_htg: Math.max(0, parseInt($('pPlas').value || '500', 10)) };
   const { error } = await sb.from('paramet').update(v).eq('id', 1); if (error) return msg('pMsg', friendly(error)); msg('pMsg', '✓ Paramèt jeneral yo anrejistre.', 'ok'); loadOrgs();
 });
 document.addEventListener('click', async (e) => {
@@ -575,7 +591,20 @@ document.addEventListener('click', async (e) => {
   b.textContent = error ? '⚠️' : '✓ ok';
 });
 
-sb.auth.getSession().then(({ data }) => showApp(data.session));
+$('forgot').addEventListener('click', async (e) => {
+  e.preventDefault(); const em = $('le').value.trim(); if (!em) { $('le').focus(); $('loginMsg').textContent = 'Tape imèl ou anlè a, epi klike ankò.'; return; }
+  await sb.auth.resetPasswordForEmail(em, { redirectTo: location.origin + location.pathname });
+  $('loginMsg').textContent = 'Si imèl sa a gen yon kont, w ap resevwa yon lyen. Gade nan Spam tou.';
+});
+const RECOVERY = /type=recovery/.test(location.hash);
+sb.auth.onAuthStateChange((ev) => { if (ev === 'PASSWORD_RECOVERY') { $('login').classList.add('hidden'); $('app').classList.add('hidden'); $('reset').classList.remove('hidden'); } });
+$('rsGo').addEventListener('click', async () => {
+  const a = $('rsP').value; if (a.length < 8 || a !== $('rsP2').value) return msg('rsMsg', 'Modpas la dwe gen 8 karaktè omwen, e de modpas yo dwe menm.');
+  const { error } = await sb.auth.updateUser({ password: a }); if (error) return msg('rsMsg', 'Lyen an ekspire. Mande yon lòt.');
+  history.replaceState(null, '', location.pathname); $('reset').classList.add('hidden'); const { data } = await sb.auth.getSession(); showApp(data.session);
+});
+
+sb.auth.getSession().then(({ data }) => { if (!RECOVERY) showApp(data.session); });
 </script>
 </body>
 </html>

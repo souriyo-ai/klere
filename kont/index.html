@@ -91,6 +91,7 @@
     <button type="button" data-tab="ed" aria-pressed="false">🖼️ Kanpay</button>
     <button type="button" data-tab="mod" aria-pressed="false">🎨 Modèl pèsonalize</button>
     <button type="button" data-tab="ver" aria-pressed="false">🪪 Verifikasyon</button>
+    <button type="button" data-tab="ekip" aria-pressed="false">👥 Ekip</button>
     <button type="button" data-tab="kob" aria-pressed="false">💰 Lajan</button>
     <button type="button" data-tab="pro" aria-pressed="false">⚙️ Pwofil</button>
   </nav>
@@ -107,6 +108,7 @@
       <label class="f" for="inE">Imèl</label><input class="t" id="inE" type="email" autocomplete="username" required />
       <label class="f" for="inP">Modpas</label><input class="t" id="inP" type="password" autocomplete="current-password" required />
       <button class="btn main full" type="submit" style="margin-top:14px">Konekte</button><p class="msg err" id="inMsg"></p>
+      <p style="text-align:center;margin:8px 0 0"><a href="#" id="forgot" class="sub">Mwen bliye modpas mwen</a></p>
     </form>
     <form id="fUp" class="hidden">
       <label class="f">Ki moun ou ye ?</label>
@@ -125,6 +127,27 @@
     </form>
   </div>
 </section>
+
+<section class="auth hidden" id="reset"><div class="card">
+  <h2>🔑 Chwazi yon nouvo modpas</h2>
+  <label class="f" for="rsP">Nouvo modpas (8 karaktè omwen)</label><input class="t" id="rsP" type="password" autocomplete="new-password" minlength="8" />
+  <label class="f" for="rsP2">Tape l ankò</label><input class="t" id="rsP2" type="password" autocomplete="new-password" minlength="8" />
+  <button class="btn main full" type="button" id="rsGo" style="margin-top:14px">Anrejistre nouvo modpas la</button><p class="msg" id="rsMsg"></p>
+</div></section>
+
+<section class="auth hidden" id="inv"><div class="card">
+  <h1 style="font-size:28px">👥 Envitasyon</h1>
+  <p id="invT"></p>
+  <div id="invForm">
+    <label class="f" for="invE">Imèl</label><input class="t" id="invE" type="email" readonly />
+    <label class="f" for="invNon">Non konplè ou</label><input class="t" id="invNon" maxlength="80" />
+    <label class="f" for="invP">Chwazi yon modpas (8 karaktè omwen)</label><input class="t" id="invP" type="password" autocomplete="new-password" minlength="8" />
+    <label class="tog"><input type="checkbox" id="invOk" /> <span>Mwen dakò ak <a href="../kondisyon/" target="_blank" rel="noopener">kondisyon itilizasyon Souriyo yo</a>.</span></label>
+    <button class="btn main full" type="button" id="invGo" style="margin-top:10px">Aksepte epi kreye kont mwen</button>
+    <p class="sub" style="text-align:center;margin:10px 0 0">Ou gen yon kont Souriyo deja ? <a href="#" id="invLogin">Konekte pito</a></p>
+  </div>
+  <p class="msg" id="invMsg"></p>
+</div></section>
 
 <section class="auth hidden" id="noOrg"><div class="card"><h2>Kont sa a pa mare ak okenn òganizasyon</h2><p class="sub">Si w se administratè Souriyo, ale sou <a href="../admin/">paj admin an</a>.</p></div></section>
 
@@ -234,6 +257,27 @@
     </section>
   </div>
 
+  <!-- ===== EKIP ===== -->
+  <div id="tEkip" class="hidden">
+    <section class="card"><h2>👥 Ekip ou</h2>
+      <p class="sub" id="ekSub"></p>
+      <div style="overflow:auto"><table><thead><tr><th>Non</th><th>Imèl</th><th>Wòl</th><th></th></tr></thead><tbody id="ekRows"></tbody></table></div>
+    </section>
+    <section class="card owner-only"><h2>✉️ Envite yon responsab</h2>
+      <div id="ekInvBox">
+        <div class="grid2"><div><label class="f" for="ekNon">Non li</label><input class="t" id="ekNon" maxlength="80" /></div><div><label class="f" for="ekE">Imèl li</label><input class="t" id="ekE" type="email" maxlength="120" /></div></div>
+        <button class="btn main" type="button" id="ekGo" style="margin-top:12px">Kreye envitasyon an</button>
+      </div>
+      <p class="msg" id="ekMsg"></p>
+      <div id="ekPend"></div>
+    </section>
+    <section class="card owner-only"><h2>➕ Achte yon plas responsab</h2>
+      <p>Chak responsab anplis koute <b id="ekPri"></b>, <b>yon sèl fwa</b>. Li ka kreye ak jere kanpay yo, men se sèlman ou menm ki ka jere ekip la ak pwofil la.</p>
+      <ol style="padding-left:20px"><li>Voye <b id="ekPri2"></b> sou MonCash nan <b id="ekMc"></b>.</li><li>Voye screenshot la sou WhatsApp ak bouton anba a.</li><li>Souriyo ajoute plas la nan kont ou : ou ka envite responsab la touswit.</li></ol>
+      <a class="btn wa" id="ekWa" target="_blank" rel="noopener">Voye screenshot la sou WhatsApp</a>
+    </section>
+  </div>
+
   <!-- ===== LAJAN ===== -->
   <div id="tKob" class="hidden">
     <section class="card"><h2>💰 Kijan ou fè lajan ak Souriyo</h2>
@@ -293,7 +337,7 @@ const LIB = [
 ];
 const FIELDS = ['nom', 'slug', 'c1', 'c2', 'c3', 'sou_tit', 'tit', 'riban', 'badj', 'liy', 'lang'];
 const CHECKS = ['mod_kad', 'mod_ia', 'manm_selman', 'nan_klasman', 'aktif'];
-let ORG = null, PARAM = null, CAMPS = [], STATS = {}, CUR = null, MODEL = 'sek', LOGO_URL = null, LOGO_FILE = null, LOGO_IMG = null, PV = 'kad', SAMPLE = {}, slugTouched = false;
+let ME = null, ORG = null, PARAM = null, CAMPS = [], STATS = {}, CUR = null, MODEL = 'sek', LOGO_URL = null, LOGO_FILE = null, LOGO_IMG = null, PV = 'kad', SAMPLE = {}, slugTouched = false;
 const kom = () => +(ORG?.komisyon_pct ?? PARAM?.komisyon_pct ?? 30);
 
 /* ---------- Auth ---------- */
@@ -301,7 +345,7 @@ document.addEventListener('click', (e) => { const b = e.target.closest('[data-au
 $('fIn').addEventListener('submit', async (e) => {
   e.preventDefault(); msg('inMsg', '');
   const { data, error } = await sb.auth.signInWithPassword({ email: $('inE').value.trim(), password: $('inP').value });
-  if (error) return msg('inMsg', 'Imèl oswa modpas la pa bon.'); start(data.session);
+  if (error) return msg('inMsg', 'Imèl oswa modpas la pa bon.'); startAfterLogin(data.session);
 });
 let TIP = 'oganizasyon';
 function setTip(t) {
@@ -332,7 +376,8 @@ $('logout').addEventListener('click', async () => { await sb.auth.signOut(); loc
 
 async function start(session) {
   if (!session) { $('auth').classList.remove('hidden'); return; }
-  const [o, p] = await Promise.all([sb.from('org_users').select('org_id, organizations(*)').eq('user_id', session.user.id).limit(1), sb.from('paramet').select('*').eq('id', 1).maybeSingle()]);
+  const [o, p] = await Promise.all([sb.from('org_users').select('org_id, wol, organizations(*)').eq('user_id', session.user.id).limit(1), sb.from('paramet').select('*').eq('id', 1).maybeSingle()]);
+  ME = { id: session.user.id, wol: o.data?.[0]?.wol || 'edite', imel: session.user.email };
   $('auth').classList.add('hidden'); $('logout').classList.remove('hidden');
   ORG = o.data?.[0]?.organizations; PARAM = p.data;
   if (!ORG) { $('noOrg').classList.remove('hidden'); return; }
@@ -342,6 +387,8 @@ async function start(session) {
   $('lib').innerHTML = LIB.map((l, i) => `<button type="button" data-lib="${i}"><span class="sw" style="background:linear-gradient(135deg,${l.c1} 55%,${l.c2} 55%)"></span>${esc(l.n)}</button>`).join('');
   document.querySelectorAll('.kom').forEach((x) => (x.textContent = kom()));
   renderMoney(); fillProfile();
+  document.querySelectorAll('.owner-only').forEach((x) => x.classList.toggle('hidden', ME.wol !== 'pwopriyete'));
+  if (ME.wol !== 'pwopriyete') { document.querySelector('[data-tab="pro"]').classList.add('hidden'); }
   await loadCamps();
 }
 function banner() {
@@ -353,8 +400,8 @@ function banner() {
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-tab]'), g = e.target.closest('[data-goto]'); const t = b ? b.dataset.tab : g ? g.dataset.goto : null; if (!t) return; if (g) e.preventDefault();
   document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', x.dataset.tab === t));
-  ['dash', 'ed', 'mod', 'ver', 'kob', 'pro'].forEach((k) => $('t' + k[0].toUpperCase() + k.slice(1)).classList.toggle('hidden', k !== t));
-  if (t === 'mod') loadModeles(); if (t === 'ver') loadVer(); if (t === 'ed' && !CUR && !$('nom').value) newCamp(); if (t === 'dash') loadCamps();
+  ['dash', 'ed', 'mod', 'ver', 'ekip', 'kob', 'pro'].forEach((k) => $('t' + k[0].toUpperCase() + k.slice(1)).classList.toggle('hidden', k !== t));
+  if (t === 'mod') loadModeles(); if (t === 'ver') loadVer(); if (t === 'ekip') loadEkip(); if (t === 'ed' && !CUR && !$('nom').value) newCamp(); if (t === 'dash') loadCamps();
 });
 
 /* ---------- Tablodbò ---------- */
@@ -542,7 +589,89 @@ $('pSave').addEventListener('click', async () => {
   Object.assign(ORG, v); $('orgName').textContent = ORG.non; msg('pMsg', '✓ Pwofil la anrejistre.', 'ok');
 });
 
-sb.auth.getSession().then(({ data }) => start(data.session));
+/* ---------- Modpas bliye ---------- */
+const RECOVERY = /type=recovery/.test(location.hash);
+$('forgot').addEventListener('click', async (e) => {
+  e.preventDefault(); const em = $('inE').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { $('inE').focus(); return msg('inMsg', 'Tape imèl kont ou a anlè a, epi klike ankò sou « Mwen bliye modpas mwen ».'); }
+  const { error } = await sb.auth.resetPasswordForEmail(em, { redirectTo: location.origin + location.pathname });
+  if (error && /rate|seconds/i.test(error.message)) return msg('inMsg', 'Tann yon ti moman anvan w mande yon lòt lyen.');
+  msg('inMsg', '✓ Si gen yon kont ak imèl sa a, w ap resevwa yon lyen pou chanje modpas la. Gade nan Spam tou.', 'ok');
+});
+sb.auth.onAuthStateChange((ev) => { if (ev === 'PASSWORD_RECOVERY') { ['auth', 'app', 'nav', 'noOrg'].forEach((id) => $(id).classList.add('hidden')); $('reset').classList.remove('hidden'); } });
+$('rsGo').addEventListener('click', async () => {
+  const a = $('rsP').value, b2 = $('rsP2').value;
+  if (a.length < 8) return msg('rsMsg', 'Modpas la dwe gen 8 karaktè omwen.'); if (a !== b2) return msg('rsMsg', 'De modpas yo pa menm.');
+  const { error } = await sb.auth.updateUser({ password: a }); if (error) return msg('rsMsg', 'Lyen an ekspire oswa li pa valab. Mande yon lòt lyen.');
+  msg('rsMsg', '✓ Nouvo modpas la anrejistre.', 'ok'); history.replaceState(null, '', location.pathname);
+  setTimeout(async () => { $('reset').classList.add('hidden'); const { data } = await sb.auth.getSession(); start(data.session); }, 900);
+});
+
+/* ---------- Envitasyon ---------- */
+const INV = new URLSearchParams(location.search).get('envitasyon') || sessionStorage.getItem('souriyo_inv');
+const INVERR = { envitasyon_envalid: 'Envitasyon sa a pa valab ankò (li deja itilize oswa li anile).', ekspire: 'Envitasyon sa a ekspire. Mande responsab la voye yon lòt.', lot_imel: 'Envitasyon sa a se pou yon lòt imèl. Konekte ak bon kont lan.', deja_nan_oganizasyon: 'Kont ou a deja fè pati yon lòt òganizasyon sou Souriyo.', modpas: 'Modpas la dwe gen 8 karaktè omwen.', imel_egziste: 'Ou gen yon kont Souriyo deja ak imèl sa a : konekte, epi envitasyon an ap aksepte otomatikman.', server: 'Yon erè rive. Eseye ankò.' };
+async function aksepte(jwt) {
+  const r = await fetch(`${S.SUPABASE_URL}/functions/v1/souriyo-org`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}) }, body: JSON.stringify({ action: 'aksepte', token: INV, non: $('invNon').value, modpas: $('invP').value }) });
+  return [r.ok, await r.json().catch(() => ({}))];
+}
+async function showInvite() {
+  let info = null; try { info = (await S.api('rpc/envitasyon_info', { method: 'POST', body: JSON.stringify({ p_token: INV }) }))[0]; } catch {}
+  $('auth').classList.add('hidden'); $('inv').classList.remove('hidden');
+  if (!info || info.estati !== 'ap_tann' || info.ekspire) { $('invForm').classList.add('hidden'); sessionStorage.removeItem('souriyo_inv'); return msg('invMsg', info?.ekspire ? INVERR.ekspire : INVERR.envitasyon_envalid); }
+  $('invT').innerHTML = `<b>${esc(info.org_non)}</b> envite w pou w jere kanpay li yo sou Souriyo.`; $('invE').value = info.imel; $('invNon').value = info.non || '';
+}
+$('invGo').addEventListener('click', async () => {
+  if (!$('invOk').checked) return msg('invMsg', 'Ou dwe dakò ak kondisyon yo.');
+  $('invGo').disabled = true; const [ok, j] = await aksepte(null); $('invGo').disabled = false;
+  if (!ok) { if (j.error === 'imel_egziste') { sessionStorage.setItem('souriyo_inv', INV); $('inv').classList.add('hidden'); $('auth').classList.remove('hidden'); $('inE').value = $('invE').value; } return msg(j.error === 'imel_egziste' ? 'inMsg' : 'invMsg', INVERR[j.error] || INVERR.server); }
+  const { data, error } = await sb.auth.signInWithPassword({ email: $('invE').value, password: $('invP').value });
+  sessionStorage.removeItem('souriyo_inv'); history.replaceState(null, '', location.pathname);
+  if (error) return msg('invMsg', 'Kont lan kreye. Konekte kounya.', 'ok'); $('inv').classList.add('hidden'); start(data.session);
+});
+$('invLogin').addEventListener('click', (e) => { e.preventDefault(); sessionStorage.setItem('souriyo_inv', INV); $('inv').classList.add('hidden'); $('auth').classList.remove('hidden'); $('inE').value = $('invE').value; });
+async function startAfterLogin(session) {
+  if (INV && session && sessionStorage.getItem('souriyo_inv')) {
+    const [ok, j] = await aksepte(session.access_token); sessionStorage.removeItem('souriyo_inv'); history.replaceState(null, '', location.pathname);
+    if (!ok) { await start(session); return msg('inMsg', INVERR[j.error] || INVERR.server); }
+  }
+  start(session);
+}
+
+/* ---------- Ekip ---------- */
+async function loadEkip() {
+  const [m, i] = await Promise.all([sb.from('org_users').select('user_id, wol, non, imel, ajoute_le').eq('org_id', ORG.id).order('ajoute_le'), ME.wol === 'pwopriyete' ? sb.from('org_envitasyon').select('*').eq('org_id', ORG.id).eq('estati', 'ap_tann').order('kreye_le', { ascending: false }) : Promise.resolve({ data: [] })]);
+  const { data: o2 } = await sb.from('organizations').select('plas_peye').eq('id', ORG.id).single(); ORG.plas_peye = o2?.plas_peye ?? ORG.plas_peye ?? 0;
+  const M = m.data || [], P = (i.data || []).filter((x) => new Date(x.ekspire_le) > new Date());
+  const tot = 1 + (ORG.plas_peye || 0), used = M.length + P.length, lib = tot - used;
+  $('ekSub').textContent = `${M.length} manm · ${P.length} envitasyon an atant · ${tot} plas an tout (${lib > 0 ? lib + ' lib' : 'pa gen plas lib'})`;
+  $('ekRows').innerHTML = M.map((x) => `<tr><td><b>${esc(x.non || '—')}</b>${x.user_id === ME.id ? ' <span class="sub">(ou)</span>' : ''}</td><td>${esc(x.imel || '')}</td><td>${x.wol === 'pwopriyete' ? '👑 Pwopriyetè' : '✏️ Responsab'}</td>
+    <td>${ME.wol === 'pwopriyete' && x.wol === 'edite' ? `<button class="btn" type="button" data-retire="${x.user_id}">Retire</button>` : ''}</td></tr>`).join('');
+  $('ekInvBox').classList.toggle('hidden', lib <= 0);
+  if (lib <= 0) msg('ekMsg', 'Ou pa gen plas lib. Achte yon plas anba a pou w envite yon lòt responsab.', 'err'); else if ($('ekMsg').classList.contains('err')) msg('ekMsg', '');
+  $('ekPend').innerHTML = P.length ? '<h2 style="margin-top:14px;font-size:16px">Envitasyon an atant</h2>' + P.map((x) => { const l = `${location.origin}${S.BASE}kont/?envitasyon=${x.token}`; return `<div class="pk" style="margin-bottom:8px"><b style="font-size:16px">${esc(x.non || '')} · ${esc(x.imel)}</b><span class="sub">ekspire ${new Date(x.ekspire_le).toLocaleDateString('fr-FR')}</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn" type="button" data-cplink="${esc(l)}">Kopye lyen an</button><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(`Bonjou ${x.non || ''} 👋 ${ORG.non} envite w nan ekip li sou Souriyo. Aksepte la a : ${l}`)}">WhatsApp</a><button class="btn" type="button" data-sendinv="${x.id}">Voye pa imèl</button><button class="btn" type="button" data-anile="${x.id}">Anile</button></div></div>`; }).join('') : '';
+  const pri = (PARAM?.pri_plas_htg ?? 500).toLocaleString('fr-FR') + ' G'; $('ekPri').textContent = pri; $('ekPri2').textContent = pri; $('ekMc').textContent = S.MONCASH.num;
+  $('ekWa').href = `https://wa.me/${S.WA}?text=${encodeURIComponent(`Bonjou Souriyo 👋 Se ${ORG.non}. Mwen peye ${pri} sou MonCash pou 1 plas responsab anplis. Men screenshot la :`)}`;
+}
+$('ekGo').addEventListener('click', async () => {
+  const em = $('ekE').value.trim().toLowerCase(), nn = $('ekNon').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) return msg('ekMsg', 'Imèl la pa bon.');
+  const { error } = await sb.from('org_envitasyon').insert({ org_id: ORG.id, imel: em, non: nn || null });
+  if (error) return msg('ekMsg', /row-level|42501/.test(error.message) ? 'Ou pa gen plas lib. Achte yon plas anvan.' : friendly(error));
+  $('ekE').value = ''; $('ekNon').value = ''; msg('ekMsg', '✓ Envitasyon an kreye. Voye lyen an ba li sou WhatsApp oswa pa imèl.', 'ok'); loadEkip();
+});
+document.addEventListener('click', async (e) => {
+  const c = e.target.closest('[data-cplink]'); if (c) { try { await navigator.clipboard.writeText(c.dataset.cplink); c.textContent = 'Kopye ✓'; } catch {} return; }
+  const a = e.target.closest('[data-anile]'); if (a) { await sb.from('org_envitasyon').update({ estati: 'anile' }).eq('id', +a.dataset.anile); return loadEkip(); }
+  const r = e.target.closest('[data-retire]'); if (r) { if (!confirm('Retire responsab sa a nan ekip la ?')) return; const { error } = await sb.from('org_users').delete().eq('org_id', ORG.id).eq('user_id', r.dataset.retire); if (error) return msg('ekMsg', friendly(error)); return loadEkip(); }
+  const sd = e.target.closest('[data-sendinv]'); if (sd) {
+    sd.disabled = true; const { data: ss } = await sb.auth.getSession();
+    const res = await fetch(`${S.SUPABASE_URL}/functions/v1/souriyo-org`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ss.session.access_token}` }, body: JSON.stringify({ action: 'voye_envitasyon', id: +sd.dataset.sendinv }) });
+    const j = await res.json().catch(() => ({})); sd.textContent = j.sent ? 'Imèl voye ✓' : 'Imèl pa disponib : sèvi ak lyen an'; }
+});
+
+if (INV && new URLSearchParams(location.search).get('envitasyon')) { sessionStorage.removeItem('souriyo_inv'); showInvite(); }
+else sb.auth.getSession().then(({ data }) => { if (RECOVERY) return; startAfterLogin(data.session); });
 </script>
 </body>
 </html>
