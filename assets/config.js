@@ -6,6 +6,7 @@ window.SOURIYO = {
   WA: '50900000000',            // ⚠️ nimewo WhatsApp Business Souriyo a (pou peman ak kontak)
   MONCASH: { num: '+509 0000-0000', nom: 'Souriyo' },   // ⚠️ pou konfime
   SITE: 'souriyo.com',
+  INSTAGRAM: 'https://www.instagram.com/souriyo.ai/',
   PACKS: [{ n: 1, p: 100 }, { n: 3, p: 250, tag: 'save' }, { n: 5, p: 350, tag: 'best' }],
 };
 // Baz URL la (GitHub Pages : /souriyo/… ; domèn pa l : /…)
