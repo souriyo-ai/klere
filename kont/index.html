@@ -285,7 +285,7 @@
     </section>
     <section class="card"><h2>Konsèp ou yo</h2><div id="knList"></div></section>
     <section class="card"><h2>💰 Òf pou achte</h2><div id="knOf"></div></section>
-    <section class="card"><h2>🧾 Revni konsèp yo</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Konsèp</th><th>Kalite</th><th>Montan</th><th>Pati pa w</th><th>Peye</th></tr></thead><tbody id="knRev"></tbody></table></div></section>
+    <section class="card"><h2>🧾 Revni konsèp yo</h2><p class="sub">Revni yo antre nan balans ou (onglè 💰 Lajan), kote ou ka mande yon retrè sou MonCash.</p><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Konsèp</th><th>Kalite</th><th>Montan</th><th>Pati pa w</th></tr></thead><tbody id="knRev"></tbody></table></div></section>
   </div>
 
   <!-- ===== VERIFIKASYON ===== -->
@@ -325,19 +325,28 @@
     <section class="card owner-only"><h2>➕ Achte yon plas responsab</h2>
       <p>Chak responsab anplis koute <b id="ekPri"></b>, <b>yon sèl fwa</b>. Li ka kreye ak jere kanpay yo, men se sèlman ou menm ki ka jere ekip la ak pwofil la.</p>
       <ol style="padding-left:20px"><li>Voye <b id="ekPri2"></b> sou MonCash nan <b id="ekMc"></b>.</li><li>Voye screenshot la sou WhatsApp ak bouton anba a.</li><li>Souriyo ajoute plas la nan kont ou : ou ka envite responsab la touswit.</li></ol>
-      <a class="btn wa" id="ekWa" target="_blank" rel="noopener">Voye screenshot la sou WhatsApp</a>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn main hidden" type="button" id="ekPay">Peye ak MonCash</button><a class="btn wa" id="ekWa" target="_blank" rel="noopener">Voye screenshot la sou WhatsApp</a></div><p class="msg" id="ekPayMsg"></p>
     </section>
   </div>
 
   <!-- ===== LAJAN ===== -->
   <div id="tKob" class="hidden">
+    <section class="card" id="balBox"><h2>💳 Balans ou</h2>
+      <div class="stats" id="balStats" style="margin-bottom:10px"></div>
+      <div class="owner-only" id="retBox">
+        <div class="grid3"><div><label class="f" for="retM">Montan pou retire (G)</label><input class="t" id="retM" type="number" min="0" step="50" /></div><div><label class="f" for="retT">Nimewo MonCash pou resevwa l</label><input class="t" id="retT" inputmode="tel" maxlength="25" /></div><div style="align-self:end"><button class="btn main" type="button" id="retGo" style="width:100%">Mande retrè a</button></div></div>
+        <p class="sub" id="retNote"></p><p class="msg" id="retMsg"></p>
+      </div>
+      <div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Kisa</th><th>Montan</th><th>Estati</th></tr></thead><tbody id="balRows"></tbody></table></div>
+    </section>
     <section class="card"><h2>💰 Kijan ou fè lajan ak Souriyo</h2>
       <div class="grid2">
         <div class="pk"><span class="sub">Komisyon ou sou chak pòtrè piblik la achte</span><b id="kKom"></b><span class="sub">Ex. pòtrè a 100 G → ou touche <span id="kEx"></span> G</span></div>
         <div class="pk"><span class="sub">Kad gwoup yo</span><b>Gratis</b><span class="sub">pou tout moun, pou fè kanpay ou a vire</span></div>
       </div>
       <h2 style="margin-top:18px">Pakè pòtrè IA pou manm ou yo</h2><div class="packs" id="packs"></div>
-      <p class="sub" style="margin-top:12px">Peman otomatik MonCash, achte pakè an liy ak demand peman komisyon ap disponib byento. Pou kounya, kontakte ekip Souriyo a sou WhatsApp.</p>
+      <div id="pkBuy" class="hidden owner-only" style="margin-top:12px"><div class="grid3"><div><label class="f" for="pkCamp">Pou ki kanpay ?</label><select class="t" id="pkCamp"></select></div><div><label class="f" for="pkPa">Pòtrè gratis pou chak manm</label><input class="t" id="pkPa" type="number" min="1" max="10" value="1" /></div></div><p class="msg" id="pkMsg"></p></div>
+      <p class="sub" style="margin-top:12px" id="kobNote">Pou achte yon pakè, kontakte ekip Souriyo a sou WhatsApp.</p>
       <a class="btn wa" id="kWa" target="_blank" rel="noopener">Pale ak Souriyo sou WhatsApp</a>
     </section>
   </div>
@@ -366,6 +375,7 @@ const G_TYPE = { lekol: 'lekol', inivesite: 'lekol', evenman: 'evenman', legliz:
 function friendly(e) {
   const m = String(e?.message || e || ''); console.warn(e);
   if (/duplicate key|groupes_slug_key/.test(m)) return 'Adrès sa a deja pran. Chwazi yon lòt.';
+  if (/slug_rezeve/.test(m)) return 'Adrès sa a rezève pou Souriyo. Chwazi yon lòt.';
   if (/slug/.test(m) && /check/.test(m)) return 'Adrès la dwe gen 3 a 40 lèt miniskil, chif oswa tirè (-).';
   if (/Konsèp|konsep_of_yon_aktif/.test(m)) return /konsep_of_yon_aktif/.test(m) ? 'Ou gen yon òf ki an kou deja pou konsèp sa a.' : m;
   if (/check constraint/.test(m)) return 'Gen yon chan ki pa nan bon fòma.';
@@ -450,7 +460,7 @@ async function start(session) {
   await K.fontsReady(); SAMPLE.kad = await K.loadImage('../img/avant-f.jpg'); SAMPLE.ia = await K.loadImage('../img/apres-f.jpg');
   $('lib').innerHTML = LIB.map((l, i) => `<button type="button" data-lib="${i}"><span class="sw" style="background:linear-gradient(135deg,${l.c1} 55%,${l.c2} 55%)"></span>${esc(l.n)}</button>`).join('');
   document.querySelectorAll('.kom').forEach((x) => (x.textContent = kom()));
-  renderMoney(); fillProfile();
+  renderMoney(); fillProfile(); S.pemanAktif().then((a) => { AUTO = a; renderMoney(); });
   document.querySelectorAll('.owner-only').forEach((x) => x.classList.toggle('hidden', ME.wol !== 'pwopriyete'));
   if (ME.wol !== 'pwopriyete') { document.querySelector('[data-tab="pro"]').classList.add('hidden'); }
   const ENF = ORG.tip_kont === 'enfliyanse';
@@ -471,7 +481,7 @@ document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-tab]'), g = e.target.closest('[data-goto]'); const t = b ? b.dataset.tab : g ? g.dataset.goto : null; if (!t) return; if (g) e.preventDefault();
   document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', x.dataset.tab === t));
   ['dash', 'ed', 'mod', 'rez', 'kon', 'ver', 'ekip', 'kob', 'pro'].forEach((k) => $('t' + k[0].toUpperCase() + k.slice(1)).classList.toggle('hidden', k !== t));
-  if (t === 'rez') loadRezo(); if (t === 'kon') loadKonsep(); if (t === 'ed') loadKonLib();
+  if (t === 'kob') { renderMoney(); loadBalans(); } if (t === 'rez') loadRezo(); if (t === 'kon') loadKonsep(); if (t === 'ed') loadKonLib();
   if (t === 'mod') loadModeles(); if (t === 'ver') loadVer(); if (t === 'ekip') loadEkip(); if (t === 'ed' && !CUR && !$('nom').value) newCamp(); if (t === 'dash') loadCamps();
 });
 
@@ -617,7 +627,7 @@ function useKonsep(id) {
   applyLib(kModel(k), k.id);
   if (!kOk(k)) {
     const pri = (+k.lisans_htg).toLocaleString('fr-FR') + ' G';
-    $('knSel').innerHTML = `🔒 <b>${esc(k.tit)}</b> se yon konsèp premium (${pri}, yon sèl fwa). Ou ka wè l, men pou w anrejistre kanpay la ak li : voye ${pri} sou MonCash nan <b>${esc(S.MONCASH.num)}</b>, epi <a target="_blank" rel="noopener" href="https://wa.me/${S.WA}?text=${encodeURIComponent(`Bonjou Souriyo 👋 Se ${ORG.non}. Mwen peye ${pri} pou lisans konsèp « ${k.tit} ». Men screenshot la :`)}">voye screenshot la sou WhatsApp</a>.`;
+    $('knSel').innerHTML = AUTO && ME.wol === 'pwopriyete' ? `🔒 <b>${esc(k.tit)}</b> se yon konsèp premium (${pri}, yon sèl fwa). <a href="#" data-paylis="${k.id}">💳 Peye lisans lan ak MonCash</a>, epi w ap ka anrejistre kanpay la ak li.` : `🔒 <b>${esc(k.tit)}</b> se yon konsèp premium (${pri}, yon sèl fwa). Ou ka wè l, men pou w anrejistre kanpay la ak li : voye ${pri} sou MonCash nan <b>${esc(S.MONCASH.num)}</b>, epi <a target="_blank" rel="noopener" href="https://wa.me/${S.WA}?text=${encodeURIComponent(`Bonjou Souriyo 👋 Se ${ORG.non}. Mwen peye ${pri} pou lisans konsèp « ${k.tit} ». Men screenshot la :`)}">voye screenshot la sou WhatsApp</a>.`;
   }
   if (ME.wol === 'pwopriyete' && k.pwopriyete_org !== ORG.id) $('knSel').innerHTML += ` <a href="#" data-kof="${k.id}">💰 Fè yon òf pou achte konsèp sa a</a>`;
 }
@@ -684,8 +694,8 @@ async function loadKonsep() {
   KMY = k.data || []; ELIJ = !!el.data;
   const S2 = Object.fromEntries((st.data || []).map((x) => [x.konsep_id, x]));
   const ids = KMY.map((x) => x.id), ms = ids.length ? (await sb.from('konsep_mesaj').select('*').in('konsep_id', ids).order('kreye_le')).data || [] : [];
-  const R = rv.data || [], tot = R.reduce((a, x) => a + x.pati_htg, 0), pp = R.filter((x) => !x.peye).reduce((a, x) => a + x.pati_htg, 0);
-  $('knStats').innerHTML = [['Konsèp nan bibliyotèk', KMY.filter((x) => x.estati === 'apwouve').length], ['Kanpay ki itilize yo', Object.values(S2).reduce((a, x) => a + +x.kanpay, 0)], ['Foto ak konsèp ou yo', Object.values(S2).reduce((a, x) => a + +x.foto, 0)], ['Revni (G) · pa peye', `${tot.toLocaleString('fr-FR')} · ${pp.toLocaleString('fr-FR')}`]].map(([a, b]) => `<div class="stat"><span>${a}</span><b>${typeof b === 'number' ? b.toLocaleString('fr-FR') : b}</b></div>`).join('');
+  const R = rv.data || [], tot = R.reduce((a, x) => a + x.pati_htg, 0);
+  $('knStats').innerHTML = [['Konsèp nan bibliyotèk', KMY.filter((x) => x.estati === 'apwouve').length], ['Kanpay ki itilize yo', Object.values(S2).reduce((a, x) => a + +x.kanpay, 0)], ['Foto ak konsèp ou yo', Object.values(S2).reduce((a, x) => a + +x.foto, 0)], ['Revni konsèp (G)', tot]].map(([a, b]) => `<div class="stat"><span>${a}</span><b>${typeof b === 'number' ? b.toLocaleString('fr-FR') : b}</b></div>`).join('');
   $('knPct').textContent = PARAM?.komisyon_kreyate_pct ?? 30;
   const enf = ORG.tip_kont === 'enfliyanse';
   $('knAsk').classList.toggle('hidden', !enf || ME.wol !== 'pwopriyete');
@@ -708,8 +718,8 @@ async function loadKonsep() {
   $('knOf').innerHTML = O.map((o) => { const vann = o.vann_org === ORG.id; return `<div class="pk" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b style="font-size:16px">${vann ? '📥 Resevwa' : '📤 Ou voye'} · « ${esc(o.konsep?.tit || '')} » · ${(+o.montan_htg).toLocaleString('fr-FR')} G</b>${OST[o.estati]}</div>
     ${o.mesaj ? `<span class="sub">« ${esc(o.mesaj)} »</span>` : ''}${vann && o.estati === 'ap_tann' ? `<span class="sub">Si w aksepte : ou touche ${Math.round(o.montan_htg * (100 - (PARAM?.fre_transfe_pct ?? 10)) / 100).toLocaleString('fr-FR')} G (Souriyo pran ${PARAM?.fre_transfe_pct ?? 10} %), epi konsèp la ak revni l ap fè apre yo pase bay achtè a.</span>` : ''}
     ${o.estati === 'aksepte' ? `<span class="sub">${vann ? 'Achtè a ap peye Souriyo. Transfè a fèt depi peman an konfime.' : `Voye ${(+o.montan_htg).toLocaleString('fr-FR')} G sou MonCash nan <b>${esc(S.MONCASH.num)}</b>, epi voye screenshot la sou WhatsApp. Konsèp la ap pase sou kont ou.`}</span>` : ''}
-    ${own ? `<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">${vann && o.estati === 'ap_tann' ? `<button class="btn main" type="button" data-ofa="${o.id}">Aksepte</button><button class="btn" type="button" data-ofr="${o.id}">Refize</button>` : ''}${!vann && ['ap_tann', 'aksepte'].includes(o.estati) ? `<button class="btn" type="button" data-ofx="${o.id}">Anile òf la</button>` : ''}${!vann && o.estati === 'aksepte' ? `<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${S.WA}?text=${encodeURIComponent(`Bonjou Souriyo 👋 Se ${ORG.non}. Mwen peye ${o.montan_htg} G pou achte konsèp « ${o.konsep?.tit || ''} » (òf #${o.id}). Men screenshot la :`)}">WhatsApp</a>` : ''}</div>` : ''}</div>`; }).join('') || '<p class="sub">Pa gen òf.</p>';
-  $('knRev').innerHTML = R.map((x) => `<tr><td class="sub">${new Date(x.kreye_le).toLocaleDateString('fr-FR')}</td><td>${esc(x.konsep?.tit || '')}</td><td>${RTIP[x.tip] || x.tip}</td><td>${(+x.montan_htg).toLocaleString('fr-FR')} G</td><td><b>${(+x.pati_htg).toLocaleString('fr-FR')} G</b></td><td>${x.peye ? '<span class="pill ok">✓</span>' : '<span class="pill w">Pa ankò</span>'}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen revni ankò.</td></tr>';
+    ${own ? `<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">${vann && o.estati === 'ap_tann' ? `<button class="btn main" type="button" data-ofa="${o.id}">Aksepte</button><button class="btn" type="button" data-ofr="${o.id}">Refize</button>` : ''}${!vann && ['ap_tann', 'aksepte'].includes(o.estati) ? `<button class="btn" type="button" data-ofx="${o.id}">Anile òf la</button>` : ''}${!vann && o.estati === 'aksepte' && AUTO ? `<button class="btn main" type="button" data-payof="${o.id}">💳 Peye ak MonCash</button>` : ''}${!vann && o.estati === 'aksepte' ? `<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${S.WA}?text=${encodeURIComponent(`Bonjou Souriyo 👋 Se ${ORG.non}. Mwen peye ${o.montan_htg} G pou achte konsèp « ${o.konsep?.tit || ''} » (òf #${o.id}). Men screenshot la :`)}">WhatsApp</a>` : ''}</div>` : ''}</div>`; }).join('') || '<p class="sub">Pa gen òf.</p>';
+  $('knRev').innerHTML = R.map((x) => `<tr><td class="sub">${new Date(x.kreye_le).toLocaleDateString('fr-FR')}</td><td>${esc(x.konsep?.tit || '')}</td><td>${RTIP[x.tip] || x.tip}</td><td>${(+x.montan_htg).toLocaleString('fr-FR')} G</td><td><b>${(+x.pati_htg).toLocaleString('fr-FR')} G</b></td></tr>`).join('') || '<tr><td colspan="5" class="sub">Pa gen revni ankò.</td></tr>';
 }
 $('knGo').addEventListener('click', async () => {
   const v = { pwopriyete_org: ORG.id, kreyate_org: ORG.id, tit: $('knT').value.trim(), tem: $('knTem').value.trim() || null, estil: $('knEs').value.trim() || null, deskripsyon: $('knD').value.trim(), referans: $('knR').value.trim() || null };
@@ -776,12 +786,54 @@ $('vGo').addEventListener('click', async () => {
   $('vGo').disabled = false;
 });
 
+/* ---------- Peman MonCash ---------- */
+let AUTO = false;
+const PAYERR = { pa_disponib: 'Peman otomatik pa disponib kounya. Sèvi ak WhatsApp la.', moncash: 'MonCash pa reponn kounya. Eseye ankò nan kèk minit.', negosye: 'Pri ou yo negosye : kontakte Souriyo.', deja: 'Ou gen lisans sa a deja.', org_pa_apwouve: 'Kont ou a dwe apwouve anvan.', auth: 'Se pwopriyetè kont lan sèlman ki ka peye.', network: 'Pa gen koneksyon. Eseye ankò.' };
+async function payNow(body, msgId, btn) {
+  if (btn) btn.disabled = true;
+  const { data: ss } = await sb.auth.getSession();
+  const e = await S.peye(body, ss.session?.access_token, location.origin + location.pathname);
+  if (btn) btn.disabled = false; if (e) msg(msgId, PAYERR[e] || 'Peman an pa ka kòmanse. Eseye ankò.');
+}
+const PTIP = { potre: '✨ Pòtrè (piblik)', pake_org: '📦 Pakè pòtrè', plas: '👥 Plas responsab', lisans: '🔑 Lisans konsèp', konsep_of: '🤝 Achte konsèp' };
+async function loadBalans() {
+  const [b, rt, pm, rv] = await Promise.all([sb.rpc('balans', { p_org: ORG.id }), sb.from('retre').select('*').eq('org_id', ORG.id).order('kreye_le', { ascending: false }), sb.from('peman').select('*').eq('org_id', ORG.id).eq('estati', 'peye').neq('tip', 'potre').order('peye_le', { ascending: false }).limit(50), sb.from('org_revni').select('*').eq('org_id', ORG.id).order('kreye_le', { ascending: false }).limit(50)]);
+  const B = b.data || { komisyon: 0, konsep: 0, retre: 0, ap_tann: 0 }, disp = B.komisyon + B.konsep - B.retre, mn = PARAM?.min_retre_htg ?? 500;
+  $('balStats').innerHTML = [['Komisyon kanpay', B.komisyon], ['Revni konsèp', B.konsep], ['Deja retire / an kou', B.retre], ['Disponib', disp]].map(([a, v]) => `<div class="stat"><span>${a}</span><b>${(+v).toLocaleString('fr-FR')} G</b></div>`).join('');
+  $('retNote').textContent = `Minimòm ${mn.toLocaleString('fr-FR')} G. Souriyo voye kòb la sou MonCash ou nan 72 è (jou ouvrab).`;
+  $('retBox').classList.toggle('hidden', ME.wol !== 'pwopriyete' || disp < mn); if (!$('retT').value) $('retT').value = ORG.kontak_tel || '';
+  const RST = { ap_tann: '<span class="pill w">⏳ An kou</span>', peye: '<span class="pill ok">✓ Voye</span>', refize: '<span class="pill off">Refize</span>' };
+  const rows = [
+    ...(rt.data || []).map((x) => ({ d: x.kreye_le, k: `💸 Retrè sou ${esc(x.moncash_tel)}${x.nota ? ' · ' + esc(x.nota) : ''}`, m: -x.montan_htg, s: RST[x.estati] })),
+    ...(rv.data || []).map((x) => ({ d: x.kreye_le, k: `📈 Komisyon ${x.pct} % sou yon vant ${x.montan_htg} G`, m: x.pati_htg, s: '' })),
+    ...(pm.data || []).map((x) => ({ d: x.peye_le, k: `🧾 ${PTIP[x.tip] || x.tip}${x.kantite ? ' × ' + x.kantite : ''} · MonCash`, m: -x.montan_htg, s: '<span class="pill ok">Peye</span>' })),
+  ].sort((a, c) => new Date(c.d) - new Date(a.d));
+  $('balRows').innerHTML = rows.map((r) => `<tr><td class="sub">${new Date(r.d).toLocaleDateString('fr-FR')}</td><td>${r.k}</td><td><b>${r.m > 0 ? '+' : ''}${(+r.m).toLocaleString('fr-FR')} G</b></td><td>${r.s}</td></tr>`).join('') || '<tr><td colspan="4" class="sub">Pa gen mouvman ankò.</td></tr>';
+}
+$('retGo').addEventListener('click', async () => {
+  const m = parseInt($('retM').value || '0', 10), tl = $('retT').value.trim();
+  if (!(m > 0)) return msg('retMsg', 'Mete montan an.'); if (tl.replace(/\D/g, '').length < 8) return msg('retMsg', 'Mete nimewo MonCash la.');
+  if (!confirm(`Mande yon retrè ${m.toLocaleString('fr-FR')} G sou MonCash ${tl} ?`)) return;
+  const { error } = await sb.from('retre').insert({ org_id: ORG.id, montan_htg: m, moncash_tel: tl });
+  if (error) return msg('retMsg', /Balans|minimòm/.test(error.message) ? error.message : friendly(error));
+  $('retM').value = ''; msg('retMsg', '✓ Demann lan pati. Souriyo ap voye kòb la sou MonCash ou.', 'ok'); loadBalans();
+});
+document.addEventListener('click', (e) => {
+  const pk = e.target.closest('[data-pkbuy]'); if (pk) { const c = $('pkCamp').value; if (!c) return msg('pkMsg', 'Kreye yon kanpay ak pòtrè IA anvan.'); return payNow({ tip: 'pake_org', n: +pk.dataset.pkbuy, groupe_id: c, pa_moun: +$('pkPa').value || 1 }, 'pkMsg', pk); }
+  const pl = e.target.closest('[data-paylis]'); if (pl) { e.preventDefault(); return payNow({ tip: 'lisans', konsep_id: pl.dataset.paylis }, 'edMsg'); }
+  const po = e.target.closest('[data-payof]'); if (po) return payNow({ tip: 'konsep_of', of_id: +po.dataset.payof }, 'knMsg', po);
+});
+$('ekPay').addEventListener('click', () => payNow({ tip: 'plas' }, 'ekPayMsg', $('ekPay')));
+
 /* ---------- Lajan ---------- */
 function renderMoney() {
   $('kKom').textContent = ORG.ka_komisyon ? `${kom()} %` : 'Pa disponib'; $('kEx').textContent = ORG.ka_komisyon ? Math.round(100 * kom() / 100) : 0;
   const packs = ORG.pake_org || PARAM?.pake_org || [];
   $('packs').innerHTML = ORG.pri_negosye ? '<div class="pk"><span class="sub">Pri pakè yo</span><b>Sou mezi</b><span class="sub">Pou òganizasyon ou a, pri yo negosye ak ekip Souriyo a.</span></div>'
-    : packs.map((p) => `<div class="pk"><span class="sub">${p.n} pòtrè IA</span><b>${(+p.p).toLocaleString('fr-FR')} G</b><span class="sub">${Math.round(p.p / p.n)} G pa pòtrè</span></div>`).join('');
+    : packs.map((p) => `<div class="pk"><span class="sub">${p.n} pòtrè IA</span><b>${(+p.p).toLocaleString('fr-FR')} G</b><span class="sub">${Math.round(p.p / p.n)} G pa pòtrè</span>${AUTO && ME.wol === 'pwopriyete' && ORG.estati === 'apwouve' ? `<button class="btn main" type="button" data-pkbuy="${p.n}" style="margin-top:8px;width:100%">Achte ak MonCash</button>` : ''}</div>`).join('');
+  const auto = AUTO && !ORG.pri_negosye && ME.wol === 'pwopriyete' && ORG.estati === 'apwouve';
+  $('pkBuy').classList.toggle('hidden', !auto); $('pkCamp').innerHTML = CAMPS.filter((c) => c.mod_ia).map((c) => `<option value="${c.id}">${esc(c.nom)}</option>`).join('') || '<option value="">— Pa gen kanpay ak pòtrè IA —</option>';
+  $('kobNote').textContent = auto ? 'Chwazi kanpay la anlè, epi klike « Achte ak MonCash » sou pakè w vle a. Pòtrè yo ajoute otomatikman apre peman an.' : 'Pou achte yon pakè, kontakte ekip Souriyo a sou WhatsApp.';
   $('kWa').href = `https://wa.me/${S.WA}?text=${encodeURIComponent(`Bonjou Souriyo 👋 Se ${ORG.non}. Mwen vle plis enfòmasyon sou pakè pòtrè IA yo.`)}`;
 }
 /* ---------- Pwofil ---------- */
@@ -854,7 +906,7 @@ async function loadEkip() {
   if (lib <= 0) msg('ekMsg', 'Ou pa gen plas lib. Achte yon plas anba a pou w envite yon lòt responsab.', 'err'); else if ($('ekMsg').classList.contains('err')) msg('ekMsg', '');
   $('ekPend').innerHTML = P.length ? '<h2 style="margin-top:14px;font-size:16px">Envitasyon an atant</h2>' + P.map((x) => { const l = `${location.origin}${S.BASE}kont/?envitasyon=${x.token}`; return `<div class="pk" style="margin-bottom:8px"><b style="font-size:16px">${esc(x.non || '')} · ${esc(x.imel)}</b><span class="sub">ekspire ${new Date(x.ekspire_le).toLocaleDateString('fr-FR')}</span>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn" type="button" data-cplink="${esc(l)}">Kopye lyen an</button><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(`Bonjou ${x.non || ''} 👋 ${ORG.non} envite w nan ekip li sou Souriyo. Aksepte la a : ${l}`)}">WhatsApp</a><button class="btn" type="button" data-sendinv="${x.id}">Voye pa imèl</button><button class="btn" type="button" data-anile="${x.id}">Anile</button></div></div>`; }).join('') : '';
-  const pri = (PARAM?.pri_plas_htg ?? 500).toLocaleString('fr-FR') + ' G'; $('ekPri').textContent = pri; $('ekPri2').textContent = pri; $('ekMc').textContent = S.MONCASH.num;
+  const pri = (PARAM?.pri_plas_htg ?? 500).toLocaleString('fr-FR') + ' G'; $('ekPri').textContent = pri; $('ekPay').classList.toggle('hidden', !AUTO || ORG.estati !== 'apwouve'); $('ekPay').textContent = `Peye ${pri} ak MonCash`; $('ekPri2').textContent = pri; $('ekMc').textContent = S.MONCASH.num;
   $('ekWa').href = `https://wa.me/${S.WA}?text=${encodeURIComponent(`Bonjou Souriyo 👋 Se ${ORG.non}. Mwen peye ${pri} sou MonCash pou 1 plas responsab anplis. Men screenshot la :`)}`;
 }
 $('ekGo').addEventListener('click', async () => {

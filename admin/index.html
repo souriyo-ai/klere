@@ -83,7 +83,7 @@
 <body>
 <header>
   <div class="brand"><img src="../assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span><small>admin</small></div>
-  <nav class="tabs hidden" id="nav"><button type="button" data-tab="o" aria-pressed="false">🏢 Òganizasyon <span id="oBadge"></span></button><button type="button" data-tab="k" aria-pressed="false">⭐ Kreyatè <span id="kBadge"></span></button><button type="button" data-tab="g" aria-pressed="true">🖼️ Gwoup yo</button><button type="button" data-tab="c" aria-pressed="false">🎟️ Koupon</button><button type="button" data-tab="d" aria-pressed="false">💬 Demand metye</button><button type="button" data-tab="r" aria-pressed="false">💰 Rantabilite</button></nav>
+  <nav class="tabs hidden" id="nav"><button type="button" data-tab="o" aria-pressed="false">🏢 Òganizasyon <span id="oBadge"></span></button><button type="button" data-tab="k" aria-pressed="false">⭐ Kreyatè <span id="kBadge"></span></button><button type="button" data-tab="p" aria-pressed="false">💳 Peman <span id="pBadge"></span></button><button type="button" data-tab="g" aria-pressed="true">🖼️ Gwoup yo</button><button type="button" data-tab="c" aria-pressed="false">🎟️ Koupon</button><button type="button" data-tab="d" aria-pressed="false">💬 Demand metye</button><button type="button" data-tab="r" aria-pressed="false">💰 Rantabilite</button></nav>
   <button class="out hidden" id="logout" type="button">Dekonekte</button>
 </header>
 
@@ -233,7 +233,22 @@
     </div>
     <section class="card"><h2>🤝 Òf achte konsèp</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Konsèp</th><th>Vandè → Achtè</th><th>Montan</th><th>Estati</th><th></th></tr></thead><tbody id="kOf"></tbody></table></div>
       <p class="sub">Lè yon vandè aksepte, achtè a peye Souriyo sou MonCash. Lè w resevwa peman an, klike « Peman resevwa » : konsèp la ak revni l pase bay achtè a, epi vandè a gen pati pa l (montan − frè) nan lis revni anba a.</p></section>
-    <section class="card"><h2>🧾 Revni kreyatè pou peye</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Benefisyè</th><th>Konsèp</th><th>Kalite</th><th>Montan</th><th>Pati</th><th></th></tr></thead><tbody id="kRev"></tbody></table></div></section>
+    <section class="card"><h2>🧾 Dènye revni kreyatè yo</h2><p class="sub">Revni sa yo antre otomatikman nan balans kreyatè a. Li peye pa demann retrè (onglè 💳 Peman).</p><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Benefisyè</th><th>Konsèp</th><th>Kalite</th><th>Montan</th><th>Pati</th><th></th></tr></thead><tbody id="kRev"></tbody></table></div></section>
+  </div>
+
+  <!-- ===== PEMAN ===== -->
+  <div id="tabP" class="hidden">
+    <section class="card"><h2>💳 Peman MonCash otomatik</h2>
+      <p id="pmEta"></p>
+      <label class="tog"><input type="checkbox" id="pmOn" /> <b>Peman otomatik aktif</b> : bouton « Peye ak MonCash » yo parèt sou sit la</label>
+      <div class="grid3"><div><label class="f" for="pmMin">Retrè minimòm (G)</label><input class="t" id="pmMin" type="number" min="0" step="50" /></div></div>
+      <button class="btn main" type="button" id="pmSave" style="margin-top:10px">Anrejistre</button><p class="msg" id="pmMsg"></p>
+    </section>
+    <div class="stats" id="pmStats"></div>
+    <section class="card"><h2>💸 Demann retrè</h2><p class="sub">Voye kòb la sou MonCash moun nan, epi klike « ✓ Voye ». Balans yo kalkile otomatikman (komisyon + revni konsèp − retrè).</p>
+      <div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Kont</th><th>MonCash</th><th>Montan</th><th>Estati</th><th></th></tr></thead><tbody id="pmRet"></tbody></table></div></section>
+    <section class="card"><h2>🧾 Peman yo</h2><select class="t" id="pmF" style="max-width:260px;margin-bottom:10px"><option value="peye">✓ Peye</option><option value="kreye">⏳ Kòmanse (pa fini)</option><option value="echwe">✖ Echwe</option><option value="">Tout</option></select>
+      <div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Kisa</th><th>Kont / nimewo</th><th>Montan</th><th>N° MonCash</th><th>Estati</th></tr></thead><tbody id="pmRows"></tbody></table></div></section>
   </div>
 
   <!-- ===== RANTABILITE ===== -->
@@ -294,7 +309,7 @@ let G = [], STATS = {}, CUR = null, MODEL = 'sek', LOGO_URL = null, LOGO_FILE = 
 /* ---------- Auth ---------- */
 async function showApp(session) {
   $('login').classList.toggle('hidden', !!session); ['app', 'nav', 'logout'].forEach((id) => $(id).classList.toggle('hidden', !session));
-  if (session) { await K.fontsReady(); SAMPLE.kad = await K.loadImage('../img/avant-f.jpg'); SAMPLE.ia = await K.loadImage('../img/apres-f.jpg'); await loadGroups(); newGroup(); loadOrgs(); kBadge(); }
+  if (session) { await K.fontsReady(); SAMPLE.kad = await K.loadImage('../img/avant-f.jpg'); SAMPLE.ia = await K.loadImage('../img/apres-f.jpg'); await loadGroups(); newGroup(); loadOrgs(); kBadge(); pBadge(); }
 }
 $('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault(); $('loginMsg').textContent = '';
@@ -306,8 +321,8 @@ $('logout').addEventListener('click', async () => { await sb.auth.signOut(); sho
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
   document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', x === b));
-  ['g', 'c', 'd', 'r', 'o', 'k'].forEach((k) => $('tab' + k.toUpperCase()).classList.toggle('hidden', b.dataset.tab !== k));
-  if (b.dataset.tab === 'o') loadOrgs(); if (b.dataset.tab === 'k') loadKreyate();
+  ['g', 'c', 'd', 'r', 'o', 'k', 'p'].forEach((k) => $('tab' + k.toUpperCase()).classList.toggle('hidden', b.dataset.tab !== k));
+  if (b.dataset.tab === 'o') loadOrgs(); if (b.dataset.tab === 'k') loadKreyate(); if (b.dataset.tab === 'p') loadPeman();
   if (b.dataset.tab === 'c') loadCoupons(); if (b.dataset.tab === 'd') loadDemandes(); if (b.dataset.tab === 'r') loadRanta();
 });
 
@@ -648,7 +663,7 @@ async function kBadge() {
   const n = (a.count || 0) + (b.count || 0) + (c.count || 0); $('kBadge').textContent = n ? `(${n})` : '';
 }
 async function loadKreyate() {
-  const [p, rz, k, of, rv, og] = await Promise.all([sb.from('paramet').select('*').eq('id', 1).single(), sb.from('rezo_kont').select('*').order('kreye_le', { ascending: false }).limit(300), sb.from('konsep').select('*').order('modifye_le', { ascending: false }).limit(500), sb.from('konsep_of').select('*').order('kreye_le', { ascending: false }).limit(200), sb.from('konsep_revni').select('*').eq('peye', false).order('kreye_le'), sb.from('organizations').select('id, non, tip_kont, kontak_tel, estati')]);
+  const [p, rz, k, of, rv, og] = await Promise.all([sb.from('paramet').select('*').eq('id', 1).single(), sb.from('rezo_kont').select('*').order('kreye_le', { ascending: false }).limit(300), sb.from('konsep').select('*').order('modifye_le', { ascending: false }).limit(500), sb.from('konsep_of').select('*').order('kreye_le', { ascending: false }).limit(200), sb.from('konsep_revni').select('*').order('kreye_le', { ascending: false }).limit(100), sb.from('organizations').select('id, non, tip_kont, kontak_tel, estati')]);
   KPAR = p.data || {}; $('kMin').value = KPAR.min_abonnes ?? 5000; $('kMinFb').value = KPAR.min_abonnes_fb ?? 10000; $('kPct').value = KPAR.komisyon_kreyate_pct ?? 30; $('kFre').value = KPAR.fre_transfe_pct ?? 10;
   KORG = Object.fromEntries((og.data || []).map((x) => [x.id, x])); KK = k.data || [];
   const on = (id) => esc(KORG[id]?.non || '—');
@@ -659,7 +674,7 @@ async function loadKreyate() {
   renderKList();
   const O = of.data || [], kt = (id) => esc((KK.find((x) => x.id === id) || {}).tit || '');
   $('kOf').innerHTML = O.map((o) => `<tr><td class="sub">${fmt(o.kreye_le)}</td><td>${kt(o.konsep_id)}</td><td>${on(o.vann_org)} → ${on(o.achte_org)}${o.mesaj ? `<br><span class="sub">« ${esc(o.mesaj)} »</span>` : ''}</td><td><b>${(+o.montan_htg).toLocaleString('fr-FR')} G</b></td><td>${OSTA[o.estati]}</td><td>${o.estati === 'aksepte' ? `<button class="btn main" type="button" data-kofi="${o.id}">💵 Peman resevwa</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen òf.</td></tr>';
-  $('kRev').innerHTML = (rv.data || []).map((r) => `<tr><td class="sub">${fmt(r.kreye_le)}</td><td>${on(r.benefisye_org)}${KORG[r.benefisye_org]?.kontak_tel ? `<br><span class="sub">${esc(KORG[r.benefisye_org].kontak_tel)}</span>` : ''}</td><td>${kt(r.konsep_id)}</td><td>${{ lisans: '🔑 Lisans', potre: '✨ Pòtrè', transfe: '🤝 Vant' }[r.tip] || r.tip}</td><td>${(+r.montan_htg).toLocaleString('fr-FR')} G</td><td><b>${(+r.pati_htg).toLocaleString('fr-FR')} G</b></td><td><button class="btn" type="button" data-krp="${r.id}">✓ Peye</button></td></tr>`).join('') || '<tr><td colspan="7" class="sub">Tout revni yo peye.</td></tr>';
+  $('kRev').innerHTML = (rv.data || []).map((r) => `<tr><td class="sub">${fmt(r.kreye_le)}</td><td>${on(r.benefisye_org)}${KORG[r.benefisye_org]?.kontak_tel ? `<br><span class="sub">${esc(KORG[r.benefisye_org].kontak_tel)}</span>` : ''}</td><td>${kt(r.konsep_id)}</td><td>${{ lisans: '🔑 Lisans', potre: '✨ Pòtrè', transfe: '🤝 Vant' }[r.tip] || r.tip}</td><td>${(+r.montan_htg).toLocaleString('fr-FR')} G</td><td><b>${(+r.pati_htg).toLocaleString('fr-FR')} G</b></td><td></td></tr>`).join('') || '<tr><td colspan="7" class="sub">Pa gen revni ankò.</td></tr>';
   kBadge();
 }
 function renderKList() {
@@ -730,6 +745,39 @@ $('kpSave').addEventListener('click', async () => {
   const c = (id, d) => Math.max(0, parseInt($(id).value || d, 10));
   const v = { min_abonnes: c('kMin', '5000'), min_abonnes_fb: c('kMinFb', '10000'), komisyon_kreyate_pct: Math.min(100, c('kPct', '30')), fre_transfe_pct: Math.min(100, c('kFre', '10')) };
   const { error } = await sb.from('paramet').update(v).eq('id', 1); if (error) return msg('kpMsg', friendly(error)); msg('kpMsg', '✓ Anrejistre.', 'ok');
+});
+
+/* ---------- Peman ---------- */
+const PTIPA = { potre: '✨ Pòtrè (piblik)', pake_org: '📦 Pakè òganizasyon', plas: '👥 Plas responsab', lisans: '🔑 Lisans konsèp', konsep_of: '🤝 Achte konsèp' };
+const PSTA = { peye: '<span class="pill ok">✓ Peye</span>', kreye: '<span class="pill w">⏳ Pa fini</span>', echwe: '<span class="pill">✖ Echwe</span>' };
+async function pBadge() { const { count } = await sb.from('retre').select('id', { count: 'exact', head: true }).eq('estati', 'ap_tann'); $('pBadge').textContent = count ? `(${count})` : ''; }
+async function loadPeman() {
+  const f = $('pmF').value;
+  let q = sb.from('peman').select('*').order('kreye_le', { ascending: false }).limit(300); if (f) q = q.eq('estati', f);
+  const since = new Date(Date.now() - 30 * 864e5).toISOString();
+  const [p, rt, og, pm, k, all] = await Promise.all([sb.from('paramet').select('*').eq('id', 1).single(), sb.from('retre').select('*').order('kreye_le', { ascending: false }).limit(200), sb.from('organizations').select('id, non'), fetch(S.PEMAN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"action":"konfig"}' }).then((r) => r.json()).catch(() => ({})), q, sb.from('peman').select('montan_htg, peye_le, tip').eq('estati', 'peye').gte('peye_le', since)]);
+  const on = Object.fromEntries((og.data || []).map((x) => [x.id, x.non]));
+  $('pmOn').checked = !!p.data?.peman_otomatik; $('pmMin').value = p.data?.min_retre_htg ?? 500;
+  $('pmEta').innerHTML = pm.mode ? `Mòd MonCash : <b>${pm.mode === 'live' ? '🟢 LIVE (lajan reyèl)' : '🧪 SANDBOX (tès)'}</b> · ${pm.aktif ? '<b style="color:var(--ok)">bouton yo parèt sou sit la</b>' : 'bouton yo pa parèt (aktive anba a, epi fòk sekrè MonCash yo la)'}` : 'Fonksyon peman an pa reponn.';
+  const P = all.data || [], jodi = new Date().toDateString();
+  const sum = (L) => L.reduce((a, x) => a + x.montan_htg, 0);
+  const R2 = rt.data || [];
+  $('pmStats').innerHTML = [['Antre jodi a', sum(P.filter((x) => new Date(x.peye_le).toDateString() === jodi))], ['Antre 30 jou', sum(P)], ['Pòtrè piblik (30 j)', sum(P.filter((x) => x.tip === 'potre'))], ['Retrè pou voye', sum(R2.filter((x) => x.estati === 'ap_tann'))]].map(([a, v]) => `<div class="stat"><span>${a}</span><b>${(+v).toLocaleString('fr-FR')} G</b></div>`).join('');
+  const RS = { ap_tann: '<span class="pill w">⏳ Pou voye</span>', peye: '<span class="pill ok">✓ Voye</span>', refize: '<span class="pill">Refize</span>' };
+  $('pmRet').innerHTML = R2.map((x) => `<tr><td class="sub">${fmt(x.kreye_le)}</td><td>${esc(on[x.org_id] || '')}</td><td><b>${esc(x.moncash_tel)}</b></td><td><b>${(+x.montan_htg).toLocaleString('fr-FR')} G</b></td><td>${RS[x.estati]}${x.nota ? `<br><span class="sub">${esc(x.nota)}</span>` : ''}</td><td>${x.estati === 'ap_tann' ? `<button class="btn main" type="button" data-rok="${x.id}">✓ Voye</button> <button class="btn" type="button" data-rko="${x.id}">Refize</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen demann retrè.</td></tr>';
+  $('pmRows').innerHTML = (k.data || []).map((x) => `<tr><td class="sub">${fmt(x.peye_le || x.kreye_le)}</td><td>${PTIPA[x.tip] || x.tip}${x.kantite ? ' × ' + x.kantite : ''}</td><td>${esc(on[x.org_id] || '')}${x.tel ? `<br><span class="sub">${esc(x.tel)}</span>` : ''}</td><td><b>${(+x.montan_htg).toLocaleString('fr-FR')} G</b></td><td class="sub">${esc(x.moncash_tx || '')}${x.peye_pa ? '<br>' + esc(x.peye_pa) : ''}</td><td>${PSTA[x.estati]}${x.rezon ? `<br><span class="sub">${esc(x.rezon)}</span>` : ''}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen peman.</td></tr>';
+  pBadge();
+}
+$('pmF').addEventListener('change', loadPeman);
+$('pmSave').addEventListener('click', async () => {
+  const v = { peman_otomatik: $('pmOn').checked, min_retre_htg: Math.max(0, parseInt($('pmMin').value || '500', 10)) };
+  const { error } = await sb.from('paramet').update(v).eq('id', 1); if (error) return msg('pmMsg', friendly(error)); msg('pmMsg', '✓ Anrejistre.', 'ok'); loadPeman();
+});
+document.addEventListener('click', async (e) => {
+  const ok = e.target.closest('[data-rok]'), ko = e.target.closest('[data-rko]'); if (!ok && !ko) return;
+  const id = +(ok || ko).dataset[ok ? 'rok' : 'rko'];
+  const nota = prompt(ok ? 'N° tranzaksyon MonCash ou voye a (pa obligatwa) :' : 'Rezon (kont lan ap wè l) :', ''); if (nota === null) return;
+  const { error } = await sb.from('retre').update({ estati: ok ? 'peye' : 'refize', nota: nota.slice(0, 300) || null }).eq('id', id); if (error) return alert(friendly(error)); loadPeman();
 });
 </script>
 </body>

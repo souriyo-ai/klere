@@ -9,6 +9,21 @@ window.SOURIYO = {
   INSTAGRAM: 'https://www.instagram.com/souriyo.ai/',
   PACKS: [{ n: 1, p: 100 }, { n: 3, p: 250, tag: 'save' }, { n: 5, p: 350, tag: 'best' }],
 };
+window.SOURIYO.PEMAN_URL = 'https://udvaaoguknrsqucdonco.supabase.co/functions/v1/souriyo-peman';
+// Peman MonCash otomatik : èske li aktif ? (rezilta a kenbe pou paj la)
+window.SOURIYO.pemanAktif = () => (window.SOURIYO._pa ||= fetch(window.SOURIYO.PEMAN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"action":"konfig"}' })
+  .then((r) => r.json()).then((j) => !!j.aktif).catch(() => false));
+// Kreye yon peman epi ale sou MonCash. Retounen yon erè si sa pa mache.
+window.SOURIYO.peye = async (body, jwt, back) => {
+  const S = window.SOURIYO;
+  try {
+    const r = await fetch(S.PEMAN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}) }, body: JSON.stringify({ action: 'kreye', ...body }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.url) return j.error || 'server';
+    try { localStorage.setItem('souriyo_peman', JSON.stringify({ order: j.order, back: back || location.href, t: Date.now() })); } catch {}
+    location.href = j.url; return null;
+  } catch { return 'network'; }
+};
 // Baz URL la (GitHub Pages : /souriyo/… ; domèn pa l : /…)
 window.SOURIYO.BASE = (() => {
   const seg = location.pathname.split('/').filter(Boolean);

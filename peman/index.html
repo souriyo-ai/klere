@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Peman · Souriyo</title>
+<link rel="icon" href="../assets/souriyo-icone.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" />
+<script src="../assets/config.js"></script>
+<style>
+  :root { --ink: #151848; --ink-2: #4b5085; --coral: #FF5A36; --cream: #fff8f2; --line: #ece4dc; --ok: #1a7a3c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; font: 16px/1.5 "DM Sans", system-ui, sans-serif; color: var(--ink); background: var(--cream); }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 28px 22px; max-width: 440px; width: 100%; text-align: center; }
+  .brand { display: inline-flex; align-items: center; gap: 8px; font: 800 20px "Bricolage Grotesque", system-ui, sans-serif; color: var(--ink); text-decoration: none; margin-bottom: 14px; }
+  .brand img { width: 30px; height: 30px; } .brand b { color: var(--coral); }
+  .ic { font-size: 54px; line-height: 1; margin: 6px 0 10px; }
+  h1 { font: 800 26px/1.15 "Bricolage Grotesque", system-ui, sans-serif; margin: 0 0 8px; }
+  p { color: var(--ink-2); margin: 0 0 16px; }
+  .btn { display: inline-flex; justify-content: center; width: 100%; border: 0; background: var(--coral); color: #fff; border-radius: 999px; padding: 13px 18px; font: 700 16px "DM Sans", system-ui, sans-serif; text-decoration: none; cursor: pointer; }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1.5px solid var(--line); margin-top: 8px; }
+  .spin { width: 42px; height: 42px; border: 4px solid #f1e6dc; border-top-color: var(--coral); border-radius: 50%; margin: 10px auto 16px; animation: s 1s linear infinite; } @keyframes s { to { transform: rotate(360deg); } }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<main class="card">
+  <a class="brand" href="../"><img src="../assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span></a>
+  <div id="wait"><div class="spin"></div><h1>N ap verifye peman an…</h1><p>Rete sou paj la yon ti moman.<br><small>Vérification du paiement en cours…</small></p></div>
+  <div id="done" class="hidden"><div class="ic" id="ic"></div><h1 id="t"></h1><p id="d"></p><a class="btn" id="go" href="../"></a><button class="btn ghost hidden" id="again" type="button">Verifye ankò</button></div>
+</main>
+<script>
+const S = window.SOURIYO, $ = (id) => document.getElementById(id), q = new URLSearchParams(location.search);
+let saved = {}; try { saved = JSON.parse(localStorage.getItem('souriyo_peman') || '{}'); } catch {}
+const tx = q.get('transactionId') || q.get('transaction_id') || '', ord = q.get('orderId') || saved.order || '';
+const TXT = {
+  potre: (n) => `${n} pòtrè IA debloke sou nimewo w la. Ou ka fè yo kounya !`,
+  pake_org: (n) => `${n} pòtrè IA ajoute nan kanpay ou a.`,
+  plas: () => 'Yon plas responsab ajoute nan ekip ou. Ou ka envite moun nan kounya.',
+  lisans: () => 'Lisans konsèp la aktive. Ou ka itilize l nan kanpay ou yo.',
+  konsep_of: () => 'Konsèp la pase sou kont ou, ak tout revni l ap fè apre.',
+};
+function show(ok, title, desc, href, label) {
+  $('wait').classList.add('hidden'); $('done').classList.remove('hidden');
+  $('ic').textContent = ok ? '✅' : '⏳'; $('t').textContent = title; $('d').textContent = desc; $('go').href = href; $('go').textContent = label;
+  $('again').classList.toggle('hidden', ok);
+}
+async function check() {
+  $('wait').classList.remove('hidden'); $('done').classList.add('hidden');
+  if (!tx && !ord) return show(false, 'Pa gen peman pou verifye', 'Si w te peye, voye screenshot la bay Souriyo sou WhatsApp.', `https://wa.me/${S.WA}`, 'Kontakte Souriyo');
+  let j = {};
+  try { const r = await fetch(S.PEMAN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'verifye', transactionId: tx || undefined, orderId: tx ? undefined : ord }) }); j = await r.json(); } catch {}
+  let back = saved.back || '../';
+  if (j.ok) {
+    try { localStorage.removeItem('souriyo_peman'); } catch {}
+    if (j.tip === 'potre' && j.slug) { const u = new URL(back, location.href); u.searchParams.set('peye', j.kantite); back = u.toString(); }
+    return show(true, 'Peman an pase ! Mèsi 🎉', (TXT[j.tip] || (() => ''))(j.kantite), back, 'Kontinye');
+  }
+  show(false, 'Nou poko wè peman an', 'Si w fèk peye, tann kèk segonn epi klike « Verifye ankò ». Si w pa t fin peye, ou ka retounen eseye ankò.', back, 'Retounen');
+}
+$('again').addEventListener('click', check);
+check();
+</script>
+</body>
+</html>

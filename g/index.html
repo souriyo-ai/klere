@@ -147,7 +147,7 @@
     <section class="card hidden" id="buy">
       <h2 data-t="buyT"></h2><p class="sub" data-t="buyS"></p>
       <div class="packs" id="packs"></div>
-      <div id="howto" class="hidden"><ol class="how" id="howList"></ol><a class="btn wa" id="buyWa" target="_blank" rel="noopener" style="width:100%"></a></div>
+      <div id="howto" class="hidden"><button class="btn main hidden" type="button" id="payMc" style="width:100%;margin-top:12px"></button><p class="sub hidden" id="payOr" style="margin:10px 0 0"></p><ol class="how" id="howList"></ol><a class="btn wa" id="buyWa" target="_blank" rel="noopener" style="width:100%"></a></div>
       <label class="f" for="code" data-t="codeL" style="margin-top:16px"></label>
       <input class="t" id="code" autocomplete="off" placeholder="SRY-XXXX-XXXX" style="text-transform:uppercase;letter-spacing:.06em;font-weight:700" />
       <button class="btn main" type="button" id="redeem" data-t="redeem"></button>
@@ -178,7 +178,7 @@ const T = {
     create: '✨ Fè pòtrè pwo m', genT: 'N ap fè pòtrè w la…', msgs: ['N ap analize foto w…', 'N ap chwazi rad la…', 'N ap regle limyè a…', 'Dènye retouch…'],
     resT: (p) => `Men vèsyon ${p} ou!`, again: '↺ Yon lòt pòtrè', left: (n) => n > 0 ? `Ou gen ${n} pòtrè ki rete.` : 'Pòtrè w la kenbe sou telefòn sa a : panse telechaje l.',
     errPhoto: 'Chwazi yon foto anvan.', errTel: 'Mete nimewo WhatsApp ou.', errs: { quota: 'Ou fin itilize pòtrè ou yo. Ou ka achte plis anba a 👇', not_member: 'Nimewo sa a pa nan lis manm gwoup la.', closed: 'Tout pòtrè gratis gwoup la fin itilize. Ou ka achte youn anba a 👇', no_group: 'Pòtrè IA pa aktive pou gwoup sa a.', bad_tel: 'Nimewo a pa bon.', api: 'Sèvis la chaje. Eseye ankò nan yon minit.', paused: 'Pòtrè IA yo an pòz pou kounya. Eseye ankò pita.', budget: 'Nou fè anpil pòtrè jodi a! Tounen demen pou pa w la. 🙏' },
-    buyT: 'Ou vle plis pòtrè? 📸', buyS: 'Peman fasil ak MonCash.', pk: () => 'pòtrè', tagSave: 'Ekonomize 50 G', tagBest: 'Pi bon pri',
+    buyT: 'Ou vle plis pòtrè? 📸', buyS: 'Peman fasil ak MonCash.', pk: () => 'pòtrè', tagSave: (x) => `Ekonomize ${x} G`, payBtn: (p) => `Peye ${p} G ak MonCash`, payOr: 'oswa peye manyèlman :', paid: (n) => `✓ Peman an pase : ${n} pòtrè debloke !`, payErr: 'Peman an pa ka kòmanse kounya. Eseye ankò, oswa peye manyèlman.', tagBest: 'Pi bon pri',
     steps: (p) => [`Voye <b>${p} goud</b> sou MonCash nan <b>${S.MONCASH.num}</b> (${S.MONCASH.nom}).`, 'Voye screenshot la sou WhatsApp ak bouton anba a.', 'W ap resevwa yon <b>kòd koupon</b> : mete l anba a.'],
     waBtn: 'Voye screenshot mwen sou WhatsApp', waMsg: (n, p, tel, g) => `Bonjou Souriyo 👋\nMwen peye ${p} G sou MonCash pou ${n} pòtrè IA (gwoup : ${g}).\nNimewo m : ${tel || '…'}\nMen screenshot la :`,
     codeL: 'Mwen gen yon kòd koupon', redeem: 'Debloke pòtrè m yo', cOk: (n) => `✓ ${n} pòtrè debloke!`, cErr: { coupon_invalide: 'Kòd sa a pa egziste.', coupon_utilise: 'Kòd sa a deja sèvi.', coupon_autre_numero: 'Kòd sa a mare ak yon lòt nimewo.', coupon_autre_groupe: 'Kòd sa a se pou yon lòt gwoup.', empty: 'Mete kòd la.' },
@@ -199,7 +199,7 @@ const T = {
     create: '✨ Créer mon portrait pro', genT: 'Création de ton portrait…', msgs: ['Analyse de ta photo…', 'Choix de la tenue…', 'Réglage de la lumière…', 'Dernières retouches…'],
     resT: (p) => `Voici ta version ${p} !`, again: '↺ Un autre portrait', left: (n) => n > 0 ? `Il te reste ${n} portrait${n > 1 ? 's' : ''}.` : 'Ton portrait est gardé sur ce téléphone : pense à le télécharger.',
     errPhoto: 'Choisis d’abord une photo.', errTel: 'Entre ton numéro WhatsApp.', errs: { quota: 'Tu as utilisé tes portraits. Tu peux en acheter ci-dessous 👇', not_member: 'Ce numéro n’est pas dans la liste des membres du groupe.', closed: 'Tous les portraits offerts du groupe ont été utilisés. Tu peux en acheter ci-dessous 👇', no_group: 'Le portrait IA n’est pas activé pour ce groupe.', bad_tel: 'Numéro invalide.', api: 'Le service est très demandé. Réessaie dans une minute.', paused: 'Les portraits IA sont en pause. Réessaie plus tard.', budget: 'Beaucoup de portraits aujourd’hui ! Reviens demain pour le tien. 🙏' },
-    buyT: 'Envie d’autres portraits ? 📸', buyS: 'Paiement simple par MonCash.', pk: (n) => `portrait${n > 1 ? 's' : ''}`, tagSave: 'Économise 50 G', tagBest: 'Meilleur prix',
+    buyT: 'Envie d’autres portraits ? 📸', buyS: 'Paiement simple par MonCash.', pk: (n) => `portrait${n > 1 ? 's' : ''}`, tagSave: (x) => `Économise ${x} G`, payBtn: (p) => `Payer ${p} G avec MonCash`, payOr: 'ou payer manuellement :', paid: (n) => `✓ Paiement reçu : ${n} portrait(s) débloqué(s) !`, payErr: 'Le paiement ne peut pas démarrer pour le moment. Réessaie ou paie manuellement.', tagBest: 'Meilleur prix',
     steps: (p) => [`Envoie <b>${p} gourdes</b> par MonCash au <b>${S.MONCASH.num}</b> (${S.MONCASH.nom}).`, 'Envoie la capture sur WhatsApp avec le bouton ci-dessous.', 'Tu reçois un <b>code coupon</b> : entre-le ci-dessous.'],
     waBtn: 'Envoyer ma capture sur WhatsApp', waMsg: (n, p, tel, g) => `Bonjour Souriyo 👋\nJ’ai payé ${p} G par MonCash pour ${n} portrait(s) IA (groupe : ${g}).\nMon numéro : ${tel || '…'}\nVoici ma capture :`,
     codeL: 'J’ai un code coupon', redeem: 'Débloquer mes portraits', cOk: (n) => `✓ ${n} portrait(s) débloqué(s) !`, cErr: { coupon_invalide: 'Ce code n’existe pas.', coupon_utilise: 'Ce code a déjà été utilisé.', coupon_autre_numero: 'Ce code est lié à un autre numéro.', coupon_autre_groupe: 'Ce code est pour un autre groupe.', empty: 'Entre ton code.' },
@@ -220,7 +220,7 @@ const T = {
     create: '✨ Create my pro portrait', genT: 'Creating your portrait…', msgs: ['Analysing your photo…', 'Choosing the outfit…', 'Setting the light…', 'Final touches…'],
     resT: (p) => `Here’s your ${p} self!`, again: '↺ Another portrait', left: (n) => n > 0 ? `${n} portrait(s) left.` : 'Your portrait is kept on this phone: remember to download it.',
     errPhoto: 'Choose a photo first.', errTel: 'Enter your WhatsApp number.', errs: { quota: 'You’ve used your portraits. You can buy more below 👇', not_member: 'This number isn’t on the group’s member list.', closed: 'All of the group’s free portraits have been used. You can buy one below 👇', no_group: 'AI portraits aren’t enabled for this group.', bad_tel: 'Invalid number.', api: 'The service is busy. Try again in a minute.', paused: 'AI portraits are paused for now. Try again later.', budget: 'Lots of portraits today! Come back tomorrow for yours. 🙏' },
-    buyT: 'Want more portraits? 📸', buyS: 'Easy payment with MonCash.', pk: (n) => `portrait${n > 1 ? 's' : ''}`, tagSave: 'Save 50 G', tagBest: 'Best price',
+    buyT: 'Want more portraits? 📸', buyS: 'Easy payment with MonCash.', pk: (n) => `portrait${n > 1 ? 's' : ''}`, tagSave: (x) => `Save ${x} G`, payBtn: (p) => `Pay ${p} G with MonCash`, payOr: 'or pay manually:', paid: (n) => `✓ Payment received: ${n} portrait(s) unlocked!`, payErr: 'Payment can’t start right now. Try again or pay manually.', tagBest: 'Best price',
     steps: (p) => [`Send <b>${p} gourdes</b> via MonCash to <b>${S.MONCASH.num}</b> (${S.MONCASH.nom}).`, 'Send the screenshot on WhatsApp with the button below.', 'You’ll get a <b>coupon code</b>: enter it below.'],
     waBtn: 'Send my screenshot on WhatsApp', waMsg: (n, p, tel, g) => `Hello Souriyo 👋\nI paid ${p} G via MonCash for ${n} AI portrait(s) (group: ${g}).\nMy number: ${tel || '…'}\nHere is my screenshot:`,
     codeL: 'I have a coupon code', redeem: 'Unlock my portraits', cOk: (n) => `✓ ${n} portrait(s) unlocked!`, cErr: { coupon_invalide: 'This code doesn’t exist.', coupon_utilise: 'This code has already been used.', coupon_autre_numero: 'This code is linked to another number.', coupon_autre_groupe: 'This code is for another group.', empty: 'Enter your code.' },
@@ -273,6 +273,15 @@ async function boot() {
   restore(); setMode(st.mode); setLang(st.lang);
   if (q.get('code')) { $('code').value = q.get('code').slice(0, 20).toUpperCase(); if (g.mod_ia) { setMode('ia'); $('buy').classList.remove('hidden'); } }
   if (q.get('tel')) $('iTel').value = q.get('tel');
+  S.pemanAktif().then((a) => { st.auto = a; renderBuy(); });
+  if (q.get('peye') && g.mod_ia) {
+    setMode('ia'); const n = +q.get('peye');
+    try { const r = await S.api('rpc/ia_rete', { method: 'POST', body: JSON.stringify({ p_slug: slug, p_tel: $('iTel').value }) }); if (r != null) st.left = r; } catch {}
+    $('buy').classList.remove('hidden'); $('cMsg').textContent = t().paid(n); $('cMsg').classList.add('ok-msg');
+    if (st.left > 0) { $('left').textContent = t().left(st.left); $('iAgain').classList.remove('hidden'); if (!st.result) $('ia1').classList.remove('hidden'); }
+    history.replaceState(null, '', location.pathname + '?s=' + encodeURIComponent(slug) + '&tel=' + encodeURIComponent($('iTel').value));
+    check(); keep();
+  }
 }
 function setMode(m) {
   st.mode = m;
@@ -378,10 +387,21 @@ function renderBuy() {
   if (!st.g) return;
   const show = st.g.mod_ia && st.mode === 'ia' && (st.left === 0 || !$('buy').classList.contains('hidden'));
   $('buy').classList.toggle('hidden', !show);
-  $('packs').innerHTML = S.PACKS.map((k) => `<button type="button" class="pack" data-pack="${k.n}" aria-pressed="${st.pack === k.n}">${k.tag ? `<em>${k.tag === 'save' ? t().tagSave : t().tagBest}</em>` : ''}<b>${k.n}</b><span>${t().pk(k.n)}</span><strong>${k.p} G</strong></button>`).join('');
-  const k = S.PACKS.find((x) => x.n === st.pack); $('howto').classList.toggle('hidden', !k);
+  const baz = ['piblik', 'melanj'].includes(st.g.mod_pey) ? +st.g.pri_piblik_htg || 100 : 100;
+  const PK = S.PACKS.map((k) => ({ ...k, p: k.n === 1 ? baz : Math.round(baz * (k.n === 3 ? 2.5 : 3.5)) }));
+  $('packs').innerHTML = PK.map((k) => `<button type="button" class="pack" data-pack="${k.n}" aria-pressed="${st.pack === k.n}">${k.tag ? `<em>${k.tag === 'save' ? t().tagSave(k.n * baz - k.p) : t().tagBest}</em>` : ''}<b>${k.n}</b><span>${t().pk(k.n)}</span><strong>${k.p} G</strong></button>`).join('');
+  const k = PK.find((x) => x.n === st.pack); $('howto').classList.toggle('hidden', !k);
+  $('payMc').classList.toggle('hidden', !st.auto); $('payOr').classList.toggle('hidden', !st.auto);
+  if (k && st.auto) { $('payMc').textContent = t().payBtn(k.p); $('payOr').textContent = t().payOr; }
   if (k) { $('howList').innerHTML = t().steps(k.p).map((x) => `<li>${x}</li>`).join(''); $('buyWa').textContent = t().waBtn; $('buyWa').href = `https://wa.me/${S.WA}?text=${encodeURIComponent(t().waMsg(k.n, k.p, $('iTel').value.trim(), st.g.nom))}`; }
 }
+$('payMc').addEventListener('click', async () => {
+  const tel = $('iTel').value.trim(); if (tel.replace(/\D/g, '').length < 8) { $('iTel').focus(); $('cMsg').textContent = t().errTel; return; }
+  $('payMc').disabled = true; $('cMsg').textContent = '';
+  const u = new URL(location.href); u.searchParams.set('tel', tel.replace(/\D/g, '').slice(-8));
+  const e = await S.peye({ tip: 'potre', slug, tel, n: st.pack }, null, u.toString());
+  $('payMc').disabled = false; if (e) $('cMsg').textContent = t().errs[e] || t().payErr;
+});
 $('redeem').addEventListener('click', async () => {
   const code = $('code').value.trim(), tel = $('iTel').value.trim();
   const msg = (x, ok) => { $('cMsg').textContent = x; $('cMsg').classList.toggle('ok-msg', !!ok); };
