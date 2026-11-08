@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Klasman gwoup yo · Souriyo</title>
+<meta name="description" content="Ki lekòl, ki evènman, ki gwoup ki pi fyè ? Klasman foto Souriyo." />
+<link rel="icon" href="../assets/souriyo-icone.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@800&family=DM+Sans:wght@400;500;700&display=swap" />
+<script src="../assets/config.js"></script>
+<style>
+  :root { --ink: #151848; --ink-2: #4b5085; --coral: #FF5A36; --cream: #fff8f2; --line: #ece4dc; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.5 "DM Sans", system-ui, sans-serif; color: var(--ink); background: var(--cream); }
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; max-width: 760px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; gap: 8px; font: 800 20px "Bricolage Grotesque", system-ui, sans-serif; text-decoration: none; color: var(--ink); }
+  .brand img { width: 30px; height: 30px; } .brand b { color: var(--coral); }
+  .langs { display: flex; gap: 4px; }
+  .langs button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 4px 10px; font: 700 12px "DM Sans", system-ui, sans-serif; cursor: pointer; color: var(--ink-2); }
+  .langs button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  main { max-width: 760px; margin: 0 auto; padding: 10px 16px 40px; }
+  h1 { font: 800 clamp(30px, 7vw, 44px)/1.05 "Bricolage Grotesque", system-ui, sans-serif; margin: 10px 0 6px; letter-spacing: -.02em; }
+  .sub { color: var(--ink-2); margin: 0 0 18px; }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .filters button { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 14px; font: 600 14px "DM Sans", system-ui, sans-serif; cursor: pointer; color: var(--ink-2); }
+  .filters button[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: #fff; }
+  ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li a { display: grid; grid-template-columns: 44px 52px 1fr auto; gap: 12px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 10px 14px; text-decoration: none; color: inherit; }
+  li a:hover { border-color: var(--ink); }
+  .rk { font: 800 22px "Bricolage Grotesque", system-ui, sans-serif; text-align: center; color: var(--ink-2); }
+  li:nth-child(1) .rk { color: #d4a017; } li:nth-child(2) .rk { color: #8a8f9c; } li:nth-child(3) .rk { color: #b7703f; }
+  .av { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font: 800 20px "Bricolage Grotesque", system-ui, sans-serif; color: #fff; overflow: hidden; }
+  .av img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+  .nm b { display: block; } .nm span { font-size: 13px; color: var(--ink-2); }
+  .ct { text-align: right; font: 800 22px "Bricolage Grotesque", system-ui, sans-serif; } .ct span { display: block; font: 500 12px "DM Sans", system-ui, sans-serif; color: var(--ink-2); }
+  .empty { text-align: center; color: var(--ink-2); padding: 30px; background: #fff; border-radius: 18px; border: 1px dashed var(--line); }
+  .cta { margin-top: 24px; text-align: center; } .cta a { display: inline-block; background: var(--coral); color: #fff; text-decoration: none; font-weight: 700; padding: 13px 22px; border-radius: 999px; }
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="brand" href="../"><img src="../assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span></a>
+  <div class="langs" role="group" aria-label="Lang"><button type="button" data-lang="ht">KR</button><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button></div>
+</div>
+<main>
+  <h1 data-t="h1"></h1><p class="sub" data-t="sub"></p>
+  <div class="filters" id="filters"></div>
+  <ol id="list"></ol>
+  <div class="cta"><a id="cta" target="_blank" rel="noopener" data-t="cta"></a></div>
+</main>
+<script>
+const S = window.SOURIYO, $ = (id) => document.getElementById(id);
+const T = {
+  ht: { h1: '🏆 Ki gwoup ki pi fyè ?', sub: 'Klasman an konte foto manm yo fè nan kad gwoup yo.', all: 'Tout', types: { lekol: 'Lekòl', evenman: 'Evènman', legliz: 'Legliz', antrepriz: 'Antrepriz', lot: 'Lòt' }, photos: 'foto', empty: 'Pa gen gwoup nan klasman sa a pou kounya.', cta: 'Kreye kad gwoup ou', wa: 'Bonjou Souriyo 👋 Mwen vle kreye yon kad pou gwoup mwen.' },
+  fr: { h1: '🏆 Quel groupe est le plus fier ?', sub: 'Le classement compte les photos créées par les membres dans le cadre de leur groupe.', all: 'Tous', types: { lekol: 'Écoles', evenman: 'Événements', legliz: 'Églises', antrepriz: 'Entreprises', lot: 'Autres' }, photos: 'photos', empty: 'Aucun groupe dans ce classement pour le moment.', cta: 'Créer le cadre de votre groupe', wa: 'Bonjour Souriyo 👋 Je veux créer un cadre pour mon groupe.' },
+  en: { h1: '🏆 Which group is the proudest?', sub: 'The leaderboard counts photos members create in their group frame.', all: 'All', types: { lekol: 'Schools', evenman: 'Events', legliz: 'Churches', antrepriz: 'Companies', lot: 'Other' }, photos: 'photos', empty: 'No groups in this leaderboard yet.', cta: 'Create your group frame', wa: 'Hello Souriyo 👋 I want to create a frame for my group.' },
+};
+let L = 'ht', TYPE = null, ROWS = [];
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function render() {
+  const t = T[L]; document.documentElement.lang = L;
+  document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === L));
+  document.querySelectorAll('[data-t]').forEach((el) => { const v = t[el.dataset.t]; if (typeof v === 'string') el.textContent = v; });
+  $('cta').href = `https://wa.me/${S.WA}?text=${encodeURIComponent(t.wa)}`;
+  $('filters').innerHTML = [[null, t.all], ...Object.entries(t.types)].map(([k, v]) => `<button type="button" data-type="${k || ''}" aria-pressed="${TYPE === k}">${v}</button>`).join('');
+  $('list').innerHTML = ROWS.length ? ROWS.map((r, i) => `<li><a href="${esc(S.groupUrl(r.slug))}">
+      <span class="rk">${i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}</span>
+      <span class="av" style="background:${esc(r.c1)}">${r.logo_url ? `<img src="${esc(r.logo_url)}" alt="" loading="lazy" />` : esc((r.nom || '?').trim()[0].toUpperCase())}</span>
+      <span class="nm"><b>${esc(r.nom)}</b><span>${esc(t.types[r.type] || '')}</span></span>
+      <span class="ct">${Number(r.foto).toLocaleString('fr-FR')}<span>${t.photos}</span></span></a></li>`).join('') : `<li class="empty">${t.empty}</li>`;
+}
+async function load() { try { ROWS = await S.api('rpc/klasman', { method: 'POST', body: JSON.stringify({ p_type: TYPE }) }) || []; } catch { ROWS = []; } render(); }
+document.addEventListener('click', (e) => {
+  const l = e.target.closest('[data-lang]'); if (l) { L = l.dataset.lang; try { localStorage.setItem('souriyo_lang', L); } catch {} return render(); }
+  const f = e.target.closest('[data-type]'); if (f) { TYPE = f.dataset.type || null; load(); }
+});
+try { L = new URLSearchParams(location.search).get('lang') || localStorage.getItem('souriyo_lang') || 'ht'; } catch {}
+if (!T[L]) L = 'ht';
+render(); load();
+</script>
+</body>
+</html>

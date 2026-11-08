@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Souriyo — Foto pa w, fyète nou</title>
+<meta property="og:title" content="Souriyo — Foto pa w, fyète nou ✨" />
+<meta property="og:image" content="img/og.jpg" />
+<meta name="description" content="Souriyo mete selfi w nan kad lekòl ou, evènman w oswa gwoup ou, epi IA a fè w yon pòtrè pwofesyonèl. Foto pa w, fyète nou." />
+<link rel="icon" href="assets/souriyo-icone.svg" />
+<script src="assets/config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" />
+<style>
+  :root { --ink: #151848; --ink-2: #4b5085; --coral: #FF5A36; --sun: #FFC93C; --cream: #fff8f2; --line: #ece4dc; --card: #fff; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font: 17px/1.55 "DM Sans", system-ui, sans-serif; color: var(--ink); background: var(--cream); }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  h1, h2, h3 { font-family: "Bricolage Grotesque", system-ui, sans-serif; letter-spacing: -.02em; margin: 0; }
+  .hidden { display: none !important; }
+
+  /* En-tête */
+  header { position: sticky; top: 0; z-index: 10; background: rgba(255,248,242,.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; gap: 16px; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 800 28px/1 "Bricolage Grotesque", system-ui, sans-serif; letter-spacing: -.03em; }
+  .logo img { width: 40px; height: 40px; }
+  .logo b { color: var(--coral); }
+  nav { display: flex; gap: 22px; margin-left: auto; font-weight: 500; font-size: 15px; }
+  nav a { text-decoration: none; color: var(--ink-2); }
+  nav a:hover { color: var(--ink); }
+  .langs { display: flex; gap: 4px; }
+  .langs button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 4px 10px; font: 700 12px "DM Sans", system-ui, sans-serif; cursor: pointer; color: var(--ink-2); }
+  .langs button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; padding: 14px 24px; font: 700 16px "DM Sans", system-ui, sans-serif; text-decoration: none; border: 0; cursor: pointer; white-space: nowrap; }
+  .btn.main { background: var(--coral); color: #fff; box-shadow: 0 8px 22px rgba(255,90,54,.3); }
+  .btn.main:hover { filter: brightness(1.05); }
+  .btn.ghost { background: #fff; border: 1.5px solid var(--line); color: var(--ink); }
+  .btn.sm { padding: 9px 16px; font-size: 14px; }
+
+  /* Hero */
+  .hero { padding: 64px 0 40px; }
+  .hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-weight: 700; font-size: 13px; color: var(--ink-2); }
+  .pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 4px rgba(255,90,54,.18); }
+  .hero h1 { font-size: clamp(42px, 6.2vw, 74px); line-height: 1; margin: 18px 0 18px; }
+  .hero h1 em { font-style: normal; color: var(--coral); }
+  .hero p.lead { font-size: 19px; color: var(--ink-2); max-width: 520px; margin: 0 0 26px; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .trust { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 22px; font-size: 14px; color: var(--ink-2); }
+  .trust span::before { content: "✓ "; color: #1f9d55; font-weight: 700; }
+
+  /* Avant / après */
+  .ba { position: relative; aspect-ratio: 4 / 5; border-radius: 28px; overflow: hidden; box-shadow: 0 30px 70px rgba(21,24,72,.25); background: #ddd; user-select: none; }
+  .ba img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ba .after { clip-path: inset(0 0 0 var(--x, 50%)); }
+  .ba .bar { position: absolute; top: 0; bottom: 0; left: var(--x, 50%); width: 3px; background: #fff; transform: translateX(-50%); pointer-events: none; }
+  .ba .knob { position: absolute; top: 50%; left: var(--x, 50%); width: 46px; height: 46px; border-radius: 50%; background: #fff; transform: translate(-50%, -50%); box-shadow: 0 6px 18px rgba(0,0,0,.25); display: grid; place-items: center; font-weight: 800; color: var(--ink); pointer-events: none; }
+  .ba .tag { position: absolute; top: 14px; padding: 5px 12px; border-radius: 999px; font: 700 12px "DM Sans", system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+  .ba .tag.l { left: 14px; background: rgba(0,0,0,.55); color: #fff; }
+  .ba .tag.r { right: 14px; background: var(--sun); color: var(--ink); }
+  .ba input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+  .swap { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+  .swap button { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 14px; font: 600 13px "DM Sans", system-ui, sans-serif; cursor: pointer; color: var(--ink-2); }
+  .swap button[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); }
+  .note { font-size: 12px; color: var(--ink-2); text-align: center; margin-top: 8px; }
+
+  section.block { padding: 72px 0; }
+  .kick { font: 700 13px "DM Sans", system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--coral); }
+  .block h2 { font-size: clamp(30px, 4vw, 44px); margin: 8px 0 12px; }
+  .block .sub { color: var(--ink-2); max-width: 620px; margin: 0 0 32px; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .step { background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 26px; }
+  .step .n { width: 40px; height: 40px; border-radius: 12px; background: var(--ink); color: #fff; display: grid; place-items: center; font: 800 18px "Bricolage Grotesque", system-ui, sans-serif; margin-bottom: 14px; }
+  .step h3 { font-size: 21px; margin-bottom: 6px; }
+  .step p { margin: 0; color: var(--ink-2); font-size: 15px; }
+
+  .dark { background: var(--ink); color: #fff; }
+  .dark .sub { color: #c9cdf2; }
+  .uses { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .use { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 22px; padding: 22px; }
+  .use .e { font-size: 30px; }
+  .use h3 { font-size: 20px; margin: 10px 0 6px; }
+  .use p { margin: 0; font-size: 15px; color: #c9cdf2; }
+
+  .case { display: grid; grid-template-columns: .8fr 1.2fr; gap: 40px; align-items: center; }
+  .case img { width: 100%; max-width: 360px; border-radius: 22px; box-shadow: 0 24px 60px rgba(21,24,72,.25); display: block; margin: 0 auto; }
+  .case ul { padding-left: 20px; color: var(--ink-2); }
+  .case li { margin-bottom: 6px; }
+
+  .prices { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .price { background: #fff; border: 1.5px solid var(--line); border-radius: 24px; padding: 24px; position: relative; display: flex; flex-direction: column; }
+  .price.hot { border-color: var(--coral); box-shadow: 0 14px 34px rgba(255,90,54,.15); }
+  .price .badge { position: absolute; top: -12px; left: 24px; background: var(--coral); color: #fff; font: 700 12px "DM Sans", system-ui, sans-serif; padding: 4px 10px; border-radius: 999px; }
+  .price h3 { font-size: 18px; color: var(--ink-2); font-family: "DM Sans", system-ui, sans-serif; font-weight: 700; }
+  .price .amt { font: 800 40px/1.1 "Bricolage Grotesque", system-ui, sans-serif; margin: 8px 0 2px; }
+  .price .per { font-size: 14px; color: var(--ink-2); }
+  .price p { font-size: 15px; color: var(--ink-2); flex: 1; }
+  .frames { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; max-width: 860px; margin: 0 auto; }
+  .frames figure { margin: 0; }
+  .frames img { width: 100%; border-radius: 22px; box-shadow: 0 24px 60px rgba(21,24,72,.22); display: block; }
+  .frames figcaption { text-align: center; font-weight: 700; margin-top: 12px; }
+  .grp { margin-top: 26px; background: var(--ink); color: #fff; border-radius: 24px; padding: 26px 28px; display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .grp h3 { font-size: 22px; margin-bottom: 4px; } .grp p { margin: 0; color: #c9cdf2; max-width: 620px; }
+  .moncash { display: flex; gap: 10px; align-items: center; justify-content: center; margin-top: 22px; color: var(--ink-2); font-size: 15px; }
+
+  .privacy { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .privacy div { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 20px; font-size: 15px; color: var(--ink-2); }
+  .privacy b { display: block; color: var(--ink); font-size: 17px; margin-bottom: 4px; }
+
+  .final { text-align: center; padding: 80px 20px; background: linear-gradient(135deg, var(--coral), #ff8a3d); color: #fff; border-radius: 32px; margin: 0 20px 60px; }
+  .final h2 { font-size: clamp(32px, 5vw, 52px); margin-bottom: 12px; }
+  .final p { margin: 0 0 24px; font-size: 18px; opacity: .92; }
+  .final .btn { background: #fff; color: var(--coral); }
+  footer { text-align: center; padding: 0 20px 40px; font-size: 14px; color: var(--ink-2); }
+
+  @media (max-width: 900px) {
+    nav { display: none; }
+    .hero .wrap, .case { grid-template-columns: 1fr; }
+    .hero { padding-top: 36px; }
+    .steps, .privacy { grid-template-columns: 1fr; }
+    .uses, .prices { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    header .wrap { gap: 10px; }
+    .logo { font-size: 24px; } .logo img { width: 34px; height: 34px; }
+    header .btn.sm { display: none; }
+    .uses, .prices, .frames { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 44px; }
+    .final { margin: 0 12px 40px; border-radius: 24px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="logo" href="#"><img src="assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span></a>
+    <nav><a href="#kijan" data-t="nav1"></a><a href="#pou-ki-moun" data-t="nav2"></a><a href="#kad" data-t="k6"></a><a href="#pri" data-t="nav3"></a></nav>
+    <div class="langs" role="group" aria-label="Lang"><button type="button" data-lang="ht">KR</button><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button></div>
+    <a class="btn main sm wa" target="_blank" rel="noopener" data-t="cta"></a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="pill"><i></i><span data-t="pill"></span></span>
+      <h1 data-t="h1"></h1>
+      <p class="lead" data-t="lead"></p>
+      <div class="ctas"><a class="btn main wa" target="_blank" rel="noopener" data-t="cta"></a><a class="btn ghost" href="#pou-ki-moun" data-t="cta2"></a></div>
+      <div class="trust"><span data-t="tr1"></span><span data-t="tr2"></span><span data-t="tr3"></span></div>
+    </div>
+    <div>
+      <div class="ba" id="ba">
+        <img id="imgA" alt="" /><img class="after" id="imgB" alt="" />
+        <div class="bar"></div><div class="knob">⇆</div>
+        <span class="tag l" data-t="before"></span><span class="tag r" data-t="after"></span>
+        <input type="range" min="0" max="100" value="50" id="baR" aria-label="Avant / après" />
+      </div>
+      <div class="swap"><button type="button" data-ex="f" aria-pressed="true" data-t="ex1"></button><button type="button" data-ex="m" aria-pressed="false" data-t="ex2"></button></div>
+      <p class="note" data-t="fict"></p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="kijan">
+  <div class="wrap">
+    <span class="kick" data-t="k1"></span><h2 data-t="h2a"></h2><p class="sub" data-t="s2a"></p>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3 data-t="st1"></h3><p data-t="st1p"></p></div>
+      <div class="step"><div class="n">2</div><h3 data-t="st2"></h3><p data-t="st2p"></p></div>
+      <div class="step"><div class="n">3</div><h3 data-t="st3"></h3><p data-t="st3p"></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block dark" id="pou-ki-moun">
+  <div class="wrap">
+    <span class="kick" data-t="k2"></span><h2 data-t="h2b"></h2><p class="sub" data-t="s2b"></p>
+    <div class="uses">
+      <div class="use"><div class="e">🎓</div><h3 data-t="u1"></h3><p data-t="u1p"></p></div>
+      <div class="use"><div class="e">🎤</div><h3 data-t="u2"></h3><p data-t="u2p"></p></div>
+      <div class="use"><div class="e">⛪</div><h3 data-t="u3"></h3><p data-t="u3p"></p></div>
+      <div class="use"><div class="e">💼</div><h3 data-t="u4"></h3><p data-t="u4p"></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="kad">
+  <div class="wrap">
+    <span class="kick" data-t="k6"></span><h2 data-t="h2f"></h2><p class="sub" data-t="s2f"></p>
+    <div class="frames">
+      <figure><img src="img/kad-lekol.jpg" alt="" data-alt="kf1" loading="lazy" /><figcaption data-t="kf1"></figcaption></figure>
+      <figure><img src="img/kad-evenman.jpg" alt="" data-alt="kf2" loading="lazy" /><figcaption data-t="kf2"></figcaption></figure>
+    </div>
+    <p class="note" data-t="kfn" style="margin-top:14px"></p>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap case">
+    <img src="img/exemple-bst.jpg" alt="Kad Souriyo pou Bwat Sekrèm Talks" />
+    <div>
+      <span class="kick" data-t="k3"></span><h2 data-t="h2c"></h2><p class="sub" data-t="s2c" style="margin-bottom:10px"></p>
+      <ul><li data-t="c1"></li><li data-t="c2"></li><li data-t="c3"></li><li data-t="c4"></li></ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="pri" style="padding-top:0">
+  <div class="wrap">
+    <span class="kick" data-t="k4"></span><h2 data-t="h2d"></h2><p class="sub" data-t="s2d"></p>
+    <div class="prices" id="prices"></div>
+    <p class="moncash" data-t="mc"></p>
+    <div class="grp"><div><h3 data-t="grpT"></h3><p data-t="grpP"></p></div><a class="btn main wa" target="_blank" rel="noopener" data-t="grpB"></a></div>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <span class="kick" data-t="k5"></span><h2 data-t="h2e"></h2>
+    <div class="privacy" style="margin-top:24px"><div data-t="p1"></div><div data-t="p2"></div><div data-t="p3"></div></div>
+  </div>
+</section>
+
+<div class="final"><h2 data-t="fh"></h2><p data-t="fp"></p><a class="btn wa" target="_blank" rel="noopener" data-t="cta"></a></div>
+<footer data-t="foot"></footer>
+
+<script>
+const WA = (window.SOURIYO && window.SOURIYO.WA) || '50900000000';
+const T = {
+  ht: {
+    k6: 'Kad gwoup', h2f: 'Menm selfi a. Kad gwoup ou.', s2f: 'Pa gen IA isit la : se selfi w la jan l ye a, nan kad lekòl ou oswa evènman w. Gratis pou chak manm, pare pou pataje.', kf1: '🎓 Lekòl : « Fyète m » · Pwomo 2027', kf2: '🎤 Evènman : « M ap la ! »', kfn: 'Lekòl, evènman ak moun yo se egzanp fiktif.',
+    nav1: 'Kijan l mache', nav2: 'Pou ki gwoup', nav3: 'Pri', cta: 'Pale ak nou sou WhatsApp', cta2: 'Wè pou ki gwoup',
+    pill: 'Kad gwoup ak pòtrè IA, fèt an Ayiti', h1: 'Foto pa w, <em>fyète nou</em>.',
+    lead: 'Souriyo mete selfi w nan kad lekòl ou, evènman w oswa gwoup ou — epi IA a ka fè w yon pòtrè pwofesyonèl. Pataje l, montre tout moun ou fè pati l.',
+    tr1: 'Kad gwoup gratis', tr2: 'Figi w rete figi w', tr3: 'Peman MonCash',
+    before: 'Anvan', after: 'Apre', ex1: 'Egzanp 1', ex2: 'Egzanp 2', fict: 'Pòtrè IA. Moun fiktif, kreye pou egzanp lan. Glise pou w konpare.',
+    k1: 'Kijan l mache', h2a: 'Souri, ou nan kad la.', s2a: 'Tout bagay fèt sou telefòn ou, nan mwens pase yon minit.',
+    st1: 'Jwenn kad gwoup ou', st1p: 'Chak lekòl, inivèsite, evènman oswa asosyasyon gen pwòp paj pa l ak kad pa l : souriyo.com/upnch, souriyo.com/bst…',
+    st2: 'Voye yon selfi', st2p: 'Foto w parèt touswit nan kad la. Ou vle plis ? IA a fè w yon pòtrè pwofesyonèl : tòj, blouz doktè, kostim…',
+    st3: 'Pataje fyète w', st3p: 'Estati WhatsApp, story Instagram, LinkedIn : chak foto ki pataje montre gwoup ou a, epi li fè lòt moun vin pran pa yo.',
+    k2: 'Pou ki gwoup', h2b: 'Pou tout gwoup ki fyè de tèt yo.', s2b: 'Ou kreye kad la yon fwa. Tout manm yo pran foto yo. Gwoup ou a parèt toupatou.',
+    u1: 'Lekòl & inivèsite', u1p: '« UPNCH, fyète m », « Pwomo 2027 », finisan ak tòj : elèv yo ak etidyan yo pote koulè lekòl yo.',
+    u2: 'Evènman', u2p: 'Konferans, seminè, konsè, lansman : « M ap la ! » anvan, « Mwen te la ! » apre. Chak patisipan fè piblisite pou evènman an.',
+    u3: 'Legliz & asosyasyon', u3p: 'Konvansyon, kan, jounen espesyal, klib, mouvman jèn : tout manm yo nan menm kad la.',
+    u4: 'Antrepriz & ekip', u4p: 'Menm estil foto pou tout ekip la : sit entènèt, badj, rezo sosyal, lansman pwodwi.',
+    k3: 'Premye gwoup', h2c: 'Bwat Sekrèm Talks × Souriyo', s2c: 'Pou konferans 22 novanm 2026 la nan Okap, chak moun ki enskri jwenn pòtrè pwo li nan kad evènman an.',
+    c1: '1 pòtrè gratis pou chak moun ki enskri', c2: 'Kad ak koulè evènman an ak patnè yo', c3: 'Chak pataj se piblisite pou evènman an', c4: 'Moun ki vle plis ka achte l ak MonCash',
+    k4: 'Pri', h2d: 'Kad la gratis. Pòtrè IA a an goud.', s2d: 'Manm yo mete selfi yo nan kad gwoup la gratis. Pou pòtrè IA yo, yo peye ak MonCash.',
+    prices: [['Kad gwoup', 'Gratis', 'pou chak manm', 'Selfi w nan kad lekòl ou, evènman w oswa gwoup ou.'], ['1 pòtrè IA', '100 G', '100 G pa pòtrè', 'Eseye l.'], ['3 pòtrè IA', '250 G', '83 G pa pòtrè', 'Plizyè metye oswa dekò.', 'Pi popilè'], ['5 pòtrè IA', '350 G', '70 G pa pòtrè', 'Pi bon pri a.']],
+    choose: 'Chwazi', free: 'Jwenn kad mwen', mc: '💳 Peman ak MonCash · Ou resevwa kòd ou sou WhatsApp',
+    grpT: 'Ou se yon lekòl, yon evènman oswa yon asosyasyon ?', grpP: 'Nou kreye kad pa w, paj pa w ak klasman pa w. Pòtrè IA gratis pou manm ou yo si w vle.', grpB: 'Mande yon pri pou gwoup ou',
+    k5: 'Konfidansyalite', h2e: 'Foto w se pou ou.',
+    p1: '<b>Nou pa kenbe foto w</b>Selfi w la sèvi sèlman pou kreye foto a. Nou pa anrejistre l.', p2: '<b>Se ou ki dakò</b>Ou dwe voye pwòp foto pa w. Pou timoun, se paran yo ki dakò.', p3: '<b>Figi w rete figi w</b>Nou mande IA a pou l pa chanje figi w, koulè po w ni cheve w.',
+    fh: 'Souri yo ! 📸', fp: 'Kreye kad gwoup ou a jodi a. Ekri nou sou WhatsApp, n ap reponn ou vit.', foot: '© 2026 Souriyo · Foto pa w, fyète nou · Fèt an Ayiti 🇭🇹',
+    waMsg: 'Bonjou Souriyo 👋 Mwen enterese nan kad gwoup ak pòtrè IA.',
+  },
+  fr: {
+    k6: 'Cadres de groupe', h2f: 'Le même selfie. Le cadre de ton groupe.', s2f: 'Pas d’IA ici : ton selfie tel quel, dans le cadre de ton école ou de ton événement. Gratuit pour chaque membre, prêt à partager.', kf1: '🎓 École : « Ma fierté » · Promo 2027', kf2: '🎤 Événement : « J’y serai ! »', kfn: 'École, événement et personnes fictifs, pour l’exemple.',
+    nav1: 'Comment ça marche', nav2: 'Pour quels groupes', nav3: 'Tarifs', cta: 'Écrivez-nous sur WhatsApp', cta2: 'Voir pour qui',
+    pill: 'Cadres de groupe et portraits IA, made in Haïti', h1: 'Ta photo, <em>notre fierté</em>.',
+    lead: 'Souriyo met ton selfie dans le cadre de ton école, de ton événement ou de ton groupe — et l’IA peut te créer un portrait professionnel. Partage-le, montre à tous que tu en fais partie.',
+    tr1: 'Cadre de groupe gratuit', tr2: 'Ton visage reste le tien', tr3: 'Paiement MonCash',
+    before: 'Avant', after: 'Après', ex1: 'Exemple 1', ex2: 'Exemple 2', fict: 'Portrait IA. Personnes fictives, créées pour l’exemple. Glisse pour comparer.',
+    k1: 'Comment ça marche', h2a: 'Souris, tu es dans le cadre.', s2a: 'Tout se fait sur ton téléphone, en moins d’une minute.',
+    st1: 'Trouve le cadre de ton groupe', st1p: 'Chaque école, université, événement ou association a sa page et son cadre : souriyo.com/upnch, souriyo.com/bst…',
+    st2: 'Envoie un selfie', st2p: 'Ta photo apparaît tout de suite dans le cadre. Envie de plus ? L’IA crée ton portrait pro : toge, blouse de médecin, costume…',
+    st3: 'Partage ta fierté', st3p: 'Statut WhatsApp, story Instagram, LinkedIn : chaque partage met ton groupe en avant et donne envie aux autres.',
+    k2: 'Pour quels groupes', h2b: 'Pour tous les groupes fiers d’eux.', s2b: 'Tu crées le cadre une fois. Tous les membres prennent leur photo. Ton groupe est visible partout.',
+    u1: 'Écoles & universités', u1p: '« Fier d’être UPNCH », « Promo 2027 », finissants en toge : élèves et étudiants portent les couleurs de leur école.',
+    u2: 'Événements', u2p: 'Conférences, séminaires, concerts, lancements : « J’y serai ! » avant, « J’y étais ! » après. Chaque participant fait la promo.',
+    u3: 'Églises & associations', u3p: 'Conventions, camps, journées spéciales, clubs, mouvements de jeunes : tous les membres dans le même cadre.',
+    u4: 'Entreprises & équipes', u4p: 'Le même style de photo pour toute l’équipe : site web, badges, réseaux sociaux, lancements.',
+    k3: 'Premier groupe', h2c: 'Bwat Sekrèm Talks × Souriyo', s2c: 'Pour la conférence du 22 novembre 2026 à Cap-Haïtien, chaque inscrit reçoit son portrait pro dans le cadre de l’événement.',
+    c1: '1 portrait gratuit par inscrit', c2: 'Cadre aux couleurs de l’événement et de ses partenaires', c3: 'Chaque partage fait la promotion de l’événement', c4: 'Ceux qui en veulent plus paient par MonCash',
+    k4: 'Tarifs', h2d: 'Le cadre est gratuit. Le portrait IA, en gourdes.', s2d: 'Les membres mettent leur selfie dans le cadre du groupe gratuitement. Les portraits IA se paient par MonCash.',
+    prices: [['Cadre de groupe', 'Gratuit', 'pour chaque membre', 'Ton selfie dans le cadre de ton école, événement ou groupe.'], ['1 portrait IA', '100 G', '100 G le portrait', 'Pour essayer.'], ['3 portraits IA', '250 G', '83 G le portrait', 'Plusieurs métiers ou décors.', 'Le plus choisi'], ['5 portraits IA', '350 G', '70 G le portrait', 'Le meilleur prix.']],
+    choose: 'Choisir', free: 'Trouver mon cadre', mc: '💳 Paiement par MonCash · Tu reçois ton code sur WhatsApp',
+    grpT: 'Vous êtes une école, un événement ou une association ?', grpP: 'Nous créons votre cadre, votre page et votre classement. Portraits IA offerts à vos membres si vous le souhaitez.', grpB: 'Demander un devis pour votre groupe',
+    k5: 'Confidentialité', h2e: 'Ta photo t’appartient.',
+    p1: '<b>Ta photo n’est pas conservée</b>Ton selfie sert uniquement à créer la photo. Nous ne l’enregistrons pas.', p2: '<b>Avec ton accord</b>Tu dois envoyer ta propre photo. Pour un enfant, il faut l’accord des parents.', p3: '<b>Ton visage reste le tien</b>Nous demandons à l’IA de ne changer ni ton visage, ni ta couleur de peau, ni tes cheveux.',
+    fh: 'Souri yo ! 📸', fp: 'Créez le cadre de votre groupe dès aujourd’hui. Écrivez-nous sur WhatsApp.', foot: '© 2026 Souriyo · Ta photo, notre fierté · Made in Haïti 🇭🇹',
+    waMsg: 'Bonjour Souriyo 👋 Je suis intéressé(e) par les cadres de groupe et les portraits IA.',
+  },
+  en: {
+    k6: 'Group frames', h2f: 'Same selfie. Your group’s frame.', s2f: 'No AI here: your selfie as is, in your school or event frame. Free for every member, ready to share.', kf1: '🎓 School: “My pride” · Class of 2027', kf2: '🎤 Event: “I’ll be there!”', kfn: 'School, event and people are fictional examples.',
+    nav1: 'How it works', nav2: 'Which groups', nav3: 'Pricing', cta: 'Chat with us on WhatsApp', cta2: 'See which groups',
+    pill: 'Group frames and AI portraits, made in Haiti', h1: 'Your photo, <em>our pride</em>.',
+    lead: 'Souriyo puts your selfie in the frame of your school, event or group — and AI can create a professional portrait of you. Share it and show everyone you belong.',
+    tr1: 'Free group frame', tr2: 'Your face stays yours', tr3: 'MonCash payment',
+    before: 'Before', after: 'After', ex1: 'Example 1', ex2: 'Example 2', fict: 'AI portrait. Fictional people, created for this example. Slide to compare.',
+    k1: 'How it works', h2a: 'Smile, you’re in the frame.', s2a: 'Everything happens on your phone, in under a minute.',
+    st1: 'Find your group’s frame', st1p: 'Every school, university, event or association has its own page and frame: souriyo.com/upnch, souriyo.com/bst…',
+    st2: 'Send a selfie', st2p: 'Your photo appears in the frame instantly. Want more? AI creates your pro portrait: cap and gown, doctor’s coat, suit…',
+    st3: 'Share your pride', st3p: 'WhatsApp status, Instagram story, LinkedIn: every share puts your group in the spotlight and makes others want theirs.',
+    k2: 'Which groups', h2b: 'For every group that’s proud of itself.', s2b: 'You create the frame once. Every member takes their photo. Your group shows up everywhere.',
+    u1: 'Schools & universities', u1p: '“Proud to be UPNCH”, “Class of 2027”, graduates in caps and gowns: students wear their school colors.',
+    u2: 'Events', u2p: 'Conferences, seminars, concerts, launches: “I’ll be there!” before, “I was there!” after. Every attendee promotes the event.',
+    u3: 'Churches & associations', u3p: 'Conventions, camps, special days, clubs, youth movements: every member in the same frame.',
+    u4: 'Companies & teams', u4p: 'One photo style for the whole team: website, badges, social media, launches.',
+    k3: 'First group', h2c: 'Bwat Sekrèm Talks × Souriyo', s2c: 'For the November 22, 2026 conference in Cap-Haïtien, every registered attendee gets a pro portrait in the event frame.',
+    c1: '1 free portrait per attendee', c2: 'Frame with the event’s and partners’ branding', c3: 'Every share promotes the event', c4: 'Want more? Pay with MonCash',
+    k4: 'Pricing', h2d: 'The frame is free. AI portraits, in gourdes.', s2d: 'Members put their selfie in the group frame for free. AI portraits are paid with MonCash.',
+    prices: [['Group frame', 'Free', 'for every member', 'Your selfie in your school, event or group frame.'], ['1 AI portrait', '100 G', '100 G per portrait', 'To try it out.'], ['3 AI portraits', '250 G', '83 G per portrait', 'Several careers or settings.', 'Most popular'], ['5 AI portraits', '350 G', '70 G per portrait', 'Best price.']],
+    choose: 'Choose', free: 'Find my frame', mc: '💳 Pay with MonCash · Get your code on WhatsApp',
+    grpT: 'Are you a school, an event or an association?', grpP: 'We create your frame, your page and your leaderboard. Free AI portraits for your members if you wish.', grpB: 'Request a quote for your group',
+    k5: 'Privacy', h2e: 'Your photo belongs to you.',
+    p1: '<b>We don’t keep your photo</b>Your selfie is only used to create the photo. We don’t store it.', p2: '<b>With your consent</b>You must send your own photo. For a child, a parent must agree.', p3: '<b>Your face stays yours</b>We ask the AI not to change your face, skin tone or hair.',
+    fh: 'Souri yo! 📸', fp: 'Create your group’s frame today. Message us on WhatsApp.', foot: '© 2026 Souriyo · Your photo, our pride · Made in Haiti 🇭🇹',
+    waMsg: 'Hello Souriyo 👋 I’m interested in group frames and AI portraits.',
+  },
+};
+const $ = (id) => document.getElementById(id);
+const EX = { f: ['img/avant-f.jpg', 'img/apres-f.jpg'], m: ['img/avant-m.jpg', 'img/apres-m.jpg'] };
+let L = 'ht';
+function setLang(l) {
+  L = T[l] ? l : 'ht'; const t = T[L];
+  document.documentElement.lang = L;
+  try { localStorage.setItem('souriyo_lang', L); } catch {}
+  document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === L));
+  document.querySelectorAll('[data-t]').forEach((el) => { const v = t[el.dataset.t]; if (typeof v === 'string') el.innerHTML = v; });
+  document.querySelectorAll('[data-alt]').forEach((el) => { el.alt = t[el.dataset.alt] || ''; });
+  const wa = `https://wa.me/${WA}?text=${encodeURIComponent(t.waMsg)}`;
+  document.querySelectorAll('a.wa').forEach((a) => (a.href = wa));
+  $('prices').innerHTML = t.prices.map(([n, a, per, d, badge], i) => `<div class="price${badge ? ' hot' : ''}">${badge ? `<span class="badge">${badge}</span>` : ''}<h3>${n}</h3><div class="amt">${a}</div><div class="per">${per}</div><p>${d}</p>
+    <a class="btn ${badge ? 'main' : 'ghost'}" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent(t.waMsg + ' — ' + n + ' (' + a + ')')}">${i === 0 ? t.free : t.choose}</a></div>`).join('');
+}
+function setEx(k) { $('imgA').src = EX[k][0]; $('imgB').src = EX[k][1]; document.querySelectorAll('[data-ex]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.ex === k)); }
+$('baR').addEventListener('input', (e) => $('ba').style.setProperty('--x', e.target.value + '%'));
+document.addEventListener('click', (e) => { const l = e.target.closest('[data-lang]'); if (l) setLang(l.dataset.lang); const x = e.target.closest('[data-ex]'); if (x) setEx(x.dataset.ex); });
+let l0 = new URLSearchParams(location.search).get('lang'); try { l0 = l0 || localStorage.getItem('souriyo_lang'); } catch {}
+setLang(l0 || 'ht'); setEx('f');
+</script>
+</body>
+</html>

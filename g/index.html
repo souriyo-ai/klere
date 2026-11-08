@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Souriyo — Foto pa w, fyète nou</title>
+<meta name="description" content="Mete selfi w nan kad gwoup ou, epi pataje fyète w. Fèt ak Souriyo." />
+<meta property="og:title" content="Souriyo — Foto pa w, fyète nou ✨" />
+<meta property="og:description" content="Mete selfi w nan kad gwoup ou, epi pataje fyète w." />
+<link rel="icon" href="../assets/souriyo-icone.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@1,500&display=swap" />
+<script src="../assets/config.js"></script>
+<script src="../assets/kad.js"></script>
+<script src="../assets/metye.js"></script>
+<style>
+  :root { --ink: #151848; --ink-2: #4b5085; --coral: #FF5A36; --sun: #FFC93C; --cream: #fff8f2; --line: #ece4dc; --g1: #151848; --g2: #FFC93C; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.5 "DM Sans", system-ui, sans-serif; color: var(--ink); background: var(--cream); }
+  h1, h2 { font-family: "Bricolage Grotesque", system-ui, sans-serif; letter-spacing: -.02em; margin: 0; }
+  .hidden { display: none !important; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; max-width: 760px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; gap: 8px; font: 800 20px "Bricolage Grotesque", system-ui, sans-serif; text-decoration: none; color: var(--ink); }
+  .brand img { width: 30px; height: 30px; } .brand b { color: var(--coral); }
+  .langs { display: flex; gap: 4px; }
+  .langs button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 4px 10px; font: 700 12px "DM Sans", system-ui, sans-serif; cursor: pointer; color: var(--ink-2); }
+  .langs button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .hero { background: var(--g1); color: #fff; text-align: center; padding: 26px 16px 70px; }
+  .hero .lg { height: 64px; max-width: 220px; object-fit: contain; background: #fff; border-radius: 14px; padding: 6px 10px; margin-bottom: 12px; }
+  .hero h1 { font-size: clamp(28px, 7vw, 42px); line-height: 1.08; }
+  .hero p { margin: 8px auto 0; max-width: 520px; opacity: .88; }
+  .wrap { max-width: 720px; margin: -46px auto 40px; padding: 0 16px; }
+  .card { background: #fff; border-radius: 22px; box-shadow: 0 10px 40px rgba(21,24,72,.10); padding: 20px; margin-bottom: 14px; }
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #f3efe9; border-radius: 16px; padding: 5px; margin-bottom: 16px; }
+  .tabs button { border: 0; background: transparent; border-radius: 12px; padding: 11px 8px; font: 700 15px "DM Sans", system-ui, sans-serif; cursor: pointer; color: var(--ink-2); }
+  .tabs button[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  .tabs .free { display: block; font-size: 11px; color: #1f9d55; } .tabs .paid { display: block; font-size: 11px; color: var(--coral); }
+  h2 { font-size: 21px; margin-bottom: 4px; }
+  .sub { color: var(--ink-2); font-size: 14px; margin: 0 0 12px; }
+  label.f { display: block; font-weight: 700; font-size: 14px; margin: 12px 0 6px; }
+  input.t { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line); font: 16px "DM Sans", system-ui, sans-serif; }
+  .pick { display: flex; align-items: center; gap: 14px; border: 2px dashed #d9cfc4; border-radius: 16px; padding: 14px; cursor: pointer; background: #fffcf9; }
+  .pick .ic { font-size: 30px; } .pick b { display: block; }
+  .prev { width: 100%; max-width: 420px; display: block; margin: 14px auto 0; border-radius: 16px; box-shadow: 0 14px 40px rgba(21,24,72,.22); }
+  .sliders { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; font-size: 13px; color: var(--ink-2); }
+  .sliders input { width: 100%; accent-color: var(--coral); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 999px; padding: 13px 20px; font: 700 16px "DM Sans", system-ui, sans-serif; cursor: pointer; text-decoration: none; }
+  .btn.main { background: var(--coral); color: #fff; width: 100%; margin-top: 14px; }
+  .btn.main:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.ghost { background: #fff; border: 1.5px solid var(--line); color: var(--ink); }
+  .btn.wa { background: #25D366; color: #06381b; }
+  .acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+  .opt { border: 1.5px solid var(--line); background: #fff; border-radius: 14px; padding: 10px; text-align: left; cursor: pointer; font: 600 14px/1.25 "DM Sans", system-ui, sans-serif; color: var(--ink); display: flex; gap: 8px; align-items: center; min-height: 52px; }
+  .opt .e { font-size: 22px; } .opt[aria-pressed="true"] { border-color: var(--ink); background: #eef0fb; box-shadow: inset 0 0 0 1px var(--ink); }
+  .opt.ask { border-style: dashed; color: var(--ink-2); }
+  .seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .seg button { border: 0; background: #fff; padding: 7px 14px; font: 600 14px "DM Sans", system-ui, sans-serif; cursor: pointer; color: var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .consent { display: flex; gap: 10px; font-size: 14px; margin-top: 12px; color: var(--ink-2); } .consent input { width: 20px; height: 20px; flex: none; accent-color: var(--ink); }
+  .err { color: #b3261e; font-size: 14px; min-height: 1em; margin: 10px 0 0; } .ok-msg { color: #1a7a3c !important; font-weight: 700; }
+  .gen { text-align: center; padding: 26px 0; } .orb { width: 90px; height: 90px; margin: 0 auto 14px; border-radius: 50%; background: conic-gradient(var(--coral), var(--sun), var(--ink), var(--coral)); animation: spin 1.4s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .packs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .pack { position: relative; border: 1.5px solid var(--line); background: #fff; border-radius: 16px; padding: 14px 6px 10px; text-align: center; cursor: pointer; font-family: "DM Sans", system-ui, sans-serif; color: var(--ink); }
+  .pack b { display: block; font: 800 26px/1 "Bricolage Grotesque", system-ui, sans-serif; } .pack strong { display: block; margin-top: 6px; }
+  .pack em { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); white-space: nowrap; font: 700 10px "DM Sans", system-ui, sans-serif; font-style: normal; background: #8cc63f; color: #12300a; padding: 2px 7px; border-radius: 999px; }
+  .pack[aria-pressed="true"] { border-color: var(--ink); background: #eef0fb; }
+  ol.how { padding-left: 20px; font-size: 15px; } ol.how li { margin-bottom: 6px; }
+  .count { text-align: center; font-size: 14px; color: var(--ink-2); margin: 6px 0 0; }
+  .foot { text-align: center; font-size: 13px; color: var(--ink-2); padding: 0 16px 30px; } .foot a { color: inherit; }
+  .missing { text-align: center; padding: 60px 20px; }
+  @media (max-width: 480px) { .sliders { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="brand" id="home" href="../"><img src="../assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span></a>
+  <div class="langs" role="group" aria-label="Lang"><button type="button" data-lang="ht">KR</button><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button></div>
+</div>
+
+<section class="missing hidden" id="missing"><h1 data-t="missT"></h1><p data-t="missP"></p><a class="btn main" style="width:auto" href="../" data-t="missB"></a></section>
+
+<div id="app" class="hidden">
+  <header class="hero">
+    <img class="lg hidden" id="glogo" alt="" />
+    <h1 id="gname"></h1>
+    <p data-t="heroP"></p>
+  </header>
+  <main class="wrap">
+    <section class="card">
+      <div class="tabs" id="tabs"><button type="button" data-mode="kad"><span data-t="tabKad"></span><span class="free" data-t="free"></span></button><button type="button" data-mode="ia"><span data-t="tabIa"></span><span class="paid" id="iaTag"></span></button></div>
+
+      <!-- KAD GRATIS -->
+      <div id="mKad">
+        <h2 data-t="kadT"></h2><p class="sub" data-t="kadS"></p>
+        <label class="pick" for="kFile"><span class="ic">📸</span><span><b data-t="pick"></b><span class="sub" data-t="pickS"></span></span></label>
+        <input id="kFile" type="file" accept="image/*" class="hidden" />
+        <label class="f" for="kName" data-t="nameL"></label><input class="t" id="kName" maxlength="24" autocomplete="given-name" />
+        <img class="prev" id="kPrev" alt="" />
+        <div class="sliders hidden" id="kAdj">
+          <label><span data-t="zoom"></span><input type="range" id="kZ" min="1" max="2.5" step="0.01" value="1" /></label>
+          <label><span data-t="horiz"></span><input type="range" id="kX" min="-1" max="1" step="0.01" value="0" /></label>
+          <label><span data-t="vert"></span><input type="range" id="kY" min="-1" max="1" step="0.01" value="0" /></label>
+        </div>
+        <div class="acts"><button class="btn wa" type="button" id="kShare" disabled></button><button class="btn ghost" type="button" id="kDl" disabled></button></div>
+        <p class="sub" style="text-align:center;margin-top:10px" data-t="privacy"></p>
+      </div>
+
+      <!-- PÒTRÈ IA -->
+      <div id="mIa" class="hidden">
+        <div id="ia1">
+          <h2 data-t="iaT"></h2><p class="sub" id="iaS"></p>
+          <div class="seg" id="gender" style="margin-bottom:10px"><button type="button" data-g="f"></button><button type="button" data-g="m"></button></div>
+          <input class="t" id="pq" type="search" autocomplete="off" style="margin-bottom:10px" />
+          <div class="grid" id="profs"></div>
+          <div id="reqBox" class="hidden" style="margin-top:12px;border:1.5px dashed #d9cfc4;border-radius:14px;padding:12px">
+            <label class="f" for="reqM" style="margin-top:0" data-t="reqL"></label><input class="t" id="reqM" maxlength="60" />
+            <label class="f" for="reqTel" data-t="reqTelL"></label><input class="t" id="reqTel" inputmode="tel" maxlength="25" />
+            <button class="btn ghost" type="button" id="reqGo" style="width:100%;margin-top:10px" data-t="reqGo"></button><p class="sub" id="reqMsg" style="margin:8px 0 0"></p>
+          </div>
+          <label class="f" data-t="decorL"></label><div class="grid" id="decors"></div>
+          <label class="pick" for="iFile" style="margin-top:14px"><span class="ic">🤳</span><span><b data-t="pick"></b><span class="sub" data-t="pickS2"></span></span></label>
+          <input id="iFile" type="file" accept="image/*" class="hidden" />
+          <label class="f" for="iName" data-t="nameL"></label><input class="t" id="iName" maxlength="24" />
+          <label class="f" for="iTel" data-t="telL"></label><input class="t" id="iTel" inputmode="tel" placeholder="ex. 3727 4672" />
+          <p class="sub" style="margin:6px 0 0" id="telS"></p>
+          <label class="consent"><input type="checkbox" id="iOk" /><span data-t="consent"></span></label>
+          <p class="err" id="iErr" role="alert"></p>
+          <button class="btn main" type="button" id="iGo" disabled data-t="create"></button>
+        </div>
+        <div id="iaGen" class="gen hidden"><div class="orb"></div><h2 data-t="genT"></h2><p class="sub" id="genMsg"></p></div>
+        <div id="iaRes" class="hidden">
+          <h2 id="resT"></h2>
+          <img class="prev" id="iPrev" alt="" />
+          <div class="acts"><button class="btn wa" type="button" id="iShare"></button><button class="btn ghost" type="button" id="iDl"></button></div>
+          <button class="btn ghost" type="button" id="iAgain" style="width:100%;margin-top:8px"></button>
+          <p class="count" id="left"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Achte plis pòtrè -->
+    <section class="card hidden" id="buy">
+      <h2 data-t="buyT"></h2><p class="sub" data-t="buyS"></p>
+      <div class="packs" id="packs"></div>
+      <div id="howto" class="hidden"><ol class="how" id="howList"></ol><a class="btn wa" id="buyWa" target="_blank" rel="noopener" style="width:100%"></a></div>
+      <label class="f" for="code" data-t="codeL" style="margin-top:16px"></label>
+      <input class="t" id="code" autocomplete="off" placeholder="SRY-XXXX-XXXX" style="text-transform:uppercase;letter-spacing:.06em;font-weight:700" />
+      <button class="btn main" type="button" id="redeem" data-t="redeem"></button>
+      <p class="err" id="cMsg" role="status"></p>
+    </section>
+
+    <p class="count"><a href="../klasman/" id="klasLink" data-t="klas"></a></p>
+  </main>
+  <p class="foot"><span data-t="made"></span> · <a href="../">souriyo.com</a></p>
+</div>
+<canvas id="cv" class="hidden"></canvas>
+
+<script>
+const S = window.SOURIYO, K = window.SouriyoKad, { PROFS, DECORS } = window.PROFS_DECORS;
+const $ = (id) => document.getElementById(id);
+const T = {
+  ht: {
+    missT: 'Nou pa jwenn gwoup sa a 🤔', missP: 'Verifye lyen an, oswa mande moun ki ba ou l la.', missB: 'Ale sou Souriyo',
+    heroP: 'Mete selfi w nan kad gwoup la, epi pataje fyète w.', tabKad: '📸 Kad gwoup', free: 'Gratis', tabIa: '✨ Pòtrè IA',
+    kadT: 'Foto w nan kad la', kadS: 'Chwazi yon selfi : foto w parèt touswit nan kad la.', pick: 'Chwazi yon foto', pickS: 'oswa pran yon selfi', pickS2: 'yon selfi kote figi w byen parèt',
+    nameL: 'Prenon w (pa obligatwa)', zoom: 'Zoom', horiz: 'Goch / dwat', vert: 'Anlè / anba',
+    share: 'Pataje', dl: 'Telechaje', privacy: '🔒 Foto w pa kite telefòn ou : kad la fèt dirèkteman sou li.',
+    iaT: 'Ki pwofesyonèl ou vle ye ?', iaS: (n) => n > 0 ? `${n} pòtrè IA gratis pou chak manm. IA a kenbe figi w, li chanje rad la ak dekò a.` : 'IA a kenbe figi w, li chanje rad la ak dekò a.',
+    g: { f: 'Fi', m: 'Gason' }, pq: 'Chèche metye w…', ask: 'Metye w pa la? Mande l', noProf: 'Pa gen metye sa a : mande l 👇',
+    reqL: 'Ki metye ou vle nou ajoute?', reqTelL: 'WhatsApp ou, pou n avèti w (pa obligatwa)', reqGo: 'Voye demann mwen', reqOk: (m) => `Mèsi! N ap ajoute « ${m} » byento.`, reqNeed: 'Ekri metye a.',
+    decorL: 'Dekò', telL: 'Nimewo WhatsApp ou', telS: { open: 'Pou n konte pòtrè w yo. Nou pa pataje l.', members: 'Se sèlman manm gwoup la ki ka fè pòtrè IA : mete nimewo gwoup la genyen pou ou a.' },
+    consent: 'Mwen dakò pou foto m voye bay sèvis IA a sèlman pou fè pòtrè sa a. Souriyo pa kenbe l.',
+    create: '✨ Fè pòtrè pwo m', genT: 'N ap fè pòtrè w la…', msgs: ['N ap analize foto w…', 'N ap chwazi rad la…', 'N ap regle limyè a…', 'Dènye retouch…'],
+    resT: (p) => `Men vèsyon ${p} ou!`, again: '↺ Yon lòt pòtrè', left: (n) => n > 0 ? `Ou gen ${n} pòtrè ki rete.` : 'Pòtrè w la kenbe sou telefòn sa a : panse telechaje l.',
+    errPhoto: 'Chwazi yon foto anvan.', errTel: 'Mete nimewo WhatsApp ou.', errs: { quota: 'Ou fin itilize pòtrè ou yo. Ou ka achte plis anba a 👇', not_member: 'Nimewo sa a pa nan lis manm gwoup la.', closed: 'Tout pòtrè gratis gwoup la fin itilize. Ou ka achte youn anba a 👇', no_group: 'Pòtrè IA pa aktive pou gwoup sa a.', bad_tel: 'Nimewo a pa bon.', api: 'Sèvis la chaje. Eseye ankò nan yon minit.' },
+    buyT: 'Ou vle plis pòtrè? 📸', buyS: 'Peman fasil ak MonCash.', pk: () => 'pòtrè', tagSave: 'Ekonomize 50 G', tagBest: 'Pi bon pri',
+    steps: (p) => [`Voye <b>${p} goud</b> sou MonCash nan <b>${S.MONCASH.num}</b> (${S.MONCASH.nom}).`, 'Voye screenshot la sou WhatsApp ak bouton anba a.', 'W ap resevwa yon <b>kòd koupon</b> : mete l anba a.'],
+    waBtn: 'Voye screenshot mwen sou WhatsApp', waMsg: (n, p, tel, g) => `Bonjou Souriyo 👋\nMwen peye ${p} G sou MonCash pou ${n} pòtrè IA (gwoup : ${g}).\nNimewo m : ${tel || '…'}\nMen screenshot la :`,
+    codeL: 'Mwen gen yon kòd koupon', redeem: 'Debloke pòtrè m yo', cOk: (n) => `✓ ${n} pòtrè debloke!`, cErr: { coupon_invalide: 'Kòd sa a pa egziste.', coupon_utilise: 'Kòd sa a deja sèvi.', coupon_autre_numero: 'Kòd sa a mare ak yon lòt nimewo.', coupon_autre_groupe: 'Kòd sa a se pou yon lòt gwoup.', empty: 'Mete kòd la.' },
+    klas: '🏆 Wè klasman gwoup yo', made: 'Fèt ak Souriyo — Foto pa w, fyète nou',
+    shareText: (g, url) => `Mwen nan kad ${g} 📸 Fè pa w tou : ${url}`,
+  },
+  fr: {
+    missT: 'Ce groupe est introuvable 🤔', missP: 'Vérifie le lien, ou demande-le à la personne qui te l’a envoyé.', missB: 'Aller sur Souriyo',
+    heroP: 'Mets ton selfie dans le cadre du groupe et partage ta fierté.', tabKad: '📸 Cadre du groupe', free: 'Gratuit', tabIa: '✨ Portrait IA',
+    kadT: 'Ta photo dans le cadre', kadS: 'Choisis un selfie : ta photo apparaît tout de suite dans le cadre.', pick: 'Choisir une photo', pickS: 'ou prendre un selfie', pickS2: 'un selfie où ton visage est bien visible',
+    nameL: 'Ton prénom (facultatif)', zoom: 'Zoom', horiz: 'Gauche / droite', vert: 'Haut / bas',
+    share: 'Partager', dl: 'Télécharger', privacy: '🔒 Ta photo ne quitte pas ton téléphone : le cadre est créé directement dessus.',
+    iaT: 'Quel professionnel veux-tu être ?', iaS: (n) => n > 0 ? `${n} portrait(s) IA offert(s) à chaque membre. L’IA garde ton visage et change la tenue et le décor.` : 'L’IA garde ton visage et change la tenue et le décor.',
+    g: { f: 'Au féminin', m: 'Au masculin' }, pq: 'Cherche ton métier…', ask: 'Ton métier n’est pas là ? Demande-le', noProf: 'Aucun métier trouvé : demande-le 👇',
+    reqL: 'Quel métier veux-tu qu’on ajoute ?', reqTelL: 'Ton WhatsApp, pour te prévenir (facultatif)', reqGo: 'Envoyer ma demande', reqOk: (m) => `Merci ! Nous ajouterons « ${m} » bientôt.`, reqNeed: 'Écris le métier.',
+    decorL: 'Décor', telL: 'Ton numéro WhatsApp', telS: { open: 'Pour compter tes portraits. Nous ne le partageons pas.', members: 'Seuls les membres du groupe peuvent créer un portrait IA : utilise le numéro enregistré par ton groupe.' },
+    consent: 'J’accepte que ma photo soit envoyée au service d’IA uniquement pour créer ce portrait. Souriyo ne la conserve pas.',
+    create: '✨ Créer mon portrait pro', genT: 'Création de ton portrait…', msgs: ['Analyse de ta photo…', 'Choix de la tenue…', 'Réglage de la lumière…', 'Dernières retouches…'],
+    resT: (p) => `Voici ta version ${p} !`, again: '↺ Un autre portrait', left: (n) => n > 0 ? `Il te reste ${n} portrait${n > 1 ? 's' : ''}.` : 'Ton portrait est gardé sur ce téléphone : pense à le télécharger.',
+    errPhoto: 'Choisis d’abord une photo.', errTel: 'Entre ton numéro WhatsApp.', errs: { quota: 'Tu as utilisé tes portraits. Tu peux en acheter ci-dessous 👇', not_member: 'Ce numéro n’est pas dans la liste des membres du groupe.', closed: 'Tous les portraits offerts du groupe ont été utilisés. Tu peux en acheter ci-dessous 👇', no_group: 'Le portrait IA n’est pas activé pour ce groupe.', bad_tel: 'Numéro invalide.', api: 'Le service est très demandé. Réessaie dans une minute.' },
+    buyT: 'Envie d’autres portraits ? 📸', buyS: 'Paiement simple par MonCash.', pk: (n) => `portrait${n > 1 ? 's' : ''}`, tagSave: 'Économise 50 G', tagBest: 'Meilleur prix',
+    steps: (p) => [`Envoie <b>${p} gourdes</b> par MonCash au <b>${S.MONCASH.num}</b> (${S.MONCASH.nom}).`, 'Envoie la capture sur WhatsApp avec le bouton ci-dessous.', 'Tu reçois un <b>code coupon</b> : entre-le ci-dessous.'],
+    waBtn: 'Envoyer ma capture sur WhatsApp', waMsg: (n, p, tel, g) => `Bonjour Souriyo 👋\nJ’ai payé ${p} G par MonCash pour ${n} portrait(s) IA (groupe : ${g}).\nMon numéro : ${tel || '…'}\nVoici ma capture :`,
+    codeL: 'J’ai un code coupon', redeem: 'Débloquer mes portraits', cOk: (n) => `✓ ${n} portrait(s) débloqué(s) !`, cErr: { coupon_invalide: 'Ce code n’existe pas.', coupon_utilise: 'Ce code a déjà été utilisé.', coupon_autre_numero: 'Ce code est lié à un autre numéro.', coupon_autre_groupe: 'Ce code est pour un autre groupe.', empty: 'Entre ton code.' },
+    klas: '🏆 Voir le classement des groupes', made: 'Fait avec Souriyo — Ta photo, notre fierté',
+    shareText: (g, url) => `Je suis dans le cadre ${g} 📸 Fais le tien : ${url}`,
+  },
+  en: {
+    missT: 'We can’t find this group 🤔', missP: 'Check the link, or ask the person who sent it to you.', missB: 'Go to Souriyo',
+    heroP: 'Put your selfie in the group frame and share your pride.', tabKad: '📸 Group frame', free: 'Free', tabIa: '✨ AI portrait',
+    kadT: 'Your photo in the frame', kadS: 'Pick a selfie: your photo appears in the frame instantly.', pick: 'Choose a photo', pickS: 'or take a selfie', pickS2: 'a selfie where your face is clearly visible',
+    nameL: 'Your first name (optional)', zoom: 'Zoom', horiz: 'Left / right', vert: 'Up / down',
+    share: 'Share', dl: 'Download', privacy: '🔒 Your photo never leaves your phone: the frame is created right on it.',
+    iaT: 'Which professional do you want to be?', iaS: (n) => n > 0 ? `${n} free AI portrait(s) per member. AI keeps your face and changes the outfit and setting.` : 'AI keeps your face and changes the outfit and setting.',
+    g: { f: 'Feminine', m: 'Masculine' }, pq: 'Search your career…', ask: 'Career not listed? Ask for it', noProf: 'No career found: ask for it 👇',
+    reqL: 'Which career should we add?', reqTelL: 'Your WhatsApp, so we can tell you (optional)', reqGo: 'Send my request', reqOk: (m) => `Thanks! We’ll add “${m}” soon.`, reqNeed: 'Type the career.',
+    decorL: 'Setting', telL: 'Your WhatsApp number', telS: { open: 'To count your portraits. We don’t share it.', members: 'Only group members can create AI portraits: use the number your group registered.' },
+    consent: 'I agree that my photo is sent to the AI service only to create this portrait. Souriyo does not keep it.',
+    create: '✨ Create my pro portrait', genT: 'Creating your portrait…', msgs: ['Analysing your photo…', 'Choosing the outfit…', 'Setting the light…', 'Final touches…'],
+    resT: (p) => `Here’s your ${p} self!`, again: '↺ Another portrait', left: (n) => n > 0 ? `${n} portrait(s) left.` : 'Your portrait is kept on this phone: remember to download it.',
+    errPhoto: 'Choose a photo first.', errTel: 'Enter your WhatsApp number.', errs: { quota: 'You’ve used your portraits. You can buy more below 👇', not_member: 'This number isn’t on the group’s member list.', closed: 'All of the group’s free portraits have been used. You can buy one below 👇', no_group: 'AI portraits aren’t enabled for this group.', bad_tel: 'Invalid number.', api: 'The service is busy. Try again in a minute.' },
+    buyT: 'Want more portraits? 📸', buyS: 'Easy payment with MonCash.', pk: (n) => `portrait${n > 1 ? 's' : ''}`, tagSave: 'Save 50 G', tagBest: 'Best price',
+    steps: (p) => [`Send <b>${p} gourdes</b> via MonCash to <b>${S.MONCASH.num}</b> (${S.MONCASH.nom}).`, 'Send the screenshot on WhatsApp with the button below.', 'You’ll get a <b>coupon code</b>: enter it below.'],
+    waBtn: 'Send my screenshot on WhatsApp', waMsg: (n, p, tel, g) => `Hello Souriyo 👋\nI paid ${p} G via MonCash for ${n} AI portrait(s) (group: ${g}).\nMy number: ${tel || '…'}\nHere is my screenshot:`,
+    codeL: 'I have a coupon code', redeem: 'Unlock my portraits', cOk: (n) => `✓ ${n} portrait(s) unlocked!`, cErr: { coupon_invalide: 'This code doesn’t exist.', coupon_utilise: 'This code has already been used.', coupon_autre_numero: 'This code is linked to another number.', coupon_autre_groupe: 'This code is for another group.', empty: 'Enter your code.' },
+    klas: '🏆 See the group leaderboard', made: 'Made with Souriyo — Your photo, our pride',
+    shareText: (g, url) => `I’m in the ${g} frame 📸 Make yours: ${url}`,
+  },
+};
+
+/* ---------- État ---------- */
+const st = { lang: 'ht', g: null, logo: null, mode: 'kad', kImg: null, iImg: null, iURL: '', prof: null, gender: 'f', decor: 'studio', result: null, left: null, counted: false, pack: null };
+const t = () => T[st.lang];
+const q = new URLSearchParams(location.search);
+const slug = (q.get('s') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
+const profTitle = () => { const p = PROFS.find((x) => x.k === st.prof); return p ? p[st.lang][st.gender === 'f' ? 1 : 0] : ''; };
+const KEY = `souriyo_${slug}`;
+
+function setLang(l) {
+  st.lang = T[l] ? l : 'ht'; document.documentElement.lang = st.lang;
+  try { localStorage.setItem('souriyo_lang', st.lang); } catch {}
+  document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === st.lang));
+  document.querySelectorAll('[data-t]').forEach((el) => { const v = t()[el.dataset.t]; if (typeof v === 'string') el.innerHTML = v; });
+  $('kShare').textContent = $('iShare').textContent = t().share; $('kDl').textContent = $('iDl').textContent = t().dl; $('iAgain').textContent = t().again;
+  document.querySelectorAll('#gender button').forEach((b) => { b.textContent = t().g[b.dataset.g]; b.setAttribute('aria-pressed', b.dataset.g === st.gender); });
+  $('pq').placeholder = t().pq;
+  if (st.g) {
+    $('iaS').textContent = t().iaS(st.g.ia_gratis); $('telS').textContent = st.g.manm_selman ? t().telS.members : t().telS.open;
+    $('iaTag').textContent = st.g.ia_gratis > 0 ? t().free : '100 G';
+    renderOpts(); renderBuy(); drawKad();
+    if (st.result) { $('resT').textContent = t().resT(profTitle()); $('left').textContent = t().left(st.left ?? 0); drawIa(); }
+  }
+}
+
+/* ---------- Chaje gwoup la ---------- */
+async function boot() {
+  let l0 = q.get('lang'); try { l0 = l0 || localStorage.getItem('souriyo_lang'); } catch {}
+  st.lang = l0 && T[l0] ? l0 : 'ht';
+  let g = null;
+  if (slug) { try { g = (await S.api(`groupes?slug=eq.${encodeURIComponent(slug)}&aktif=is.true&select=*`))[0]; } catch {} }
+  if (!g) { setLang(st.lang); $('missing').classList.remove('hidden'); return; }
+  st.g = g; if (!q.get('lang') && !l0) st.lang = g.lang;
+  document.title = `${g.nom} · Souriyo`;
+  document.documentElement.style.setProperty('--g1', g.c1); document.documentElement.style.setProperty('--g2', g.c2);
+  $('gname').textContent = g.nom;
+  if (g.logo_url) { $('glogo').src = g.logo_url; $('glogo').alt = g.nom; $('glogo').classList.remove('hidden'); }
+  $('tabs').classList.toggle('hidden', !(g.mod_kad && g.mod_ia));
+  st.mode = g.mod_kad ? 'kad' : 'ia';
+  await K.fontsReady(); st.logo = await K.loadImage(g.logo_url);
+  $('app').classList.remove('hidden');
+  restore(); setMode(st.mode); setLang(st.lang);
+  if (q.get('code')) { $('code').value = q.get('code').slice(0, 20).toUpperCase(); if (g.mod_ia) { setMode('ia'); $('buy').classList.remove('hidden'); } }
+  if (q.get('tel')) $('iTel').value = q.get('tel');
+}
+function setMode(m) {
+  st.mode = m;
+  document.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.mode === m));
+  $('mKad').classList.toggle('hidden', m !== 'kad'); $('mIa').classList.toggle('hidden', m !== 'ia');
+  renderBuy();
+}
+
+/* ---------- Foto (redui a 1280 px) ---------- */
+function readPhoto(file, max = 1280) {
+  return new Promise((res) => {
+    const img = new Image();
+    img.onload = () => { const k = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); const url = c.toDataURL('image/jpeg', .88); const out = new Image(); out.onload = () => res({ img: out, url }); out.src = url; URL.revokeObjectURL(img.src); };
+    img.onerror = () => res(null); img.src = URL.createObjectURL(file);
+  });
+}
+
+/* ---------- Kad gratis ---------- */
+function drawKad() {
+  if (!st.g || st.mode !== 'kad') return;
+  K.draw($('cv'), st.g, st.kImg, { prenom: $('kName').value.trim().split(/\s+/)[0] || '', zoom: +$('kZ').value, dx: +$('kX').value, dy: +$('kY').value, logo: st.logo, logoPlate: true });
+  $('kPrev').src = $('cv').toDataURL('image/jpeg', .9);
+}
+$('kFile').addEventListener('change', async () => { const f = $('kFile').files[0]; if (!f) return; const r = await readPhoto(f); if (!r) return; st.kImg = r.img; $('kAdj').classList.remove('hidden'); $('kShare').disabled = $('kDl').disabled = false; drawKad(); });
+['kName', 'kZ', 'kX', 'kY'].forEach((id) => $(id).addEventListener('input', drawKad));
+
+const blob = () => new Promise((r) => $('cv').toBlob(r, 'image/jpeg', 0.92));
+async function count() { if (st.counted) return; st.counted = true; try { await S.api('rpc/konte_kad', { method: 'POST', body: JSON.stringify({ p_slug: slug }) }); } catch {} }
+async function share(name) {
+  const url = S.groupUrl(slug), text = t().shareText(st.g.nom, url);
+  const file = new File([await blob()], name, { type: 'image/jpeg' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], text }); return true; } catch (e) { if (e.name === 'AbortError') return false; } }
+  download(name); window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener'); return true;
+}
+async function download(name) { const a = document.createElement('a'); a.href = URL.createObjectURL(await blob()); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); }
+$('kShare').addEventListener('click', async () => { drawKad(); if (await share(`souriyo-${slug}.jpg`)) count(); });
+$('kDl').addEventListener('click', () => { drawKad(); download(`souriyo-${slug}.jpg`); count(); });
+
+/* ---------- Pòtrè IA ---------- */
+function renderOpts() {
+  const nq = (v) => String(v).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const qq = nq($('pq').value.trim());
+  const list = PROFS.filter((p) => !qq || [...p.fr, ...p.ht, ...p.en].some((x) => nq(x).includes(qq)));
+  $('profs').innerHTML = list.map((p) => `<button type="button" class="opt" data-p="${p.k}" aria-pressed="${st.prof === p.k}"><span class="e">${p.e}</span>${p[st.lang][st.gender === 'f' ? 1 : 0]}</button>`).join('')
+    + (list.length ? '' : `<p class="sub" style="grid-column:1/-1;margin:0">${t().noProf}</p>`) + `<button type="button" class="opt ask" id="askBtn"><span class="e">➕</span>${t().ask}</button>`;
+  $('decors').innerHTML = DECORS.map((d) => `<button type="button" class="opt" data-d="${d.k}" aria-pressed="${st.decor === d.k}"><span class="e">${d.e}</span>${d[st.lang]}</button>`).join('');
+  check();
+}
+function check() { $('iGo').disabled = !(st.prof && st.iImg && $('iOk').checked && $('iTel').value.replace(/\D/g, '').length >= 8); }
+['iOk', 'iTel'].forEach((id) => $(id).addEventListener('input', check));
+$('pq').addEventListener('input', renderOpts);
+$('iFile').addEventListener('change', async () => { const f = $('iFile').files[0]; if (!f) return; const r = await readPhoto(f, 1024); if (!r) return $('iErr').textContent = t().errPhoto; st.iImg = r.img; st.iURL = r.url; $('iErr').textContent = ''; check(); });
+document.addEventListener('click', (e) => {
+  const l = e.target.closest('[data-lang]'); if (l) return setLang(l.dataset.lang);
+  const m = e.target.closest('[data-mode]'); if (m) return setMode(m.dataset.mode);
+  const p = e.target.closest('[data-p]'); if (p) { st.prof = p.dataset.p; return renderOpts(); }
+  const d = e.target.closest('[data-d]'); if (d) { st.decor = d.dataset.d; return renderOpts(); }
+  const g = e.target.closest('[data-g]'); if (g) { st.gender = g.dataset.g; return setLang(st.lang); }
+  const k = e.target.closest('[data-pack]'); if (k) { st.pack = +k.dataset.pack; return renderBuy(); }
+  if (e.target.closest('#askBtn')) { $('reqBox').classList.remove('hidden'); if (!$('reqM').value) $('reqM').value = $('pq').value.trim(); $('reqM').focus(); }
+});
+$('reqGo').addEventListener('click', async () => {
+  const m = $('reqM').value.trim().slice(0, 60); if (m.length < 2) return ($('reqMsg').textContent = t().reqNeed);
+  try { await S.api('demandes', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ groupe_slug: slug, metye: m, telefon: $('reqTel').value.trim() || null, lang: st.lang }) }); $('reqMsg').textContent = t().reqOk(m); $('reqM').value = ''; }
+  catch { $('reqMsg').textContent = t().errs.api; }
+});
+
+let MT = null;
+$('iGo').addEventListener('click', async () => {
+  $('iErr').textContent = '';
+  $('ia1').classList.add('hidden'); $('iaGen').classList.remove('hidden');
+  let i = 0; $('genMsg').textContent = t().msgs[0]; MT = setInterval(() => { i = Math.min(i + 1, 3); $('genMsg').textContent = t().msgs[i]; }, 2200);
+  try {
+    const r = await fetch(S.IA_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, image: st.iURL.split(',')[1], profession: st.prof, decor: st.decor, telephone: $('iTel').value }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || 'api');
+    const img = await K.loadImage(`data:${j.mime || 'image/png'};base64,${j.image}`);
+    st.result = img; st.left = j.left ?? 0;
+    $('iaRes').classList.remove('hidden'); $('resT').textContent = t().resT(profTitle()); $('left').textContent = t().left(st.left);
+    $('iAgain').classList.toggle('hidden', st.left <= 0); drawIa(); keep();
+  } catch (e) {
+    $('ia1').classList.remove('hidden'); $('iErr').textContent = t().errs[e.message] || t().errs.api;
+    if (['quota', 'closed'].includes(e.message)) { st.left = 0; $('buy').classList.remove('hidden'); renderBuy(); }
+  } finally { clearInterval(MT); $('iaGen').classList.add('hidden'); renderBuy(); }
+});
+function drawIa() { K.draw($('cv'), st.g, st.result, { modele: 'pwo', prenom: $('iName').value.trim().split(/\s+/)[0] || '', titre: profTitle(), logo: st.logo, logoPlate: true }); $('iPrev').src = $('cv').toDataURL('image/jpeg', .9); }
+$('iShare').addEventListener('click', () => { drawIa(); share(`souriyo-${slug}-${st.prof}.jpg`); });
+$('iDl').addEventListener('click', () => { drawIa(); download(`souriyo-${slug}-${st.prof}.jpg`); });
+$('iAgain').addEventListener('click', () => { $('iaRes').classList.add('hidden'); $('ia1').classList.remove('hidden'); st.prof = null; renderOpts(); });
+
+/* ---------- Pòtrè a kenbe sou telefòn nan ---------- */
+function keep() { try { const c = document.createElement('canvas'), im = st.result, k = Math.min(1, 900 / im.width); c.width = im.width * k; c.height = im.height * k; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); localStorage.setItem(KEY, JSON.stringify({ img: c.toDataURL('image/jpeg', .85), prof: st.prof, gender: st.gender, name: $('iName').value, tel: $('iTel').value, left: st.left })); } catch {} }
+async function restore() {
+  let k = null; try { k = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch {}
+  if (!k || !k.img || !st.g.mod_ia) return;
+  st.result = await K.loadImage(k.img); if (!st.result) return;
+  Object.assign(st, { prof: k.prof, gender: k.gender || 'f', left: k.left ?? 0 }); $('iName').value = k.name || ''; $('iTel').value = k.tel || '';
+  st.mode = 'ia'; $('ia1').classList.add('hidden'); $('iaRes').classList.remove('hidden'); $('iAgain').classList.toggle('hidden', st.left <= 0);
+}
+
+/* ---------- Achte plis ---------- */
+function renderBuy() {
+  if (!st.g) return;
+  const show = st.g.mod_ia && st.mode === 'ia' && (st.left === 0 || !$('buy').classList.contains('hidden'));
+  $('buy').classList.toggle('hidden', !show);
+  $('packs').innerHTML = S.PACKS.map((k) => `<button type="button" class="pack" data-pack="${k.n}" aria-pressed="${st.pack === k.n}">${k.tag ? `<em>${k.tag === 'save' ? t().tagSave : t().tagBest}</em>` : ''}<b>${k.n}</b><span>${t().pk(k.n)}</span><strong>${k.p} G</strong></button>`).join('');
+  const k = S.PACKS.find((x) => x.n === st.pack); $('howto').classList.toggle('hidden', !k);
+  if (k) { $('howList').innerHTML = t().steps(k.p).map((x) => `<li>${x}</li>`).join(''); $('buyWa').textContent = t().waBtn; $('buyWa').href = `https://wa.me/${S.WA}?text=${encodeURIComponent(t().waMsg(k.n, k.p, $('iTel').value.trim(), st.g.nom))}`; }
+}
+$('redeem').addEventListener('click', async () => {
+  const code = $('code').value.trim(), tel = $('iTel').value.trim();
+  const msg = (x, ok) => { $('cMsg').textContent = x; $('cMsg').classList.toggle('ok-msg', !!ok); };
+  if (!code) return msg(t().cErr.empty); if (tel.replace(/\D/g, '').length < 8) { $('iTel').focus(); return msg(t().errTel); }
+  $('redeem').disabled = true;
+  let j; try { j = await S.api('rpc/utiliser_coupon', { method: 'POST', body: JSON.stringify({ p_code: code, p_tel: tel, p_slug: slug }) }); } catch { j = { ok: false, error: 'api' }; }
+  $('redeem').disabled = false;
+  if (!j.ok) return msg(t().cErr[j.error] || t().errs[j.error] || t().errs.api);
+  st.left = j.left; $('code').value = ''; msg(t().cOk(j.photos), true);
+  $('left').textContent = t().left(st.left); $('iAgain').classList.remove('hidden'); $('iErr').textContent = '';
+  if (!st.result) { $('ia1').classList.remove('hidden'); } check(); keep();
+});
+
+boot();
+</script>
+</body>
+</html>

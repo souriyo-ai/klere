@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Admin · Souriyo</title>
+<link rel="icon" href="../assets/souriyo-icone.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@1,500&display=swap" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="../assets/config.js"></script>
+<script src="../assets/kad.js"></script>
+<style>
+  :root { --ink: #151848; --ink-2: #4b5085; --coral: #FF5A36; --cream: #fff8f2; --line: #ece4dc; --ok: #1a7a3c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 "DM Sans", system-ui, sans-serif; color: var(--ink); background: #f6f3ef; }
+  .hidden { display: none !important; }
+  header { background: var(--ink); color: #fff; padding: 12px 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 8px; font: 800 20px "Bricolage Grotesque", system-ui, sans-serif; }
+  .brand img { width: 30px; height: 30px; } .brand b { color: var(--coral); } .brand small { font: 500 13px "DM Sans", system-ui, sans-serif; color: #c9cdf2; margin-left: 4px; }
+  nav.tabs { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+  nav.tabs button, header .out { border: 1px solid rgba(255,255,255,.25); background: transparent; color: #fff; border-radius: 999px; padding: 7px 14px; font: 600 14px "DM Sans", system-ui, sans-serif; cursor: pointer; }
+  nav.tabs button[aria-pressed="true"] { background: #fff; color: var(--ink); }
+  main { max-width: 1240px; margin: 0 auto; padding: 18px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px; margin-bottom: 14px; }
+  h2 { font: 800 19px "Bricolage Grotesque", system-ui, sans-serif; margin: 0 0 12px; }
+  .sub { color: var(--ink-2); font-size: 13px; }
+  label.f { display: block; font-weight: 700; font-size: 13px; margin: 10px 0 4px; }
+  input.t, select.t, textarea.t { width: 100%; padding: 9px 11px; border: 1.5px solid var(--line); border-radius: 10px; font: 15px "DM Sans", system-ui, sans-serif; background: #fff; }
+  textarea.t { min-height: 90px; resize: vertical; }
+  .btn { border: 1.5px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px; padding: 9px 16px; font: 700 14px "DM Sans", system-ui, sans-serif; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+  .btn.main { background: var(--coral); border-color: var(--coral); color: #fff; } .btn.wa { background: #25D366; border-color: #25D366; color: #06381b; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .msg { min-height: 1.2em; font-size: 14px; margin: 8px 0 0; } .msg.err { color: #b3261e; } .msg.ok { color: var(--ok); font-weight: 700; }
+  .login { max-width: 380px; margin: 60px auto; }
+  /* Gwoup */
+  .layout { display: grid; grid-template-columns: 300px 1fr 400px; gap: 14px; align-items: start; }
+  .glist { display: grid; gap: 6px; max-height: 75vh; overflow: auto; }
+  .gi { display: grid; grid-template-columns: 36px 1fr; gap: 10px; align-items: center; border: 1.5px solid var(--line); border-radius: 14px; padding: 8px 10px; cursor: pointer; background: #fff; text-align: left; font: inherit; color: inherit; }
+  .gi[aria-current="true"] { border-color: var(--ink); background: #eef0fb; }
+  .gi .sw { width: 36px; height: 36px; border-radius: 10px; }
+  .gi b { display: block; font-size: 14px; } .gi span { font-size: 12px; color: var(--ink-2); }
+  .gi.off { opacity: .55; }
+  .models { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .models button { border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 8px; cursor: pointer; font: 600 13px "DM Sans", system-ui, sans-serif; color: var(--ink); }
+  .models button[aria-pressed="true"] { border-color: var(--ink); background: #eef0fb; }
+  .colors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .colors label { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--line); border-radius: 10px; padding: 6px 8px; font-size: 13px; }
+  .colors input[type=color] { width: 34px; height: 30px; border: 0; padding: 0; background: none; cursor: pointer; }
+  .presets { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .presets button { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--line); cursor: pointer; }
+  .tog { display: flex; align-items: center; gap: 8px; font-size: 14px; margin: 8px 0; } .tog input { width: 18px; height: 18px; accent-color: var(--ink); }
+  fieldset { border: 1px solid var(--line); border-radius: 14px; padding: 6px 14px 12px; margin: 12px 0 0; } legend { font-weight: 800; font-size: 13px; padding: 0 6px; }
+  .prev { position: sticky; top: 12px; }
+  .prev img { width: 100%; border-radius: 14px; box-shadow: 0 14px 40px rgba(21,24,72,.2); display: block; }
+  .prev .seg { display: flex; gap: 6px; margin-bottom: 10px; }
+  .prev .seg button { flex: 1; border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 6px; cursor: pointer; font: 600 13px "DM Sans", system-ui, sans-serif; }
+  .prev .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .linkbox { margin-top: 12px; background: #f6f3ef; border-radius: 14px; padding: 12px; text-align: center; }
+  .linkbox code { display: block; font-size: 14px; word-break: break-all; margin-bottom: 8px; }
+  .linkbox .acts { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  #qr { margin: 10px auto 0; width: 160px; } #qr img, #qr canvas { width: 160px !important; height: 160px !important; image-rendering: pixelated; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+  .stat { background: #f6f3ef; border-radius: 12px; padding: 10px; } .stat b { display: block; font: 800 22px "Bricolage Grotesque", system-ui, sans-serif; } .stat span { font-size: 12px; color: var(--ink-2); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; } th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); } td.mono { font-family: ui-monospace, Menlo, monospace; font-weight: 700; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; } .pill.ok { background: #e2f4e7; color: var(--ok); } .pill.w { background: #fff4d6; color: #7a5200; }
+  .packs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .packs button { border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 10px; cursor: pointer; font: 700 15px "DM Sans", system-ui, sans-serif; }
+  .packs button[aria-pressed="true"] { border-color: var(--ink); background: #eef0fb; }
+  .done { border: 2px solid var(--ok); background: #f1faf3; border-radius: 14px; padding: 14px; margin-top: 12px; text-align: center; } .done .code { font: 800 26px ui-monospace, Menlo, monospace; margin: 6px 0 10px; }
+  @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } .prev { position: static; } .glist { max-height: none; } }
+  @media (max-width: 600px) { .grid2, .grid3, .stats { grid-template-columns: 1fr 1fr; } .models { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><img src="../assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span><small>admin</small></div>
+  <nav class="tabs hidden" id="nav"><button type="button" data-tab="g" aria-pressed="true">🖼️ Gwoup yo</button><button type="button" data-tab="c" aria-pressed="false">🎟️ Koupon</button><button type="button" data-tab="d" aria-pressed="false">💬 Demand metye</button></nav>
+  <button class="out hidden" id="logout" type="button">Dekonekte</button>
+</header>
+
+<section class="card login" id="login">
+  <h2>Koneksyon admin</h2>
+  <form id="loginForm"><label class="f" for="le">Imèl</label><input class="t" id="le" type="email" autocomplete="username" required />
+    <label class="f" for="lp">Modpas</label><input class="t" id="lp" type="password" autocomplete="current-password" required />
+    <button class="btn main" type="submit" style="width:100%;justify-content:center;margin-top:14px">Konekte</button><p class="msg err" id="loginMsg"></p></form>
+</section>
+
+<main class="hidden" id="app">
+  <!-- ===== GWOUP ===== -->
+  <div id="tabG" class="layout">
+    <section class="card">
+      <h2>Gwoup yo</h2>
+      <button class="btn main" type="button" id="newG" style="width:100%;justify-content:center;margin-bottom:10px">+ Nouvo gwoup</button>
+      <div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b id="sG">0</b><span>gwoup aktif</span></div><div class="stat"><b id="sF">0</b><span>foto an tout</span></div></div>
+      <div class="glist" id="glist"></div>
+    </section>
+
+    <section class="card" id="editor">
+      <h2 id="edT">Nouvo gwoup</h2>
+      <div class="stats" id="gStats"></div>
+      <div class="grid2">
+        <div><label class="f" for="nom">Non gwoup la</label><input class="t" id="nom" maxlength="80" placeholder="ex. Lekòl Flanbwayan" /></div>
+        <div><label class="f" for="slug">Adrès (souriyo.com/…)</label><input class="t" id="slug" maxlength="40" placeholder="ex. flanbwayan" /></div>
+      </div>
+      <div class="grid2">
+        <div><label class="f" for="type">Kalite</label><select class="t" id="type"><option value="lekol">🎓 Lekòl / inivèsite</option><option value="evenman">🎤 Evènman</option><option value="legliz">⛪ Legliz</option><option value="antrepriz">💼 Antrepriz</option><option value="lot">✨ Lòt</option></select></div>
+        <div><label class="f" for="lang">Lang paj la</label><select class="t" id="lang"><option value="ht">Kreyòl</option><option value="fr">Français</option><option value="en">English</option></select></div>
+      </div>
+      <label class="f">Modèl kad la</label>
+      <div class="models" id="models"><button type="button" data-m="sek">🟢 Sèk (lekòl)</button><button type="button" data-m="polaroid">📷 Polaroid (evènman)</button><button type="button" data-m="pwo">🏅 Pwo (elegan)</button></div>
+      <label class="f">Koulè</label>
+      <div class="colors"><label><input type="color" id="c1" value="#0f5132" /> Fon</label><label><input type="color" id="c2" value="#f2c94c" /> Aksan</label><label><input type="color" id="c3" value="#ffffff" /> Kad foto</label></div>
+      <div class="presets" id="presets"></div>
+      <div class="grid2">
+        <div><label class="f" for="sou_tit">Ti tèks anlè</label><input class="t" id="sou_tit" maxlength="60" placeholder="ex. Lekòl Flanbwayan" /></div>
+        <div><label class="f" for="tit">Gwo tit</label><input class="t" id="tit" maxlength="40" placeholder="ex. Fyète m 💚" /></div>
+        <div><label class="f" for="riban">Riban</label><input class="t" id="riban" maxlength="30" placeholder="ex. Pwomo 2027" /></div>
+        <div><label class="f" for="badj">Badj (polaroid)</label><input class="t" id="badj" maxlength="16" placeholder="ex. M ap la !" /></div>
+      </div>
+      <label class="f" for="liy">Liy anba (dat, kote…)</label><input class="t" id="liy" maxlength="60" placeholder="ex. 13 desanm · Okap" />
+      <label class="f">Logo gwoup la (PNG, JPG oswa WebP, 1 Mo maks.)</label>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input type="file" id="logoF" accept="image/png,image/jpeg,image/webp" /><button class="btn" type="button" id="logoX">Retire logo a</button></div>
+
+      <fieldset><legend>Sa manm yo ka fè</legend>
+        <label class="tog"><input type="checkbox" id="mod_kad" checked /> 📸 Kad gwoup gratis</label>
+        <label class="tog"><input type="checkbox" id="mod_ia" /> ✨ Pòtrè IA</label>
+        <div class="grid2" id="iaOpts">
+          <div><label class="f" for="ia_gratis">Pòtrè IA gratis pa manm</label><input class="t" id="ia_gratis" type="number" min="0" max="5" value="0" /></div>
+          <div><label class="f" for="ia_plafond">Plafon pòtrè gratis pou gwoup la (0 = san limit)</label><input class="t" id="ia_plafond" type="number" min="0" value="0" /></div>
+        </div>
+        <label class="tog"><input type="checkbox" id="manm_selman" /> Pòtrè IA rezève pou manm ki nan lis la</label>
+        <label class="tog"><input type="checkbox" id="nan_klasman" checked /> Parèt nan klasman an</label>
+        <label class="tog"><input type="checkbox" id="aktif" checked /> Gwoup la aktif (paj la an liy)</label>
+      </fieldset>
+
+      <fieldset><legend>Kontak kliyan an (prive)</legend>
+        <div class="grid3"><div><label class="f" for="kNon">Non</label><input class="t" id="kNon" maxlength="80" /></div><div><label class="f" for="kTel">Telefòn</label><input class="t" id="kTel" maxlength="25" /></div><div><label class="f" for="kImel">Imèl</label><input class="t" id="kImel" maxlength="120" /></div></div>
+        <label class="f" for="kNota">Nòt (pri, kontra…)</label><textarea class="t" id="kNota" maxlength="1000"></textarea>
+      </fieldset>
+
+      <fieldset id="manmBox"><legend>Lis manm (<span id="mCount">0</span>)</legend>
+        <p class="sub" style="margin:6px 0">Kole yon nimewo pa liy, ak non an si w vle : <code>3727 4672, Marie Joseph</code></p>
+        <textarea class="t" id="mList" placeholder="3727 4672, Marie Joseph&#10;4100 2222"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="btn" type="button" id="mAdd">Ajoute nan lis la</button><button class="btn" type="button" id="mClear">Efase tout lis la</button></div>
+      </fieldset>
+
+      <button class="btn main" type="button" id="save" style="width:100%;justify-content:center;margin-top:14px;padding:12px">Anrejistre gwoup la</button>
+      <p class="msg" id="edMsg"></p>
+    </section>
+
+    <aside class="card prev">
+      <div class="seg"><button type="button" data-pv="kad" aria-pressed="true">📸 Kad</button><button type="button" data-pv="ia" aria-pressed="false">✨ Pòtrè IA</button></div>
+      <img id="pv" alt="Aperçu kad la" />
+      <div class="linkbox hidden" id="linkbox"><code id="gLink"></code>
+        <div class="acts"><button class="btn" type="button" id="copy">Kopye lyen an</button><a class="btn" id="open" target="_blank" rel="noopener">Louvri</a><a class="btn wa" id="waShare" target="_blank" rel="noopener">WhatsApp</a></div>
+        <div id="qr"></div><button class="btn" type="button" id="qrDl" style="margin-top:8px">Telechaje QR la</button></div>
+    </aside>
+  </div>
+
+  <!-- ===== KOUPON ===== -->
+  <div id="tabC" class="hidden">
+    <div class="stats" id="cStats"></div>
+    <section class="card"><h2>Nouvo koupon (apre w resevwa peman MonCash la)</h2>
+      <div class="packs" id="cPacks"></div>
+      <div class="grid3">
+        <div><label class="f" for="cTel">Nimewo moun nan (pa obligatwa)</label><input class="t" id="cTel" inputmode="tel" placeholder="3727 4672" /></div>
+        <div><label class="f" for="cGroup">Gwoup (pa obligatwa)</label><select class="t" id="cGroup"></select></div>
+        <div><label class="f" for="cNote">N° tranzaksyon MonCash</label><input class="t" id="cNote" maxlength="200" /></div>
+      </div>
+      <p class="sub">Nimewo a : se sèlman moun sa a ki ka itilize kòd la (pa nesesèman moun ki peye MonCash la). Gwoup : si w chwazi youn, kòd la mache sèlman nan gwoup sa a.</p>
+      <button class="btn main" type="button" id="cCreate" disabled style="width:100%;justify-content:center;margin-top:10px">Kreye koupon an</button>
+      <p class="msg" id="cMsg"></p><div class="done hidden" id="cDone"></div>
+    </section>
+    <section class="card"><h2>Koupon yo</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Kòd</th><th>Pakè</th><th>Gwoup</th><th>Moun nan</th><th>Nòt</th><th>Estati</th><th></th></tr></thead><tbody id="cRows"></tbody></table></div></section>
+  </div>
+
+  <!-- ===== DEMAND ===== -->
+  <div id="tabD" class="hidden">
+    <section class="card"><h2>Metye moun mande</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Metye</th><th>Gwoup</th><th>WhatsApp</th><th>Lang</th><th>Ajoute ?</th></tr></thead><tbody id="dRows"></tbody></table></div></section>
+  </div>
+</main>
+
+<canvas id="cv" class="hidden"></canvas>
+<script>
+const S = window.SOURIYO, K = window.SouriyoKad;
+const sb = window.supabase.createClient(S.SUPABASE_URL, S.SUPABASE_KEY);
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (d) => d ? new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+const wa = (tel) => { let d = String(tel || '').replace(/\D/g, ''); if (d.length === 8) d = '509' + d; return d.length >= 10 ? d : ''; };
+function friendly(e) {
+  const m = String(e?.message || e || ''); console.warn(e);
+  if (/duplicate key|groupes_slug_key/.test(m)) return 'Adrès sa a deja pran pa yon lòt gwoup. Chwazi yon lòt.';
+  if (/slug/.test(m) && /check/.test(m)) return 'Adrès la dwe gen 3 a 40 lèt miniskil, chif oswa tirè (-), san espas ni aksan.';
+  if (/check constraint/.test(m)) return 'Gen yon chan ki pa nan bon fòma. Verifye yo.';
+  if (/failed to fetch|network/i.test(m)) return 'Pa gen koneksyon. Eseye ankò.';
+  if (/42501|permission|row-level/i.test(m)) return 'Kont sa a pa gen aksè admin.';
+  return m.length < 140 ? m : 'Yon erè rive. Eseye ankò.';
+}
+const msg = (id, txt, kind = 'err') => { $(id).className = `msg ${kind}`; $(id).textContent = txt; };
+const slugify = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+
+const PRESETS = [['#0f5132', '#f2c94c', '#ffffff'], ['#5b21b6', '#facc15', '#ffffff'], ['#0a1f38', '#d8b25a', '#ffffff'], ['#b91c1c', '#fde68a', '#ffffff'], ['#1e3a8a', '#ef4444', '#ffffff'], ['#f4efe6', '#b91c1c', '#ffffff'], ['#151848', '#FF5A36', '#ffffff'], ['#0e7490', '#fbbf24', '#ffffff']];
+const FIELDS = ['nom', 'slug', 'type', 'lang', 'c1', 'c2', 'c3', 'sou_tit', 'tit', 'riban', 'badj', 'liy'];
+const CHECKS = ['mod_kad', 'mod_ia', 'manm_selman', 'nan_klasman', 'aktif'];
+let G = [], STATS = {}, CUR = null, MODEL = 'sek', LOGO_URL = null, LOGO_FILE = null, LOGO_IMG = null, PV = 'kad', SAMPLE = {}, slugTouched = false;
+
+/* ---------- Auth ---------- */
+async function showApp(session) {
+  $('login').classList.toggle('hidden', !!session); ['app', 'nav', 'logout'].forEach((id) => $(id).classList.toggle('hidden', !session));
+  if (session) { await K.fontsReady(); SAMPLE.kad = await K.loadImage('../img/avant-f.jpg'); SAMPLE.ia = await K.loadImage('../img/apres-f.jpg'); await loadGroups(); newGroup(); }
+}
+$('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault(); $('loginMsg').textContent = '';
+  const { data, error } = await sb.auth.signInWithPassword({ email: $('le').value.trim(), password: $('lp').value });
+  if (error) return ($('loginMsg').textContent = 'Imèl oswa modpas la pa bon.');
+  showApp(data.session);
+});
+$('logout').addEventListener('click', async () => { await sb.auth.signOut(); showApp(null); });
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-tab]'); if (!b) return;
+  document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', x === b));
+  $('tabG').classList.toggle('hidden', b.dataset.tab !== 'g'); $('tabC').classList.toggle('hidden', b.dataset.tab !== 'c'); $('tabD').classList.toggle('hidden', b.dataset.tab !== 'd');
+  if (b.dataset.tab === 'c') loadCoupons(); if (b.dataset.tab === 'd') loadDemandes();
+});
+
+/* ---------- Gwoup yo ---------- */
+async function loadGroups() {
+  const [g, s] = await Promise.all([sb.from('groupes').select('*').order('kreye_le', { ascending: false }), sb.from('stats').select('*')]);
+  if (g.error) return msg('edMsg', friendly(g.error));
+  G = g.data || []; STATS = {};
+  (s.data || []).forEach((r) => { const x = STATS[r.groupe_id] ||= { kad: 0, ia: 0, d7: 0 }; x.kad += r.kad; x.ia += r.ia; if (new Date(r.jou) >= new Date(Date.now() - 7 * 864e5)) x.d7 += r.kad + r.ia; });
+  $('sG').textContent = G.filter((x) => x.aktif).length;
+  $('sF').textContent = Object.values(STATS).reduce((a, x) => a + x.kad + x.ia, 0);
+  renderList();
+  $('cGroup').innerHTML = '<option value="">— Nenpòt gwoup —</option>' + G.filter((x) => x.mod_ia).map((x) => `<option value="${esc(x.slug)}">${esc(x.nom)}</option>`).join('');
+}
+function renderList() {
+  $('glist').innerHTML = G.map((g) => { const s = STATS[g.id] || { kad: 0, ia: 0 }; return `<button type="button" class="gi${g.aktif ? '' : ' off'}" data-gid="${g.id}" aria-current="${CUR && CUR.id === g.id}">
+    <span class="sw" style="background:linear-gradient(135deg,${esc(g.c1)} 60%,${esc(g.c2)} 60%)"></span>
+    <span><b>${esc(g.nom)}</b><span>/${esc(g.slug)} · ${s.kad + s.ia} foto${g.aktif ? '' : ' · inaktif'}</span></span></button>`; }).join('') || '<p class="sub">Pa gen gwoup ankò. Kreye premye a !</p>';
+}
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-gid]'); if (b) editGroup(G.find((g) => g.id === b.dataset.gid)); });
+
+function setModel(m) { MODEL = m; document.querySelectorAll('[data-m]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.m === m)); preview(); }
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-m]'); if (b) setModel(b.dataset.m); const p = e.target.closest('[data-pv]'); if (p) { PV = p.dataset.pv; document.querySelectorAll('[data-pv]').forEach((x) => x.setAttribute('aria-pressed', x === p)); preview(); } });
+$('presets').innerHTML = PRESETS.map((p, i) => `<button type="button" data-preset="${i}" title="${p.join(' · ')}" style="background:linear-gradient(135deg,${p[0]} 55%,${p[1]} 55%)"></button>`).join('');
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-preset]'); if (!b) return; const p = PRESETS[+b.dataset.preset]; ['c1', 'c2', 'c3'].forEach((id, i) => ($(id).value = p[i])); preview(); });
+
+function current() {
+  const g = { modele: MODEL, logo_url: LOGO_URL };
+  FIELDS.forEach((f) => (g[f] = $(f).value.trim()));
+  CHECKS.forEach((c) => (g[c] = $(c).checked));
+  g.ia_gratis = Math.max(0, Math.min(5, parseInt($('ia_gratis').value || '0', 10)));
+  g.ia_plafond = Math.max(0, parseInt($('ia_plafond').value || '0', 10));
+  g.slug = slugify(g.slug);
+  return g;
+}
+function preview() {
+  const g = current(); $('iaOpts').style.opacity = g.mod_ia ? 1 : .45; $('manmBox').classList.toggle('hidden', !g.manm_selman);
+  K.draw($('cv'), g, PV === 'ia' ? SAMPLE.ia : SAMPLE.kad, PV === 'ia' ? { modele: 'pwo', prenom: 'Nadège', titre: 'Comptable', logo: LOGO_IMG, logoPlate: true } : { prenom: 'Nadège', logo: LOGO_IMG, logoPlate: true });
+  $('pv').src = $('cv').toDataURL('image/jpeg', .85);
+}
+[...FIELDS, 'ia_gratis', 'ia_plafond'].forEach((f) => $(f).addEventListener('input', preview));
+CHECKS.forEach((c) => $(c).addEventListener('change', preview));
+$('nom').addEventListener('input', () => { if (!slugTouched && !CUR) $('slug').value = slugify($('nom').value); });
+$('slug').addEventListener('input', () => { slugTouched = true; });
+$('slug').addEventListener('blur', () => { $('slug').value = slugify($('slug').value); preview(); });
+
+$('logoF').addEventListener('change', async () => {
+  const f = $('logoF').files[0]; if (!f) return;
+  if (f.size > 1048576) { $('logoF').value = ''; return msg('edMsg', 'Logo a twò gwo (1 Mo maksimòm).'); }
+  LOGO_FILE = f; LOGO_IMG = await K.loadImage(URL.createObjectURL(f)); preview();
+});
+$('logoX').addEventListener('click', () => { LOGO_FILE = null; LOGO_URL = null; LOGO_IMG = null; $('logoF').value = ''; preview(); });
+
+function fill(g, k) {
+  FIELDS.forEach((f) => ($(f).value = g[f] ?? ''));
+  CHECKS.forEach((c) => ($(c).checked = !!g[c]));
+  $('ia_gratis').value = g.ia_gratis ?? 0; $('ia_plafond').value = g.ia_plafond ?? 0;
+  $('kNon').value = k?.non || ''; $('kTel').value = k?.telefon || ''; $('kImel').value = k?.imel || ''; $('kNota').value = k?.nota || '';
+  LOGO_URL = g.logo_url || null; LOGO_FILE = null; $('logoF').value = ''; $('mList').value = '';
+  setModel(g.modele || 'sek');
+}
+async function newGroup() {
+  CUR = null; slugTouched = false; $('edT').textContent = 'Nouvo gwoup'; $('gStats').innerHTML = ''; $('linkbox').classList.add('hidden'); msg('edMsg', '');
+  LOGO_IMG = null; fill({ type: 'lekol', lang: 'ht', c1: '#0f5132', c2: '#f2c94c', c3: '#ffffff', modele: 'sek', mod_kad: true, nan_klasman: true, aktif: true, sou_tit: '', tit: 'Fyète m 💚', riban: 'Pwomo 2027' });
+  $('mCount').textContent = 0; renderList();
+}
+$('newG').addEventListener('click', newGroup);
+async function editGroup(g) {
+  CUR = g; slugTouched = true; $('edT').textContent = g.nom; msg('edMsg', '');
+  const [k, m] = await Promise.all([sb.from('groupe_kontak').select('*').eq('groupe_id', g.id).maybeSingle(), sb.from('manm').select('tel', { count: 'exact', head: true }).eq('groupe_id', g.id)]);
+  LOGO_IMG = await K.loadImage(g.logo_url); fill(g, k.data); $('mCount').textContent = m.count || 0;
+  const s = STATS[g.id] || { kad: 0, ia: 0, d7: 0 };
+  $('gStats').innerHTML = [['Kad', s.kad], ['Pòtrè IA', s.ia], ['7 dènye jou', s.d7], ['Manm', m.count || 0]].map(([a, b]) => `<div class="stat"><b>${b}</b><span>${a}</span></div>`).join('');
+  showLink(g); renderList();
+}
+function showLink(g) {
+  const url = S.groupUrl(g.slug); $('linkbox').classList.remove('hidden'); $('gLink').textContent = url; $('open').href = url;
+  $('waShare').href = `https://wa.me/?text=${encodeURIComponent(`📸 Mete selfi w nan kad ${g.nom} : ${url}`)}`;
+  const qr = qrcode(0, 'M'); qr.addData(url); qr.make(); $('qr').innerHTML = qr.createImgTag(6, 12);
+}
+$('copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('gLink').textContent); $('copy').textContent = 'Kopye ✓'; setTimeout(() => ($('copy').textContent = 'Kopye lyen an'), 1500); } catch {} });
+$('qrDl').addEventListener('click', () => { const img = $('qr').querySelector('img'); if (!img) return; const a = document.createElement('a'); a.href = img.src; a.download = `qr-souriyo-${CUR ? CUR.slug : 'gwoup'}.gif`; a.click(); });
+
+$('save').addEventListener('click', async () => {
+  const g = current();
+  if (g.nom.length < 2) return msg('edMsg', 'Mete non gwoup la.');
+  if (!/^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/.test(g.slug)) return msg('edMsg', 'Adrès la dwe gen 3 a 40 lèt miniskil, chif oswa tirè (-).');
+  $('save').disabled = true; msg('edMsg', 'N ap anrejistre…', 'ok');
+  try {
+    if (LOGO_FILE) {
+      const ext = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp' }[LOGO_FILE.type] || 'png';
+      const path = `${g.slug}-${Date.now()}.${ext}`;
+      const up = await sb.storage.from('logos').upload(path, LOGO_FILE, { contentType: LOGO_FILE.type, upsert: false });
+      if (up.error) throw up.error;
+      g.logo_url = sb.storage.from('logos').getPublicUrl(path).data.publicUrl; LOGO_URL = g.logo_url; LOGO_FILE = null;
+    }
+    const q = CUR ? sb.from('groupes').update(g).eq('id', CUR.id).select().single() : sb.from('groupes').insert(g).select().single();
+    const { data, error } = await q; if (error) throw error;
+    const k = { groupe_id: data.id, non: $('kNon').value.trim() || null, telefon: $('kTel').value.trim() || null, imel: $('kImel').value.trim() || null, nota: $('kNota').value.trim() || null };
+    const kr = await sb.from('groupe_kontak').upsert(k); if (kr.error) throw kr.error;
+    await loadGroups(); await editGroup(G.find((x) => x.id === data.id) || data);
+    msg('edMsg', '✓ Gwoup la anrejistre. Pataje lyen an ak manm yo !', 'ok');
+  } catch (e) { msg('edMsg', friendly(e)); }
+  $('save').disabled = false;
+});
+
+/* ---------- Manm ---------- */
+$('mAdd').addEventListener('click', async () => {
+  if (!CUR) return msg('edMsg', 'Anrejistre gwoup la anvan.');
+  const rows = $('mList').value.split('\n').map((l) => { const [a, ...b] = l.split(/[,;\t]/); const tel = (a || '').replace(/\D/g, '').slice(-8); return tel.length === 8 ? { groupe_id: CUR.id, tel, non: b.join(' ').trim().slice(0, 80) || null } : null; }).filter(Boolean);
+  if (!rows.length) return msg('edMsg', 'Pa gen nimewo valab nan lis la (8 chif).');
+  const { error } = await sb.from('manm').upsert(rows, { onConflict: 'groupe_id,tel' });
+  if (error) return msg('edMsg', friendly(error));
+  $('mList').value = ''; msg('edMsg', `✓ ${rows.length} manm ajoute.`, 'ok'); editGroup(CUR);
+});
+$('mClear').addEventListener('click', async () => {
+  if (!CUR || !confirm(`Efase tout lis manm « ${CUR.nom} » a ?`)) return;
+  const { error } = await sb.from('manm').delete().eq('groupe_id', CUR.id);
+  if (error) return msg('edMsg', friendly(error)); msg('edMsg', '✓ Lis la efase.', 'ok'); editGroup(CUR);
+});
+
+/* ---------- Koupon ---------- */
+let PACK = null;
+function renderPacks() { $('cPacks').innerHTML = S.PACKS.map((p) => `<button type="button" data-cp="${p.n}" aria-pressed="${PACK === p.n}">${p.n} pòtrè · ${p.p} G</button>`).join(''); $('cCreate').disabled = !PACK; }
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-cp]'); if (b) { PACK = +b.dataset.cp; renderPacks(); } });
+renderPacks();
+function couponText(c) {
+  const g = G.find((x) => x.id === c.groupe_id);
+  const link = g ? `${S.groupUrl(g.slug)}?code=${encodeURIComponent(c.code)}${c.tel_achte ? '&tel=' + c.tel_achte : ''}` : '';
+  return `Mèsi pou peman an ! 🙏\nMen kòd ou pou ${c.photos} pòtrè IA : *${c.code}*${link ? `\n\nLouvri lyen sa a pou debloke yo :\n${link}` : '\n\nMete l nan paj gwoup ou a, nan « Mwen gen yon kòd koupon ».'}\n\nSouriyo · Foto pa w, fyète nou`;
+}
+async function loadCoupons() {
+  const { data, error } = await sb.from('coupons').select('*').order('kreye_le', { ascending: false });
+  if (error) return msg('cMsg', friendly(error));
+  const c = data || [], used = c.filter((x) => x.itilize_le);
+  $('cStats').innerHTML = [['Koupon vann', c.length], ['Itilize', used.length], ['Lajan antre', c.reduce((a, x) => a + x.prix_htg, 0).toLocaleString('fr-FR') + ' G'], ['Pòtrè vann', c.reduce((a, x) => a + x.photos, 0)]].map(([a, b]) => `<div class="stat"><b>${b}</b><span>${a}</span></div>`).join('');
+  $('cRows').innerHTML = c.map((x) => { const g = G.find((y) => y.id === x.groupe_id); return `<tr><td class="sub">${fmt(x.kreye_le)}</td><td class="mono">${esc(x.code)}</td><td>${x.photos} · ${x.prix_htg} G</td><td>${esc(g ? g.nom : '—')}</td><td>${esc(x.tel_achte || '—')}</td><td class="sub">${esc(x.note || '')}</td>
+    <td>${x.itilize_le ? `<span class="pill ok">Itilize</span><div class="sub">${fmt(x.itilize_le)}</div>` : '<span class="pill w">Poko itilize</span>'}</td>
+    <td>${!x.itilize_le && wa(x.tel_achte) ? `<a class="btn" target="_blank" rel="noopener" href="https://wa.me/${wa(x.tel_achte)}?text=${encodeURIComponent(couponText(x))}">Revoye</a>` : ''}</td></tr>`; }).join('') || '<tr><td colspan="8" class="sub">Pa gen koupon ankò.</td></tr>';
+  return c;
+}
+$('cCreate').addEventListener('click', async () => {
+  $('cCreate').disabled = true; msg('cMsg', '');
+  const { data: code, error } = await sb.rpc('creer_coupon', { p_photos: PACK, p_tel: $('cTel').value.trim() || null, p_note: $('cNote').value.trim() || null, p_slug: $('cGroup').value || null });
+  $('cCreate').disabled = false;
+  if (error) return msg('cMsg', friendly(error));
+  const list = await loadCoupons(); const c = (list || []).find((x) => x.code === code) || { code, photos: PACK };
+  const num = wa(c.tel_achte);
+  $('cDone').classList.remove('hidden');
+  $('cDone').innerHTML = `<div class="sub">Koupon kreye · ${c.photos} pòtrè</div><div class="code">${esc(code)}</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">${num ? `<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${num}?text=${encodeURIComponent(couponText(c))}">Voye l sou WhatsApp</a>` : ''}<button class="btn" type="button" id="cCopy">Kopye mesaj la</button></div>`;
+  $('cCopy').onclick = async () => { try { await navigator.clipboard.writeText(couponText(c)); $('cCopy').textContent = 'Kopye ✓'; } catch {} };
+  $('cTel').value = ''; $('cNote').value = ''; PACK = null; renderPacks();
+});
+
+/* ---------- Demand ---------- */
+async function loadDemandes() {
+  const { data, error } = await sb.from('demandes').select('*').order('created_at', { ascending: false }).limit(300);
+  if (error) return;
+  $('dRows').innerHTML = (data || []).map((x) => `<tr><td class="sub">${fmt(x.created_at)}</td><td><b>${esc(x.metye)}</b></td><td>${esc(x.groupe_slug || '—')}</td><td>${esc(x.telefon || '—')}</td><td>${esc((x.lang || '').toUpperCase())}</td><td><input type="checkbox" data-dem="${x.id}" ${x.trete ? 'checked' : ''} aria-label="Ajoute" /></td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen demand.</td></tr>';
+}
+document.addEventListener('change', async (e) => { const c = e.target.closest('[data-dem]'); if (!c) return; const { error } = await sb.from('demandes').update({ trete: c.checked }).eq('id', +c.dataset.dem); if (error) { c.checked = !c.checked; alert(friendly(error)); } });
+
+sb.auth.getSession().then(({ data }) => showApp(data.session));
+</script>
+</body>
+</html>

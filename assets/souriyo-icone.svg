@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Souriyo">
+  <defs>
+    <linearGradient id="sy-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a2f7a"/><stop offset="1" stop-color="#151848"/></linearGradient>
+    <linearGradient id="sy-cam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF7A45"/><stop offset="1" stop-color="#FF4D2E"/></linearGradient>
+  </defs>
+  <rect x="4" y="4" width="112" height="112" rx="30" fill="url(#sy-bg)"/>
+  <!-- appareil photo -->
+  <rect x="31" y="31" width="24" height="12" rx="4" fill="url(#sy-cam)"/>
+  <rect x="18" y="38" width="84" height="58" rx="16" fill="url(#sy-cam)"/>
+  <!-- étincelle (IA) à la place du flash -->
+  <path d="M89 42.5 L90.6 47.4 L95.5 49 L90.6 50.6 L89 55.5 L87.4 50.6 L82.5 49 L87.4 47.4 Z" fill="#FFE7A3"/>
+  <!-- objectif = un visage qui sourit : « Souri yo ! » -->
+  <circle cx="60" cy="67" r="22" fill="#FFC93C"/>
+  <circle cx="60" cy="67" r="15" fill="#151848"/>
+  <circle cx="54.5" cy="63" r="2.4" fill="#ffffff"/>
+  <circle cx="65.5" cy="63" r="2.4" fill="#ffffff"/>
+  <path d="M52.5 69 Q60 77 67.5 69" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+</svg>
