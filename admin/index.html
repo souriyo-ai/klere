@@ -70,6 +70,8 @@
   .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; } .pill.ok { background: #e2f4e7; color: var(--ok); } .pill.w { background: #fff4d6; color: #7a5200; }
   .packs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .packs button { border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 10px; cursor: pointer; font: 700 15px "DM Sans", system-ui, sans-serif; }
   .packs button[aria-pressed="true"] { border-color: var(--ink); background: #eef0fb; }
+  .alert { background: #fde8e6; color: #9b1c12; border-radius: 14px; padding: 12px 16px; font-weight: 700; margin-bottom: 12px; }
+  .budget { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; } .budget .bar { flex: 1; height: 12px; background: #e9e3dc; border-radius: 8px; overflow: hidden; } .budget .bar div { height: 100%; background: #1a7a3c; transition: width .4s; }
   .done { border: 2px solid var(--ok); background: #f1faf3; border-radius: 14px; padding: 14px; margin-top: 12px; text-align: center; } .done .code { font: 800 26px ui-monospace, Menlo, monospace; margin: 6px 0 10px; }
   @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } .prev { position: static; } .glist { max-height: none; } }
   @media (max-width: 600px) { .grid2, .grid3, .stats { grid-template-columns: 1fr 1fr; } .models { grid-template-columns: 1fr; } }
@@ -78,7 +80,7 @@
 <body>
 <header>
   <div class="brand"><img src="../assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span><small>admin</small></div>
-  <nav class="tabs hidden" id="nav"><button type="button" data-tab="g" aria-pressed="true">🖼️ Gwoup yo</button><button type="button" data-tab="c" aria-pressed="false">🎟️ Koupon</button><button type="button" data-tab="d" aria-pressed="false">💬 Demand metye</button></nav>
+  <nav class="tabs hidden" id="nav"><button type="button" data-tab="g" aria-pressed="true">🖼️ Gwoup yo</button><button type="button" data-tab="c" aria-pressed="false">🎟️ Koupon</button><button type="button" data-tab="d" aria-pressed="false">💬 Demand metye</button><button type="button" data-tab="r" aria-pressed="false">💰 Rantabilite</button></nav>
   <button class="out hidden" id="logout" type="button">Dekonekte</button>
 </header>
 
@@ -178,6 +180,29 @@
     <section class="card"><h2>Koupon yo</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Kòd</th><th>Pakè</th><th>Gwoup</th><th>Moun nan</th><th>Nòt</th><th>Estati</th><th></th></tr></thead><tbody id="cRows"></tbody></table></div></section>
   </div>
 
+  <!-- ===== RANTABILITE ===== -->
+  <div id="tabR" class="hidden">
+    <div class="alert hidden" id="rAlert"></div>
+    <div class="stats" id="rToday"></div>
+    <div class="budget"><div class="bar"><div id="rBar"></div></div><span class="sub" id="rBarT"></span></div>
+    <section class="card"><h2>Paramèt IA</h2>
+      <div class="grid3">
+        <div><label class="f" for="cfModele">Modèl IA (OpenRouter)</label><input class="t" id="cfModele" maxlength="120" /></div>
+        <div><label class="f" for="cfBidje">Bidjè maksimòm pa jou ($)</label><input class="t" id="cfBidje" type="number" min="0" step="0.5" /></div>
+        <div><label class="f" for="cfTo">To : 1 $ = … goud</label><input class="t" id="cfTo" type="number" min="1" step="0.5" /></div>
+        <div><label class="f" for="cfEst">Pri estime pa pòtrè ($)</label><input class="t" id="cfEst" type="number" min="0.001" step="0.001" /></div>
+        <div><label class="f" for="cfAlet">Alèt si pri mwayen depase ($)</label><input class="t" id="cfAlet" type="number" min="0.001" step="0.001" /></div>
+        <div><label class="f" for="cfKredi">Kredi pou 1 pòtrè</label><input class="t" id="cfKredi" type="number" min="1" max="10" /></div>
+      </div>
+      <label class="tog" style="margin-top:12px"><input type="checkbox" id="cfAktif" /> <b>IA a aktif</b> — retire kwochèt la pou w kanpe tout pòtrè IA yo touswit</label>
+      <p class="sub">Si pri IA a monte, ou ka : mete <b>plis kredi pou 1 pòtrè</b> (pa egzanp 2), oswa chanje <b>modèl la</b>. Pri an goud yo ak kontra yo pa chanje.</p>
+      <button class="btn main" type="button" id="cfSave">Anrejistre paramèt yo</button><p class="msg" id="cfMsg"></p>
+    </section>
+    <section class="card"><h2>Pa gwoup (30 dènye jou)</h2><div style="overflow:auto"><table><thead><tr><th>Gwoup</th><th>Pòtrè</th><th>Depans IA</th><th>Lajan antre (koupon)</th><th>Maj</th><th>Pri mwayen</th></tr></thead><tbody id="rGroups"></tbody></table></div>
+      <p class="sub">« Lajan antre » kounya = koupon MonCash yo. Pakè òganizasyon yo ak peman otomatik yo ap ajoute isit la tou.</p></section>
+    <section class="card"><h2>Pa jou (14 dènye jou)</h2><div style="overflow:auto"><table><thead><tr><th>Jou</th><th>Pòtrè reyisi</th><th>Echwe</th><th>Depans ($)</th><th>Depans (G)</th><th>Pri mwayen</th></tr></thead><tbody id="rDays"></tbody></table></div></section>
+  </div>
+
   <!-- ===== DEMAND ===== -->
   <div id="tabD" class="hidden">
     <section class="card"><h2>Metye moun mande</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Metye</th><th>Gwoup</th><th>WhatsApp</th><th>Lang</th><th>Ajoute ?</th></tr></thead><tbody id="dRows"></tbody></table></div></section>
@@ -224,8 +249,8 @@ $('logout').addEventListener('click', async () => { await sb.auth.signOut(); sho
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
   document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', x === b));
-  $('tabG').classList.toggle('hidden', b.dataset.tab !== 'g'); $('tabC').classList.toggle('hidden', b.dataset.tab !== 'c'); $('tabD').classList.toggle('hidden', b.dataset.tab !== 'd');
-  if (b.dataset.tab === 'c') loadCoupons(); if (b.dataset.tab === 'd') loadDemandes();
+  ['g', 'c', 'd', 'r'].forEach((k) => $('tab' + k.toUpperCase()).classList.toggle('hidden', b.dataset.tab !== k));
+  if (b.dataset.tab === 'c') loadCoupons(); if (b.dataset.tab === 'd') loadDemandes(); if (b.dataset.tab === 'r') loadRanta();
 });
 
 /* ---------- Gwoup yo ---------- */
@@ -386,6 +411,42 @@ async function loadDemandes() {
   $('dRows').innerHTML = (data || []).map((x) => `<tr><td class="sub">${fmt(x.created_at)}</td><td><b>${esc(x.metye)}</b></td><td>${esc(x.groupe_slug || '—')}</td><td>${esc(x.telefon || '—')}</td><td>${esc((x.lang || '').toUpperCase())}</td><td><input type="checkbox" data-dem="${x.id}" ${x.trete ? 'checked' : ''} aria-label="Ajoute" /></td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen demand.</td></tr>';
 }
 document.addEventListener('change', async (e) => { const c = e.target.closest('[data-dem]'); if (!c) return; const { error } = await sb.from('demandes').update({ trete: c.checked }).eq('id', +c.dataset.dem); if (error) { c.checked = !c.checked; alert(friendly(error)); } });
+
+/* ---------- Rantabilite ---------- */
+const haiti = (d = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Port-au-Prince' }).format(d);
+const usd = (n) => '$' + Number(n || 0).toFixed(2), usd3 = (n) => '$' + Number(n || 0).toFixed(3), htg = (n) => Math.round(n || 0).toLocaleString('fr-FR') + ' G';
+let CFG = null;
+async function loadRanta() {
+  const since = haiti(new Date(Date.now() - 30 * 864e5));
+  const [c, j, k] = await Promise.all([sb.from('ia_config').select('*').eq('id', 1).single(), sb.from('ia_jounal').select('jou, groupe_id, estati, kout_usd').gte('jou', since).limit(50000), sb.from('coupons').select('prix_htg, groupe_id, itilize_nan, kreye_le').gte('kreye_le', since)]);
+  if (c.error) return msg('cfMsg', friendly(c.error));
+  CFG = c.data; const J = j.data || [], C = k.data || [], to = +CFG.to_htg;
+  $('cfModele').value = CFG.modele; $('cfBidje').value = CFG.bidje_jou_usd; $('cfTo').value = CFG.to_htg; $('cfEst').value = CFG.kout_estime_usd; $('cfAlet').value = CFG.alet_kout_usd; $('cfKredi').value = CFG.kredi_potre; $('cfAktif').checked = CFG.aktif;
+  const today = haiti(), T = J.filter((x) => x.jou === today), spent = T.reduce((a, x) => a + +x.kout_usd, 0);
+  const ok = J.filter((x) => x.estati === 'ok'), ok7 = ok.filter((x) => x.jou >= haiti(new Date(Date.now() - 7 * 864e5)));
+  const avg7 = ok7.length ? ok7.reduce((a, x) => a + +x.kout_usd, 0) / ok7.length : 0;
+  $('rToday').innerHTML = [['Pòtrè jodi a', T.filter((x) => x.estati === 'ok').length], ['Depans jodi a', `${usd(spent)} · ${htg(spent * to)}`], ['Pri mwayen (7 j)', avg7 ? usd3(avg7) : '—'], ['IA a', CFG.aktif ? '🟢 Aktif' : '🔴 Kanpe']].map(([a, b]) => `<div class="stat"><b>${b}</b><span>${a}</span></div>`).join('');
+  const pct = CFG.bidje_jou_usd > 0 ? Math.min(100, spent / CFG.bidje_jou_usd * 100) : 100;
+  $('rBar').style.width = pct + '%'; $('rBar').style.background = pct > 85 ? '#b3261e' : pct > 60 ? '#d97706' : '#1a7a3c';
+  $('rBarT').textContent = `Bidjè jodi a : ${usd(spent)} / ${usd(CFG.bidje_jou_usd)} (${Math.round(pct)} %)`;
+  const al = [];
+  if (avg7 > +CFG.alet_kout_usd) al.push(`⚠️ Pri mwayen yon pòtrè (${usd3(avg7)}) depase limit ou a (${usd3(CFG.alet_kout_usd)}). Konsidere mete plis kredi pou 1 pòtrè, oswa chanje modèl.`);
+  if (pct >= 85) al.push(`⚠️ Bidjè jodi a prèske fini (${Math.round(pct)} %). Lè l fini, pòtrè IA yo ap kanpe jiska demen.`);
+  if (!CFG.aktif) al.push('🔴 IA a kanpe : pèsonn pa ka fè pòtrè IA kounya.');
+  $('rAlert').classList.toggle('hidden', !al.length); $('rAlert').innerHTML = al.map(esc).join('<br>');
+  const byG = {};
+  J.forEach((x) => { const g = byG[x.groupe_id] ||= { n: 0, cost: 0, rev: 0 }; if (x.estati === 'ok') g.n++; g.cost += +x.kout_usd; });
+  C.forEach((x) => { const id = x.groupe_id || x.itilize_nan; const g = byG[id] ||= { n: 0, cost: 0, rev: 0 }; g.rev += x.prix_htg; });
+  $('rGroups').innerHTML = Object.entries(byG).sort((a, b) => b[1].n - a[1].n).map(([id, g]) => { const gr = G.find((x) => x.id === id); const m = g.rev - g.cost * to; return `<tr><td>${esc(gr ? gr.nom : '— (nenpòt gwoup)')}</td><td>${g.n}</td><td>${usd(g.cost)} · ${htg(g.cost * to)}</td><td>${htg(g.rev)}</td><td style="font-weight:700;color:${m >= 0 ? 'var(--ok)' : '#b3261e'}">${htg(m)}</td><td>${g.n ? usd3(g.cost / g.n) : '—'}</td></tr>`; }).join('') || '<tr><td colspan="6" class="sub">Pa gen done ankò.</td></tr>';
+  const byD = {}; J.forEach((x) => { const d = byD[x.jou] ||= { ok: 0, ko: 0, cost: 0 }; x.estati === 'echwe' ? d.ko++ : x.estati === 'ok' && d.ok++; d.cost += +x.kout_usd; });
+  $('rDays').innerHTML = Object.entries(byD).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 14).map(([d, x]) => `<tr><td>${new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}</td><td>${x.ok}</td><td>${x.ko}</td><td>${usd(x.cost)}</td><td>${htg(x.cost * to)}</td><td>${x.ok ? usd3(x.cost / x.ok) : '—'}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen done ankò.</td></tr>';
+}
+$('cfSave').addEventListener('click', async () => {
+  const v = { modele: $('cfModele').value.trim(), bidje_jou_usd: +$('cfBidje').value, to_htg: +$('cfTo').value, kout_estime_usd: +$('cfEst').value, alet_kout_usd: +$('cfAlet').value, kredi_potre: parseInt($('cfKredi').value, 10), aktif: $('cfAktif').checked };
+  if (!v.modele || !(v.to_htg > 0) || !(v.kout_estime_usd > 0) || !(v.kredi_potre >= 1)) return msg('cfMsg', 'Verifye chif yo.');
+  const { error } = await sb.from('ia_config').update(v).eq('id', 1);
+  if (error) return msg('cfMsg', friendly(error)); msg('cfMsg', '✓ Paramèt yo anrejistre. Yo aplike touswit.', 'ok'); loadRanta();
+});
 
 sb.auth.getSession().then(({ data }) => showApp(data.session));
 </script>
