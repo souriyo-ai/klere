@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Espas òganizasyon · Souriyo</title>
+<meta name="description" content="Kreye kad gwoup ou, mete l an liy, swiv konbyen moun ki fè foto yo." />
+<link rel="icon" href="../assets/souriyo-icone.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@1,500&display=swap" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="../assets/config.js"></script>
+<script src="../assets/kad.js"></script>
+<style>
+  :root { --ink: #151848; --ink-2: #4b5085; --coral: #FF5A36; --sun: #FFC93C; --cream: #fff8f2; --line: #ece4dc; --ok: #1a7a3c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 "DM Sans", system-ui, sans-serif; color: var(--ink); background: var(--cream); }
+  .hidden { display: none !important; }
+  header { background: #fff; border-bottom: 1px solid var(--line); padding: 10px 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; position: sticky; top: 0; z-index: 5; }
+  .brand { display: flex; align-items: center; gap: 8px; font: 800 20px "Bricolage Grotesque", system-ui, sans-serif; text-decoration: none; color: var(--ink); }
+  .brand img { width: 30px; height: 30px; } .brand b { color: var(--coral); }
+  nav.tabs { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+  nav.tabs button, .out { border: 1.5px solid var(--line); background: #fff; color: var(--ink-2); border-radius: 999px; padding: 7px 14px; font: 600 14px "DM Sans", system-ui, sans-serif; cursor: pointer; }
+  nav.tabs button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  main { max-width: 1180px; margin: 0 auto; padding: 18px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 20px; margin-bottom: 14px; }
+  h1 { font: 800 clamp(26px, 5vw, 38px)/1.1 "Bricolage Grotesque", system-ui, sans-serif; margin: 0 0 6px; letter-spacing: -.02em; }
+  h2 { font: 800 19px "Bricolage Grotesque", system-ui, sans-serif; margin: 0 0 10px; }
+  .sub { color: var(--ink-2); font-size: 14px; }
+  label.f { display: block; font-weight: 700; font-size: 13px; margin: 10px 0 4px; }
+  input.t, select.t, textarea.t { width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; font: 15px "DM Sans", system-ui, sans-serif; background: #fff; }
+  textarea.t { min-height: 90px; resize: vertical; }
+  .btn { border: 1.5px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px; padding: 10px 18px; font: 700 14px "DM Sans", system-ui, sans-serif; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .btn.main { background: var(--coral); border-color: var(--coral); color: #fff; } .btn.wa { background: #25D366; border-color: #25D366; color: #06381b; } .btn.full { width: 100%; padding: 12px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .msg { min-height: 1.2em; font-size: 14px; margin: 8px 0 0; } .msg.err { color: #b3261e; } .msg.ok { color: var(--ok); font-weight: 700; }
+  .tog { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; margin: 8px 0; } .tog input { width: 18px; height: 18px; accent-color: var(--ink); margin-top: 2px; flex: none; }
+  /* Auth */
+  .auth { max-width: 520px; margin: 30px auto; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #f3efe9; border-radius: 14px; padding: 5px; margin-bottom: 14px; }
+  .seg button { border: 0; background: transparent; border-radius: 10px; padding: 10px; font: 700 15px "DM Sans", system-ui, sans-serif; cursor: pointer; color: var(--ink-2); }
+  .seg button[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  .hp { position: absolute; left: -9999px; }
+  /* Tablodbò */
+  .banner { border-radius: 16px; padding: 14px 18px; margin-bottom: 14px; font-weight: 600; }
+  .banner.wait { background: #fff4d6; color: #7a5200; } .banner.ok { background: #e2f4e7; color: var(--ok); } .banner.ko { background: #fde8e6; color: #9b1c12; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+  .stat { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 14px; } .stat b { display: block; font: 800 28px "Bricolage Grotesque", system-ui, sans-serif; } .stat span { font-size: 12px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+  .camps { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .camp { border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+  .camp img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; background: #eee; }
+  .camp .bd { padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .camp .bd b { font-size: 16px; } .camp .row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; } .pill.ok { background: #e2f4e7; color: var(--ok); } .pill.w { background: #fff4d6; color: #7a5200; } .pill.off { background: #eee; color: #666; }
+  .new { border: 2px dashed #d9cfc4; border-radius: 18px; display: grid; place-items: center; text-align: center; padding: 30px; cursor: pointer; background: #fffcf9; font-weight: 700; color: var(--ink-2); min-height: 200px; }
+  /* Editè */
+  .layout { display: grid; grid-template-columns: 1fr 380px; gap: 14px; align-items: start; }
+  .lib { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+  .lib button { border: 1.5px solid var(--line); background: #fff; border-radius: 14px; padding: 8px; cursor: pointer; text-align: left; font: 600 13px "DM Sans", system-ui, sans-serif; color: var(--ink); display: flex; gap: 8px; align-items: center; }
+  .lib button .sw { width: 28px; height: 28px; border-radius: 8px; flex: none; }
+  .models { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .models button { border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 8px; cursor: pointer; font: 600 13px "DM Sans", system-ui, sans-serif; color: var(--ink); }
+  .models button[aria-pressed="true"] { border-color: var(--ink); background: #eef0fb; }
+  .colors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .colors label { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--line); border-radius: 10px; padding: 6px 8px; font-size: 13px; }
+  .colors input[type=color] { width: 34px; height: 30px; border: 0; padding: 0; background: none; cursor: pointer; }
+  fieldset { border: 1px solid var(--line); border-radius: 14px; padding: 6px 14px 12px; margin: 14px 0 0; } legend { font-weight: 800; font-size: 13px; padding: 0 6px; }
+  .pay { display: grid; gap: 8px; margin-top: 6px; }
+  .pay label { display: flex; gap: 10px; align-items: flex-start; border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; font-size: 14px; }
+  .pay label:has(input:checked) { border-color: var(--ink); background: #eef0fb; } .pay input { margin-top: 3px; accent-color: var(--ink); }
+  .pv { position: sticky; top: 76px; } .pv img { width: 100%; border-radius: 14px; box-shadow: 0 14px 40px rgba(21,24,72,.2); display: block; }
+  .pv .seg { margin: 0 0 10px; }
+  .kit { margin-top: 12px; background: #f6f3ef; border-radius: 14px; padding: 12px; text-align: center; }
+  .kit code { display: block; word-break: break-all; margin-bottom: 8px; font-size: 14px; } .kit .acts { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  #qr { width: 150px; margin: 10px auto 0; } #qr img { width: 150px !important; height: 150px !important; image-rendering: pixelated; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; } th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; } th { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); }
+  .packs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .pk { border: 1.5px solid var(--line); border-radius: 16px; padding: 16px; } .pk b { display: block; font: 800 26px "Bricolage Grotesque", system-ui, sans-serif; }
+  @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } .pv { position: static; } .stats { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .grid2, .grid3 { grid-template-columns: 1fr; } .models { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="../"><img src="../assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span></a>
+  <span class="sub" id="orgName"></span>
+  <nav class="tabs hidden" id="nav">
+    <button type="button" data-tab="dash" aria-pressed="true">📊 Tablodbò</button>
+    <button type="button" data-tab="ed" aria-pressed="false">🖼️ Kanpay</button>
+    <button type="button" data-tab="mod" aria-pressed="false">🎨 Modèl pèsonalize</button>
+    <button type="button" data-tab="kob" aria-pressed="false">💰 Lajan</button>
+    <button type="button" data-tab="pro" aria-pressed="false">⚙️ Pwofil</button>
+  </nav>
+  <button class="out hidden" id="logout" type="button">Dekonekte</button>
+</header>
+
+<!-- ===== KONEKSYON / ENSKRIPSYON ===== -->
+<section class="auth" id="auth">
+  <div class="card">
+    <h1>Espas òganizasyon</h1>
+    <p class="sub">Lekòl, inivèsite, evènman, legliz, pati politik, asosyasyon, antrepriz : kreye kad gwoup ou, pataje l, epi swiv konbyen moun ki fè foto yo.</p>
+    <div class="seg"><button type="button" data-auth="in" aria-pressed="true">Konekte</button><button type="button" data-auth="up" aria-pressed="false">Kreye yon kont</button></div>
+    <form id="fIn">
+      <label class="f" for="inE">Imèl</label><input class="t" id="inE" type="email" autocomplete="username" required />
+      <label class="f" for="inP">Modpas</label><input class="t" id="inP" type="password" autocomplete="current-password" required />
+      <button class="btn main full" type="submit" style="margin-top:14px">Konekte</button><p class="msg err" id="inMsg"></p>
+    </form>
+    <form id="fUp" class="hidden">
+      <label class="f" for="upNon">Non òganizasyon an</label><input class="t" id="upNon" maxlength="100" required placeholder="ex. Lekòl Flanbwayan" />
+      <label class="f" for="upKal">Kalite</label>
+      <select class="t" id="upKal"><option value="lekol">🏫 Lekòl</option><option value="inivesite">🎓 Inivèsite</option><option value="evenman">🎤 Evènman</option><option value="legliz">⛪ Legliz</option><option value="politik">🗳️ Pati / kanpay politik</option><option value="asosyasyon">🤝 Asosyasyon / klib</option><option value="antrepriz">💼 Antrepriz</option><option value="lot">✨ Lòt</option></select>
+      <div class="grid2"><div><label class="f" for="upKon">Non responsab la</label><input class="t" id="upKon" maxlength="80" required /></div><div><label class="f" for="upTel">WhatsApp</label><input class="t" id="upTel" inputmode="tel" maxlength="25" required placeholder="3727 4672" /></div></div>
+      <label class="f" for="upDesk">Kisa òganizasyon an fè ? (pa obligatwa)</label><textarea class="t" id="upDesk" maxlength="600" style="min-height:60px"></textarea>
+      <div class="grid2"><div><label class="f" for="upE">Imèl</label><input class="t" id="upE" type="email" autocomplete="username" required /></div><div><label class="f" for="upP">Modpas (8 karaktè omwen)</label><input class="t" id="upP" type="password" autocomplete="new-password" minlength="8" required /></div></div>
+      <input class="hp" id="upHp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <label class="tog"><input type="checkbox" id="upOk" required /> <span>Mwen dakò ak kondisyon itilizasyon Souriyo yo : pa gen fo foto, pa gen kontni ki twonpe moun, pa gen foto moun san yo pa dakò. Souriyo ap verifye òganizasyon an anvan kanpay li yo ale an liy.</span></label>
+      <button class="btn main full" type="submit" style="margin-top:10px">Kreye kont òganizasyon an</button><p class="msg err" id="upMsg"></p>
+    </form>
+  </div>
+</section>
+
+<section class="auth hidden" id="noOrg"><div class="card"><h2>Kont sa a pa mare ak okenn òganizasyon</h2><p class="sub">Si w se administratè Souriyo, ale sou <a href="../admin/">paj admin an</a>.</p></div></section>
+
+<main class="hidden" id="app">
+  <div class="banner hidden" id="banner"></div>
+
+  <!-- ===== TABLODBÒ ===== -->
+  <div id="tDash">
+    <div class="stats" id="stats"></div>
+    <div class="card"><h2>Kanpay ou yo</h2><div class="camps" id="camps"></div></div>
+  </div>
+
+  <!-- ===== EDITÈ KANPAY ===== -->
+  <div id="tEd" class="hidden layout">
+    <section class="card">
+      <h2 id="edT">Nouvo kanpay</h2>
+      <label class="f">Kòmanse ak yon modèl nan bibliyotèk la</label>
+      <div class="lib" id="lib"></div>
+      <div class="grid2">
+        <div><label class="f" for="nom">Non kanpay la</label><input class="t" id="nom" maxlength="80" placeholder="ex. Pwomo 2027" /></div>
+        <div><label class="f" for="slug">Adrès (souriyo.com/…)</label><input class="t" id="slug" maxlength="40" /></div>
+      </div>
+      <label class="f">Modèl kad la</label>
+      <div class="models" id="models"><button type="button" data-m="sek">🟢 Sèk</button><button type="button" data-m="polaroid">📷 Polaroid</button><button type="button" data-m="pwo">🏅 Pwo</button></div>
+      <label class="f">Koulè</label>
+      <div class="colors"><label><input type="color" id="c1" /> Fon</label><label><input type="color" id="c2" /> Aksan</label><label><input type="color" id="c3" /> Kad foto</label></div>
+      <div class="grid2">
+        <div><label class="f" for="sou_tit">Ti tèks anlè</label><input class="t" id="sou_tit" maxlength="60" /></div>
+        <div><label class="f" for="tit">Gwo tit</label><input class="t" id="tit" maxlength="40" /></div>
+        <div><label class="f" for="riban">Riban</label><input class="t" id="riban" maxlength="30" /></div>
+        <div><label class="f" for="badj">Badj (modèl polaroid)</label><input class="t" id="badj" maxlength="16" /></div>
+      </div>
+      <label class="f" for="liy">Liy anba (dat, kote, slogan…)</label><input class="t" id="liy" maxlength="60" />
+      <label class="f">Logo (PNG, JPG oswa WebP, 1 Mo maks.)</label>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input type="file" id="logoF" accept="image/png,image/jpeg,image/webp" /><button class="btn" type="button" id="logoX">Retire logo a</button></div>
+      <div class="grid2"><div><label class="f" for="lang">Lang paj la</label><select class="t" id="lang"><option value="ht">Kreyòl</option><option value="fr">Français</option><option value="en">English</option></select></div></div>
+
+      <fieldset><legend>Sa piblik la ka fè</legend>
+        <label class="tog"><input type="checkbox" id="mod_kad" /> <span>📸 <b>Kad gwoup</b> : gratis pou tout moun, toujou.</span></label>
+        <label class="tog"><input type="checkbox" id="mod_ia" /> <span>✨ <b>Pòtrè IA</b> : rad pwofesyonèl (28 metye), nan kad ou a.</span></label>
+        <div id="payBox">
+          <label class="f">Kiyès ki peye pòtrè IA yo ?</label>
+          <div class="pay">
+            <label><input type="radio" name="pay" value="ofri" /> <span><b>Òganizasyon an ofri yo</b> : ou achte yon pakè, epi manm ou yo fè pòtrè yo gratis.</span></label>
+            <label><input type="radio" name="pay" value="piblik" /> <span><b>Piblik la peye</b> : chak moun peye pòtrè l, epi <b>ou touche <span class="kom"></span> %</b> sou chak vant.</span></label>
+            <label><input type="radio" name="pay" value="melanj" /> <span><b>Melanj</b> : kèk pòtrè gratis (pakè ou a), apre sa piblik la peye epi ou touche komisyon.</span></label>
+          </div>
+          <div class="grid2" id="priBox"><div><label class="f" for="pri">Pri yon pòtrè pou piblik la (goud)</label><input class="t" id="pri" type="number" min="25" max="2000" step="5" /></div><div class="sub" style="align-self:end;padding-bottom:10px" id="priNote"></div></div>
+          <p class="sub" id="payNote"></p>
+        </div>
+        <label class="tog"><input type="checkbox" id="manm_selman" /> <span>Pòtrè IA yo rezève pou manm ki nan lis ou a sèlman</span></label>
+        <label class="tog"><input type="checkbox" id="nan_klasman" /> <span>Parèt nan klasman piblik la</span></label>
+        <label class="tog"><input type="checkbox" id="aktif" /> <span><b>Kanpay la an liy</b> <span class="sub" id="aktifNote"></span></span></label>
+      </fieldset>
+
+      <fieldset id="manmBox"><legend>Lis manm (<span id="mCount">0</span>)</legend>
+        <p class="sub" style="margin:6px 0">Yon nimewo WhatsApp pa liy, ak non an si w vle : <code>3727 4672, Marie Joseph</code></p>
+        <textarea class="t" id="mList"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="btn" type="button" id="mAdd">Ajoute nan lis la</button><button class="btn" type="button" id="mClear">Efase tout lis la</button></div>
+      </fieldset>
+
+      <button class="btn main full" type="button" id="save" style="margin-top:14px">Anrejistre kanpay la</button><p class="msg" id="edMsg"></p>
+      <p class="sub">Pa jwenn modèl ou vle a ? <a href="#" data-goto="mod">Dekri l pou nou</a>, ekip Souriyo a ap fè l pou ou.</p>
+    </section>
+    <aside class="card pv">
+      <div class="seg"><button type="button" data-pv="kad" aria-pressed="true">📸 Kad</button><button type="button" data-pv="ia" aria-pressed="false">✨ Pòtrè IA</button></div>
+      <img id="pvImg" alt="Aperçu" />
+      <div class="kit hidden" id="kit">
+        <b>📣 Kit maketing</b>
+        <code id="link"></code>
+        <div class="acts"><button class="btn" type="button" id="copy">Kopye lyen an</button><a class="btn" id="open" target="_blank" rel="noopener">Louvri</a><a class="btn wa" id="waShare" target="_blank" rel="noopener">WhatsApp</a></div>
+        <div id="qr"></div>
+        <div class="acts" style="margin-top:8px"><button class="btn" type="button" id="qrDl">QR code</button><button class="btn" type="button" id="poster">Afich (imaj)</button><button class="btn" type="button" id="copyMsg">Mesaj pou pataje</button></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ===== MODÈL PÈSONALIZE ===== -->
+  <div id="tMod" class="hidden">
+    <section class="card"><h2>🎨 Dekri modèl ou ta renmen an</h2>
+      <p class="sub">Ou pa jwenn sa w vle a nan bibliyotèk la ? Dekri l : koulè, logo, tèks, estil, sa w vle moun yo santi. Ekip Souriyo a ap voye yon pri ba ou, epi fè l pou ou.</p>
+      <label class="f" for="mdCamp">Pou ki kanpay ? (pa obligatwa)</label><select class="t" id="mdCamp"></select>
+      <label class="f" for="mdDesk">Deskripsyon</label><textarea class="t" id="mdDesk" maxlength="2000" placeholder="ex. Yon kad ble ak wouj, ak logo lekòl la anlè, ak yon riban « Fyè dèske m nan Pwomo 2027 », estil elegan…"></textarea>
+      <label class="f" for="mdRef">Lyen yon egzanp oswa yon enspirasyon (pa obligatwa)</label><input class="t" id="mdRef" maxlength="500" placeholder="https://…" />
+      <button class="btn main" type="button" id="mdGo" style="margin-top:12px">Voye demann lan</button><p class="msg" id="mdMsg"></p>
+    </section>
+    <section class="card"><h2>Demann ou yo</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Deskripsyon</th><th>Estati</th><th>Pri</th><th>Repons Souriyo</th></tr></thead><tbody id="mdRows"></tbody></table></div></section>
+  </div>
+
+  <!-- ===== LAJAN ===== -->
+  <div id="tKob" class="hidden">
+    <section class="card"><h2>💰 Kijan ou fè lajan ak Souriyo</h2>
+      <div class="grid2">
+        <div class="pk"><span class="sub">Komisyon ou sou chak pòtrè piblik la achte</span><b id="kKom"></b><span class="sub">Ex. pòtrè a 100 G → ou touche <span id="kEx"></span> G</span></div>
+        <div class="pk"><span class="sub">Kad gwoup yo</span><b>Gratis</b><span class="sub">pou tout moun, pou fè kanpay ou a vire</span></div>
+      </div>
+      <h2 style="margin-top:18px">Pakè pòtrè IA pou manm ou yo</h2><div class="packs" id="packs"></div>
+      <p class="sub" style="margin-top:12px">Peman otomatik MonCash, achte pakè an liy ak demand peman komisyon ap disponib byento. Pou kounya, kontakte ekip Souriyo a sou WhatsApp.</p>
+      <a class="btn wa" id="kWa" target="_blank" rel="noopener">Pale ak Souriyo sou WhatsApp</a>
+    </section>
+  </div>
+
+  <!-- ===== PWOFIL ===== -->
+  <div id="tPro" class="hidden">
+    <section class="card"><h2>⚙️ Pwofil òganizasyon an</h2>
+      <div class="grid2"><div><label class="f" for="pNon">Non</label><input class="t" id="pNon" maxlength="100" /></div><div><label class="f" for="pKal">Kalite</label><select class="t" id="pKal"></select></div>
+        <div><label class="f" for="pKon">Responsab</label><input class="t" id="pKon" maxlength="80" /></div><div><label class="f" for="pTel">WhatsApp</label><input class="t" id="pTel" maxlength="25" /></div></div>
+      <label class="f" for="pDesk">Deskripsyon</label><textarea class="t" id="pDesk" maxlength="600"></textarea>
+      <button class="btn main" type="button" id="pSave" style="margin-top:12px">Anrejistre</button><p class="msg" id="pMsg"></p>
+    </section>
+  </div>
+</main>
+<canvas id="cv" class="hidden"></canvas>
+
+<script>
+const S = window.SOURIYO, K = window.SouriyoKad;
+const sb = window.supabase.createClient(S.SUPABASE_URL, S.SUPABASE_KEY);
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const msg = (id, t, k = 'err') => { $(id).className = `msg ${k}`; $(id).textContent = t; };
+const slugify = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+const KAL = { lekol: '🏫 Lekòl', inivesite: '🎓 Inivèsite', evenman: '🎤 Evènman', legliz: '⛪ Legliz', politik: '🗳️ Politik', asosyasyon: '🤝 Asosyasyon', antrepriz: '💼 Antrepriz', lot: '✨ Lòt' };
+const G_TYPE = { lekol: 'lekol', inivesite: 'lekol', evenman: 'evenman', legliz: 'legliz', politik: 'lot', asosyasyon: 'lot', antrepriz: 'antrepriz', lot: 'lot' };
+function friendly(e) {
+  const m = String(e?.message || e || ''); console.warn(e);
+  if (/duplicate key|groupes_slug_key/.test(m)) return 'Adrès sa a deja pran. Chwazi yon lòt.';
+  if (/slug/.test(m) && /check/.test(m)) return 'Adrès la dwe gen 3 a 40 lèt miniskil, chif oswa tirè (-).';
+  if (/check constraint/.test(m)) return 'Gen yon chan ki pa nan bon fòma.';
+  if (/failed to fetch|network/i.test(m)) return 'Pa gen koneksyon. Eseye ankò.';
+  if (/42501|permission|row-level/i.test(m)) return 'Ou pa gen aksè pou fè sa.';
+  return 'Yon erè rive. Eseye ankò.';
+}
+
+/* ---------- Bibliyotèk modèl ---------- */
+const LIB = [
+  { n: '🏫 Lekòl / Pwomo', modele: 'sek', c1: '#0f5132', c2: '#f2c94c', c3: '#ffffff', sou_tit: '{org}', tit: 'Fyète m 💚', riban: 'Pwomo 2027', badj: '', liy: '' },
+  { n: '🎓 Finisan', modele: 'pwo', c1: '#0a1f38', c2: '#d8b25a', c3: '#ffffff', sou_tit: 'Finisan', tit: 'Diplome', riban: 'Promotion 2026', badj: '', liy: '{org}' },
+  { n: '🎤 Evènman « M ap la »', modele: 'polaroid', c1: '#5b21b6', c2: '#facc15', c3: '#ffffff', sou_tit: '', tit: '{org}', riban: '', badj: 'M ap la !', liy: 'Dat · Kote' },
+  { n: '🎉 « Mwen te la »', modele: 'polaroid', c1: '#0e7490', c2: '#fbbf24', c3: '#ffffff', sou_tit: '', tit: '{org}', riban: '', badj: 'Mwen te la !', liy: 'Mèsi pou tout moun' },
+  { n: '⛪ Legliz / Kan', modele: 'sek', c1: '#f4efe6', c2: '#b91c1c', c3: '#ffffff', sou_tit: '{org}', tit: 'Mwen la ✝️', riban: 'Benediksyon', badj: '', liy: '' },
+  { n: '🗳️ Kanpay politik', modele: 'polaroid', c1: '#1e3a8a', c2: '#ef4444', c3: '#ffffff', sou_tit: '', tit: 'Mwen sipòte {org}', riban: '', badj: 'Ann vote !', liy: 'Eleksyon 2026' },
+  { n: '💼 Antrepriz / Ekip', modele: 'pwo', c1: '#151848', c2: '#FF5A36', c3: '#ffffff', sou_tit: 'Ekip', tit: '', riban: 'Fyè de ekip mwen', badj: '', liy: '{org}' },
+  { n: '🤝 Asosyasyon / Klib', modele: 'sek', c1: '#b45309', c2: '#fde68a', c3: '#ffffff', sou_tit: '{org}', tit: 'Manm fyè', riban: 'Ansanm nou pi fò', badj: '', liy: '' },
+];
+const FIELDS = ['nom', 'slug', 'c1', 'c2', 'c3', 'sou_tit', 'tit', 'riban', 'badj', 'liy', 'lang'];
+const CHECKS = ['mod_kad', 'mod_ia', 'manm_selman', 'nan_klasman', 'aktif'];
+let ORG = null, PARAM = null, CAMPS = [], STATS = {}, CUR = null, MODEL = 'sek', LOGO_URL = null, LOGO_FILE = null, LOGO_IMG = null, PV = 'kad', SAMPLE = {}, slugTouched = false;
+const kom = () => +(ORG?.komisyon_pct ?? PARAM?.komisyon_pct ?? 30);
+
+/* ---------- Auth ---------- */
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-auth]'); if (!b) return; document.querySelectorAll('[data-auth]').forEach((x) => x.setAttribute('aria-pressed', x === b)); $('fIn').classList.toggle('hidden', b.dataset.auth !== 'in'); $('fUp').classList.toggle('hidden', b.dataset.auth !== 'up'); });
+$('fIn').addEventListener('submit', async (e) => {
+  e.preventDefault(); msg('inMsg', '');
+  const { data, error } = await sb.auth.signInWithPassword({ email: $('inE').value.trim(), password: $('inP').value });
+  if (error) return msg('inMsg', 'Imèl oswa modpas la pa bon.'); start(data.session);
+});
+const UPERR = { non: 'Mete non òganizasyon an.', kalite: 'Chwazi kalite òganizasyon an.', imel: 'Imèl la pa bon.', tel: 'Mete yon nimewo WhatsApp ki gen 8 chif omwen.', modpas: 'Modpas la dwe gen 8 karaktè omwen.', kondisyon: 'Ou dwe dakò ak kondisyon yo.', imel_egziste: 'Gen yon kont ak imèl sa a deja. Konekte pito.', server: 'Yon erè rive. Eseye ankò.' };
+$('fUp').addEventListener('submit', async (e) => {
+  e.preventDefault(); msg('upMsg', '');
+  const body = { action: 'enskri', non: $('upNon').value, kalite: $('upKal').value, kontak_non: $('upKon').value, tel: $('upTel').value, deskripsyon: $('upDesk').value, imel: $('upE').value, modpas: $('upP').value, kondisyon: $('upOk').checked, siwo: $('upHp').value };
+  const btn = e.submitter; btn.disabled = true;
+  try {
+    const r = await fetch(`${S.SUPABASE_URL}/functions/v1/souriyo-org`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) { btn.disabled = false; return msg('upMsg', UPERR[j.error] || UPERR.server); }
+    const { data, error } = await sb.auth.signInWithPassword({ email: body.imel.trim().toLowerCase(), password: body.modpas });
+    btn.disabled = false; if (error) return msg('upMsg', 'Kont lan kreye. Konekte kounya.'); start(data.session);
+  } catch { btn.disabled = false; msg('upMsg', UPERR.server); }
+});
+$('logout').addEventListener('click', async () => { await sb.auth.signOut(); location.reload(); });
+
+async function start(session) {
+  if (!session) { $('auth').classList.remove('hidden'); return; }
+  const [o, p] = await Promise.all([sb.from('org_users').select('org_id, organizations(*)').eq('user_id', session.user.id).limit(1), sb.from('paramet').select('*').eq('id', 1).maybeSingle()]);
+  $('auth').classList.add('hidden'); $('logout').classList.remove('hidden');
+  ORG = o.data?.[0]?.organizations; PARAM = p.data;
+  if (!ORG) { $('noOrg').classList.remove('hidden'); return; }
+  $('orgName').textContent = ORG.non; $('nav').classList.remove('hidden'); $('app').classList.remove('hidden');
+  banner();
+  await K.fontsReady(); SAMPLE.kad = await K.loadImage('../img/avant-f.jpg'); SAMPLE.ia = await K.loadImage('../img/apres-f.jpg');
+  $('lib').innerHTML = LIB.map((l, i) => `<button type="button" data-lib="${i}"><span class="sw" style="background:linear-gradient(135deg,${l.c1} 55%,${l.c2} 55%)"></span>${esc(l.n)}</button>`).join('');
+  document.querySelectorAll('.kom').forEach((x) => (x.textContent = kom()));
+  renderMoney(); fillProfile();
+  await loadCamps();
+}
+function banner() {
+  const b = $('banner'); b.classList.remove('hidden', 'wait', 'ok', 'ko');
+  if (ORG.estati === 'ap_tann') { b.classList.add('wait'); b.textContent = '⏳ Ekip Souriyo a ap verifye òganizasyon ou a. Ou ka prepare kanpay ou yo kounya : yo ap ka ale an liy depi nou apwouve w (anjeneral nan 24 è).'; }
+  else if (ORG.estati === 'apwouve') { b.classList.add('hidden'); }
+  else { b.classList.add('ko'); b.textContent = ORG.estati === 'sispann' ? '⛔ Kont òganizasyon an sispann. Kontakte Souriyo.' : '⛔ Demann òganizasyon an pa aksepte. Kontakte Souriyo pou plis enfòmasyon.'; }
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-tab]'), g = e.target.closest('[data-goto]'); const t = b ? b.dataset.tab : g ? g.dataset.goto : null; if (!t) return; if (g) e.preventDefault();
+  document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', x.dataset.tab === t));
+  ['dash', 'ed', 'mod', 'kob', 'pro'].forEach((k) => $('t' + k[0].toUpperCase() + k.slice(1)).classList.toggle('hidden', k !== t));
+  if (t === 'mod') loadModeles(); if (t === 'ed' && !CUR && !$('nom').value) newCamp(); if (t === 'dash') loadCamps();
+});
+
+/* ---------- Tablodbò ---------- */
+async function loadCamps() {
+  const { data, error } = await sb.from('groupes').select('*').eq('org_id', ORG.id).order('kreye_le', { ascending: false });
+  if (error) return;
+  CAMPS = data || [];
+  const ids = CAMPS.map((c) => c.id); STATS = {};
+  if (ids.length) { const s = await sb.from('stats').select('*').in('groupe_id', ids); (s.data || []).forEach((r) => { const x = STATS[r.groupe_id] ||= { kad: 0, ia: 0, d7: 0 }; x.kad += r.kad; x.ia += r.ia; if (new Date(r.jou) >= new Date(Date.now() - 7 * 864e5)) x.d7 += r.kad + r.ia; }); }
+  const tot = Object.values(STATS).reduce((a, x) => ({ kad: a.kad + x.kad, ia: a.ia + x.ia, d7: a.d7 + x.d7 }), { kad: 0, ia: 0, d7: 0 });
+  $('stats').innerHTML = [['Foto an tout', tot.kad + tot.ia], ['Kad gwoup', tot.kad], ['Pòtrè IA', tot.ia], ['7 dènye jou', tot.d7]].map(([a, b]) => `<div class="stat"><span>${a}</span><b>${b.toLocaleString('fr-FR')}</b></div>`).join('');
+  const cards = await Promise.all(CAMPS.map(async (c) => {
+    const lg = await K.loadImage(c.logo_url); K.draw($('cv'), c, SAMPLE.kad, { prenom: '', logo: lg, logoPlate: true });
+    const s = STATS[c.id] || { kad: 0, ia: 0, d7: 0 };
+    const st = c.aktif ? '<span class="pill ok">🟢 An liy</span>' : ORG.estati === 'apwouve' ? '<span class="pill off">Pa an liy</span>' : '<span class="pill w">⏳ Ap tann apwobasyon</span>';
+    return `<div class="camp"><img src="${$('cv').toDataURL('image/jpeg', .7)}" alt="" /><div class="bd"><b>${esc(c.nom)}</b>${st}<span class="sub">/${esc(c.slug)} · ${s.kad + s.ia} foto · ${s.d7} sou 7 jou</span>
+      <div class="row"><button class="btn" type="button" data-edit="${c.id}">✎ Modifye</button>${c.aktif ? `<a class="btn" href="${esc(S.groupUrl(c.slug))}" target="_blank" rel="noopener">Louvri</a>` : ''}</div></div></div>`;
+  }));
+  $('camps').innerHTML = cards.join('') + '<button type="button" class="new" data-newc="1">＋<br>Nouvo kanpay</button>';
+}
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-edit]'); if (b) { editCamp(CAMPS.find((c) => c.id === b.dataset.edit)); go('ed'); } if (e.target.closest('[data-newc]')) { newCamp(); go('ed'); } });
+function go(t) { document.querySelector(`[data-tab="${t}"]`).click(); }
+
+/* ---------- Editè ---------- */
+const sub = (s) => String(s || '').replaceAll('{org}', ORG ? ORG.non : '');
+function applyLib(l) { MODEL = l.modele; ['c1', 'c2', 'c3'].forEach((k) => ($(k).value = l[k])); ['sou_tit', 'tit', 'riban', 'badj', 'liy'].forEach((k) => ($(k).value = sub(l[k]).slice(0, +$(k).maxLength))); setModel(MODEL); }
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-lib]'); if (b) applyLib(LIB[+b.dataset.lib]); const m = e.target.closest('[data-m]'); if (m) setModel(m.dataset.m); const p = e.target.closest('[data-pv]'); if (p) { PV = p.dataset.pv; document.querySelectorAll('[data-pv]').forEach((x) => x.setAttribute('aria-pressed', x === p)); preview(); } });
+function setModel(m) { MODEL = m; document.querySelectorAll('[data-m]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.m === m)); preview(); }
+function current() {
+  const g = { modele: MODEL, logo_url: LOGO_URL, org_id: ORG.id, type: G_TYPE[ORG.kalite] || 'lot' };
+  FIELDS.forEach((f) => (g[f] = $(f).value.trim())); CHECKS.forEach((c) => (g[c] = $(c).checked));
+  g.slug = slugify(g.slug); g.mod_pey = (document.querySelector('[name=pay]:checked') || {}).value || 'ofri'; g.pri_piblik_htg = Math.max(25, Math.min(2000, parseInt($('pri').value || '100', 10)));
+  return g;
+}
+function preview() {
+  if (!ORG) return; const g = current();
+  $('payBox').style.display = g.mod_ia ? '' : 'none'; $('manmBox').classList.toggle('hidden', !(g.mod_ia && g.manm_selman));
+  $('priBox').style.display = g.mod_pey === 'ofri' ? 'none' : '';
+  $('priNote').textContent = `Ou touche ${Math.round(g.pri_piblik_htg * kom() / 100)} G sou chak pòtrè (${kom()} %).`;
+  $('payNote').textContent = g.mod_pey === 'piblik' ? '' : 'Pou pòtrè gratis yo, achte yon pakè nan onglè « Lajan » an. Ekip Souriyo a aktive yo pou ou.';
+  $('aktifNote').textContent = ORG.estati === 'apwouve' ? '' : '(disponib depi Souriyo apwouve òganizasyon an)';
+  $('aktif').disabled = ORG.estati !== 'apwouve';
+  K.draw($('cv'), g, PV === 'ia' ? SAMPLE.ia : SAMPLE.kad, PV === 'ia' ? { modele: 'pwo', prenom: 'Nadège', titre: 'Comptable', logo: LOGO_IMG, logoPlate: true } : { prenom: 'Nadège', logo: LOGO_IMG, logoPlate: true });
+  $('pvImg').src = $('cv').toDataURL('image/jpeg', .85);
+}
+[...FIELDS, 'pri'].forEach((f) => $(f).addEventListener('input', preview)); CHECKS.forEach((c) => $(c).addEventListener('change', preview));
+document.querySelectorAll('[name=pay]').forEach((r) => r.addEventListener('change', preview));
+$('nom').addEventListener('input', () => { if (!slugTouched && !CUR) $('slug').value = slugify(`${ORG.non} ${$('nom').value}`); });
+$('slug').addEventListener('input', () => (slugTouched = true)); $('slug').addEventListener('blur', () => ($('slug').value = slugify($('slug').value)));
+$('logoF').addEventListener('change', async () => { const f = $('logoF').files[0]; if (!f) return; if (f.size > 1048576) { $('logoF').value = ''; return msg('edMsg', 'Logo a twò gwo (1 Mo maks.).'); } LOGO_FILE = f; LOGO_IMG = await K.loadImage(URL.createObjectURL(f)); preview(); });
+$('logoX').addEventListener('click', () => { LOGO_FILE = null; LOGO_URL = null; LOGO_IMG = null; $('logoF').value = ''; preview(); });
+function fill(g) {
+  FIELDS.forEach((f) => ($(f).value = g[f] ?? '')); CHECKS.forEach((c) => ($(c).checked = !!g[c]));
+  (document.querySelector(`[name=pay][value="${g.mod_pey || 'ofri'}"]`) || {}).checked = true; $('pri').value = g.pri_piblik_htg || 100;
+  LOGO_URL = g.logo_url || null; LOGO_FILE = null; $('logoF').value = ''; $('mList').value = ''; setModel(g.modele || 'sek');
+}
+function newCamp() {
+  CUR = null; slugTouched = false; $('edT').textContent = 'Nouvo kanpay'; $('kit').classList.add('hidden'); msg('edMsg', ''); LOGO_IMG = null;
+  const l = LIB.find((x) => x.n.includes({ lekol: 'Lekòl', inivesite: 'Finisan', evenman: 'M ap la', legliz: 'Legliz', politik: 'politik', antrepriz: 'Antrepriz', asosyasyon: 'Asosyasyon' }[ORG.kalite] || 'M ap la')) || LIB[0];
+  fill({ nom: '', slug: '', lang: 'ht', mod_kad: true, mod_ia: false, nan_klasman: true, aktif: false, mod_pey: 'piblik', pri_piblik_htg: 100 }); applyLib(l);
+  $('mCount').textContent = 0;
+}
+async function editCamp(g) {
+  CUR = g; slugTouched = true; $('edT').textContent = g.nom; msg('edMsg', ''); LOGO_IMG = await K.loadImage(g.logo_url); fill(g);
+  const m = await sb.from('manm').select('tel', { count: 'exact', head: true }).eq('groupe_id', g.id); $('mCount').textContent = m.count || 0;
+  showKit(g);
+}
+$('save').addEventListener('click', async () => {
+  const g = current();
+  if (g.nom.length < 2) return msg('edMsg', 'Mete non kanpay la.');
+  if (!/^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/.test(g.slug)) return msg('edMsg', 'Adrès la dwe gen 3 a 40 lèt miniskil, chif oswa tirè (-).');
+  if (!g.mod_kad && !g.mod_ia) return msg('edMsg', 'Chwazi omwen kad gwoup oswa pòtrè IA.');
+  $('save').disabled = true; msg('edMsg', 'N ap anrejistre…', 'ok');
+  try {
+    if (LOGO_FILE) {
+      const ext = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp' }[LOGO_FILE.type] || 'png';
+      const path = `org/${ORG.id}/${g.slug}-${Date.now()}.${ext}`;
+      const up = await sb.storage.from('logos').upload(path, LOGO_FILE, { contentType: LOGO_FILE.type }); if (up.error) throw up.error;
+      g.logo_url = sb.storage.from('logos').getPublicUrl(path).data.publicUrl; LOGO_URL = g.logo_url; LOGO_FILE = null;
+    }
+    const q = CUR ? sb.from('groupes').update(g).eq('id', CUR.id).select().single() : sb.from('groupes').insert(g).select().single();
+    const { data, error } = await q; if (error) throw error;
+    CUR = data; showKit(data); $('edT').textContent = data.nom;
+    msg('edMsg', data.aktif ? '✓ Kanpay la an liy ! Pataje lyen an ak piblik ou a.' : ORG.estati === 'apwouve' ? '✓ Kanpay la anrejistre. Tcheke « Kanpay la an liy » lè w pare.' : '✓ Kanpay la anrejistre. L ap ka ale an liy depi Souriyo apwouve òganizasyon ou a.', 'ok');
+  } catch (e) { msg('edMsg', friendly(e)); }
+  $('save').disabled = false;
+});
+function shareText(g) { return `📸 ${g.nom} : mete selfi w nan kad ofisyèl la, epi pataje fyète w ! 👉 ${S.groupUrl(g.slug)}`; }
+function showKit(g) {
+  const url = S.groupUrl(g.slug); $('kit').classList.remove('hidden'); $('link').textContent = url; $('open').href = url;
+  $('waShare').href = `https://wa.me/?text=${encodeURIComponent(shareText(g))}`;
+  const qr = qrcode(0, 'M'); qr.addData(url); qr.make(); $('qr').innerHTML = qr.createImgTag(6, 12);
+}
+$('copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('link').textContent); $('copy').textContent = 'Kopye ✓'; } catch {} });
+$('copyMsg').addEventListener('click', async () => { if (!CUR) return; try { await navigator.clipboard.writeText(shareText(CUR)); $('copyMsg').textContent = 'Kopye ✓'; } catch {} });
+$('qrDl').addEventListener('click', () => { const i = $('qr').querySelector('img'); if (!i) return; const a = document.createElement('a'); a.href = i.src; a.download = `qr-${CUR ? CUR.slug : 'kanpay'}.gif`; a.click(); });
+$('poster').addEventListener('click', async () => {
+  if (!CUR) return; const g = current(); const W = 1080, H = 1350;
+  const fr = document.createElement('canvas'); K.draw(fr, g, SAMPLE.kad, { prenom: '', logo: LOGO_IMG, logoPlate: true });
+  const qr = qrcode(0, 'M'); qr.addData(S.groupUrl(CUR.slug)); qr.make(); const qi = await K.loadImage(qr.createDataURL(10, 2));
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+  x.fillStyle = g.c1; x.fillRect(0, 0, W, H); x.fillStyle = '#fff'; x.textAlign = 'center';
+  x.font = '800 92px "Bricolage Grotesque", system-ui'; x.fillText('Souri yo ! 📸', W / 2, 140);
+  x.font = '500 38px "DM Sans", system-ui'; x.fillText(`Mete selfi w nan kad ${g.nom}`.slice(0, 48), W / 2, 205);
+  x.save(); x.translate(80, 270); x.rotate(-0.04); x.drawImage(fr, 0, 0, 480, 600); x.restore();
+  x.fillStyle = '#fff'; x.beginPath(); x.roundRect(600, 300, 400, 400, 28); x.fill(); x.drawImage(qi, 620, 320, 360, 360);
+  x.font = '700 34px "DM Sans", system-ui'; x.fillText('Eskane la a 👆', 800, 760);
+  const u = S.groupUrl(CUR.slug).replace(/^https?:\/\//, ''); let fs = 48; do { x.font = `800 ${fs}px "Bricolage Grotesque", system-ui`; fs -= 2; } while (x.measureText(u).width > W - 100 && fs > 22);
+  x.fillText(u, W / 2, 960);
+  x.font = '500 30px "DM Sans", system-ui'; x.fillText('Gratis · Foto w pa kite telefòn ou', W / 2, 1015);
+  [['1', 'Eskane QR la'], ['2', 'Chwazi yon selfi'], ['3', 'Pataje fyète w']].forEach(([n, t], i) => { const cx = 200 + i * 340; x.fillStyle = g.c2; x.beginPath(); x.arc(cx, 1130, 34, 0, 7); x.fill(); x.fillStyle = g.c1; x.font = '800 36px "Bricolage Grotesque", system-ui'; x.fillText(n, cx, 1143); x.fillStyle = '#fff'; x.font = '700 28px "DM Sans", system-ui'; x.fillText(t, cx, 1205); });
+  x.font = '700 28px "DM Sans", system-ui'; x.globalAlpha = .85; x.fillText('Fèt ak Souriyo · souriyo.com', W / 2, H - 50);
+  const a = document.createElement('a'); a.href = c.toDataURL('image/jpeg', .92); a.download = `afich-${CUR.slug}.jpg`; a.click();
+});
+/* Manm */
+$('mAdd').addEventListener('click', async () => {
+  if (!CUR) return msg('edMsg', 'Anrejistre kanpay la anvan.');
+  const rows = $('mList').value.split('\n').map((l) => { const [a, ...b] = l.split(/[,;\t]/); const tel = (a || '').replace(/\D/g, '').slice(-8); return tel.length === 8 ? { groupe_id: CUR.id, tel, non: b.join(' ').trim().slice(0, 80) || null } : null; }).filter(Boolean);
+  if (!rows.length) return msg('edMsg', 'Pa gen nimewo valab (8 chif).');
+  const { error } = await sb.from('manm').upsert(rows, { onConflict: 'groupe_id,tel' }); if (error) return msg('edMsg', friendly(error));
+  $('mList').value = ''; msg('edMsg', `✓ ${rows.length} manm ajoute.`, 'ok'); editCamp(CUR);
+});
+$('mClear').addEventListener('click', async () => { if (!CUR || !confirm('Efase tout lis manm lan ?')) return; const { error } = await sb.from('manm').delete().eq('groupe_id', CUR.id); if (error) return msg('edMsg', friendly(error)); editCamp(CUR); });
+
+/* ---------- Modèl pèsonalize ---------- */
+const MST = { nouvo: '<span class="pill w">Nouvo</span>', an_kou: '<span class="pill w">An kou</span>', fini: '<span class="pill ok">Fini</span>', refize: '<span class="pill off">Refize</span>' };
+async function loadModeles() {
+  $('mdCamp').innerHTML = '<option value="">—</option>' + CAMPS.map((c) => `<option value="${c.id}">${esc(c.nom)}</option>`).join('');
+  const { data } = await sb.from('modele_demandes').select('*').eq('org_id', ORG.id).order('kreye_le', { ascending: false });
+  $('mdRows').innerHTML = (data || []).map((d) => `<tr><td class="sub">${new Date(d.kreye_le).toLocaleDateString('fr-FR')}</td><td>${esc(d.deskripsyon)}</td><td>${MST[d.estati] || ''}</td><td>${d.pri_htg != null ? d.pri_htg.toLocaleString('fr-FR') + ' G' : '—'}</td><td class="sub">${esc(d.repons || '')}</td></tr>`).join('') || '<tr><td colspan="5" class="sub">Pa gen demann ankò.</td></tr>';
+}
+$('mdGo').addEventListener('click', async () => {
+  const d = $('mdDesk').value.trim(); if (d.length < 10) return msg('mdMsg', 'Dekri modèl la ak omwen kèk mo.');
+  const { error } = await sb.from('modele_demandes').insert({ org_id: ORG.id, groupe_id: $('mdCamp').value || null, deskripsyon: d, referans: $('mdRef').value.trim() || null });
+  if (error) return msg('mdMsg', friendly(error)); $('mdDesk').value = ''; $('mdRef').value = ''; msg('mdMsg', '✓ Demann lan pati. Ekip Souriyo a ap reponn ou byento.', 'ok'); loadModeles();
+});
+
+/* ---------- Lajan ---------- */
+function renderMoney() {
+  $('kKom').textContent = `${kom()} %`; $('kEx').textContent = Math.round(100 * kom() / 100);
+  const packs = ORG.pake_org || PARAM?.pake_org || [];
+  $('packs').innerHTML = ORG.pri_negosye ? '<div class="pk"><span class="sub">Pri pakè yo</span><b>Sou mezi</b><span class="sub">Pou òganizasyon ou a, pri yo negosye ak ekip Souriyo a.</span></div>'
+    : packs.map((p) => `<div class="pk"><span class="sub">${p.n} pòtrè IA</span><b>${(+p.p).toLocaleString('fr-FR')} G</b><span class="sub">${Math.round(p.p / p.n)} G pa pòtrè</span></div>`).join('');
+  $('kWa').href = `https://wa.me/${S.WA}?text=${encodeURIComponent(`Bonjou Souriyo 👋 Se ${ORG.non}. Mwen vle plis enfòmasyon sou pakè pòtrè IA yo.`)}`;
+}
+/* ---------- Pwofil ---------- */
+function fillProfile() { $('pKal').innerHTML = Object.entries(KAL).map(([k, v]) => `<option value="${k}">${v}</option>`).join(''); $('pNon').value = ORG.non; $('pKal').value = ORG.kalite; $('pKon').value = ORG.kontak_non || ''; $('pTel').value = ORG.kontak_tel || ''; $('pDesk').value = ORG.deskripsyon || ''; }
+$('pSave').addEventListener('click', async () => {
+  const v = { non: $('pNon').value.trim(), kalite: $('pKal').value, kontak_non: $('pKon').value.trim() || null, kontak_tel: $('pTel').value.trim() || null, deskripsyon: $('pDesk').value.trim() || null };
+  if (v.non.length < 2) return msg('pMsg', 'Mete non òganizasyon an.');
+  const { error } = await sb.from('organizations').update(v).eq('id', ORG.id); if (error) return msg('pMsg', friendly(error));
+  Object.assign(ORG, v); $('orgName').textContent = ORG.non; msg('pMsg', '✓ Pwofil la anrejistre.', 'ok');
+});
+
+sb.auth.getSession().then(({ data }) => start(data.session));
+</script>
+</body>
+</html>

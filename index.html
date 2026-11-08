@@ -136,7 +136,7 @@
 <header>
   <div class="wrap">
     <a class="logo" href="#"><img src="assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span></a>
-    <nav><a href="#kijan" data-t="nav1"></a><a href="#pou-ki-moun" data-t="nav2"></a><a href="#kad" data-t="k6"></a><a href="#pri" data-t="nav3"></a></nav>
+    <nav><a href="#kijan" data-t="nav1"></a><a href="#pou-ki-moun" data-t="nav2"></a><a href="#kad" data-t="k6"></a><a href="kont/" data-t="navK" style="font-weight:700;color:var(--ink)"></a><a href="#pri" data-t="nav3"></a></nav>
     <div class="langs" role="group" aria-label="Lang"><button type="button" data-lang="ht">KR</button><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button></div>
     <a class="btn main sm wa" target="_blank" rel="noopener" data-t="cta"></a>
   </div>
@@ -213,7 +213,7 @@
     <span class="kick" data-t="k4"></span><h2 data-t="h2d"></h2><p class="sub" data-t="s2d"></p>
     <div class="prices" id="prices"></div>
     <p class="moncash" data-t="mc"></p>
-    <div class="grp"><div><h3 data-t="grpT"></h3><p data-t="grpP"></p></div><a class="btn main wa" target="_blank" rel="noopener" data-t="grpB"></a></div>
+    <div class="grp"><div><h3 data-t="grpT"></h3><p data-t="grpP"></p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn main" href="kont/" data-t="grpK"></a><a class="btn ghost wa" target="_blank" rel="noopener" data-t="grpB"></a></div></div>
   </div>
 </section>
 
@@ -231,6 +231,7 @@
 const WA = (window.SOURIYO && window.SOURIYO.WA) || '50900000000';
 const T = {
   ht: {
+    navK: 'Espas òganizasyon', grpK: 'Kreye kont gwoup ou (gratis)',
     k6: 'Kad gwoup', h2f: 'Menm selfi a. Kad gwoup ou.', s2f: 'Pa gen IA isit la : se selfi w la jan l ye a, nan kad lekòl ou oswa evènman w. Gratis pou chak manm, pare pou pataje.', kf1: '🎓 Lekòl : « Fyète m » · Pwomo 2027', kf2: '🎤 Evènman : « M ap la ! »', kfn: 'Lekòl, evènman ak moun yo se egzanp fiktif.',
     nav1: 'Kijan l mache', nav2: 'Pou ki gwoup', nav3: 'Pri', cta: 'Pale ak nou sou WhatsApp', cta2: 'Wè pou ki gwoup',
     pill: 'Kad gwoup ak pòtrè IA, fèt an Ayiti', h1: 'Foto pa w, <em>fyète nou</em>.',
@@ -258,6 +259,7 @@ const T = {
     waMsg: 'Bonjou Souriyo 👋 Mwen enterese nan kad gwoup ak pòtrè IA.',
   },
   fr: {
+    navK: 'Espace organisations', grpK: 'Créer le compte de votre groupe (gratuit)',
     k6: 'Cadres de groupe', h2f: 'Le même selfie. Le cadre de ton groupe.', s2f: 'Pas d’IA ici : ton selfie tel quel, dans le cadre de ton école ou de ton événement. Gratuit pour chaque membre, prêt à partager.', kf1: '🎓 École : « Ma fierté » · Promo 2027', kf2: '🎤 Événement : « J’y serai ! »', kfn: 'École, événement et personnes fictifs, pour l’exemple.',
     nav1: 'Comment ça marche', nav2: 'Pour quels groupes', nav3: 'Tarifs', cta: 'Écrivez-nous sur WhatsApp', cta2: 'Voir pour qui',
     pill: 'Cadres de groupe et portraits IA, made in Haïti', h1: 'Ta photo, <em>notre fierté</em>.',
@@ -285,6 +287,7 @@ const T = {
     waMsg: 'Bonjour Souriyo 👋 Je suis intéressé(e) par les cadres de groupe et les portraits IA.',
   },
   en: {
+    navK: 'For organizations', grpK: 'Create your group account (free)',
     k6: 'Group frames', h2f: 'Same selfie. Your group’s frame.', s2f: 'No AI here: your selfie as is, in your school or event frame. Free for every member, ready to share.', kf1: '🎓 School: “My pride” · Class of 2027', kf2: '🎤 Event: “I’ll be there!”', kfn: 'School, event and people are fictional examples.',
     nav1: 'How it works', nav2: 'Which groups', nav3: 'Pricing', cta: 'Chat with us on WhatsApp', cta2: 'See which groups',
     pill: 'Group frames and AI portraits, made in Haiti', h1: 'Your photo, <em>our pride</em>.',
