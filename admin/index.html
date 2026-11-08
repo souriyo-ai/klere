@@ -221,7 +221,7 @@
       <button class="btn main" type="button" id="kpSave" style="margin-top:10px">Anrejistre</button><p class="msg" id="kpMsg"></p>
     </section>
     <section class="card"><h2>⭐ Rezo sosyal pou verifye</h2>
-      <p class="sub">Tcheke : 1) kòd la parèt nan bio a, 2) kantite abonnés yo, 3) se menm non itilizatè a. Louvri pwofil la pou w konfime an dirèk si sa nesesè.</p>
+      <p class="sub">Gade kapti ekran an (non itilizatè + kantite abonnés), epi louvri pwofil la pou w konfime an dirèk si sa nesesè.</p>
       <div id="kRez"></div>
     </section>
     <div class="layout" style="grid-template-columns:340px 1fr">
@@ -654,7 +654,7 @@ async function loadKreyate() {
   const on = (id) => esc(KORG[id]?.non || '—');
   const RZ = (rz.data || []).filter((x) => x.estati === 'ap_tann');
   $('kRez').innerHTML = RZ.map((x) => { const min = x.platfom === 'facebook' ? KPAR.min_abonnes_fb : KPAR.min_abonnes; return `<div class="card" style="margin-bottom:8px;padding:14px"><div style="display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap"><b>${on(x.org_id)} · ${PLAT[x.platfom]} <a href="${esc(PURL[x.platfom](encodeURIComponent(x.itilizate)))}" target="_blank" rel="noopener">@${esc(x.itilizate)}</a></b><span class="sub">${fmt(x.kreye_le)}</span></div>
-    <span class="sub">Deklare : <b>${(+x.abonnes || 0).toLocaleString('fr-FR')}</b> abonnés (minimòm ${(+min).toLocaleString('fr-FR')}) · kòd : <span class="kods">${esc(x.kod)}</span> · ${x.kapti_path ? `<a href="#" data-kcap="${esc(x.kapti_path)}">📷 Wè kapti ekran an</a>` : '<i>pa gen kapti ekran ankò</i>'}</span>
+    <span class="sub">Deklare : <b>${(+x.abonnes || 0).toLocaleString('fr-FR')}</b> abonnés (minimòm ${(+min).toLocaleString('fr-FR')}) · ${x.kapti_path ? `<a href="#" data-kcap="${esc(x.kapti_path)}">📷 Wè kapti ekran an</a>` : '<i>pa gen kapti ekran ankò</i>'}</span>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center"><input class="t" style="width:150px" type="number" min="0" data-kab="${x.id}" value="${+x.abonnes || 0}" title="Abonnés verifye" /><button class="btn main" type="button" data-krok="${x.id}">✓ Verifye</button><button class="btn" type="button" data-krko="${x.id}">✖ Refize</button></div></div>`; }).join('') || '<p class="sub">Pa gen kont pou verifye.</p>';
   renderKList();
   const O = of.data || [], kt = (id) => esc((KK.find((x) => x.id === id) || {}).tit || '');

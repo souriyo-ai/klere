@@ -257,7 +257,7 @@
   <!-- ===== REZO SOSYAL (enfliyansè) ===== -->
   <div id="tRez" class="hidden">
     <section class="card"><h2>⭐ Rezo sosyal ou yo</h2>
-      <p class="sub">Pou w ka kreye konsèp sou Souriyo, fòk omwen yon kont gen <b id="rzMin"></b> abonnés (Facebook : <b id="rzMinFb"></b>). Pou pwouve kont lan se pou ou : mete <b>kòd la</b> nan bio (oswa deskripsyon chèn YouTube ou a), epi klike « Verifye ». Ou ka retire kòd la apre verifikasyon an.</p>
+      <p class="sub">Pou w ka kreye konsèp sou Souriyo, fòk omwen yon kont gen <b id="rzMin"></b> abonnés (Facebook : <b id="rzMinFb"></b>). Pou verifye yon kont, voye yon <b>kapti ekran paj pwofil ou</b> (kote nou wè non itilizatè a ak kantite abonnés yo). Ekip Souriyo a ap konfime l rapidman.</p>
       <div id="rzElig"></div>
       <div id="rzList"></div>
     </section>
@@ -415,7 +415,7 @@ function setTip(t) {
     $('upNonL').textContent = 'Non kreyatè ou (jan piblik la konnen w)'; $('upNon').placeholder = 'ex. Ti Mari Kreyòl';
     $('upDeskL').textContent = 'Ki kalite kontni ou fè ? (pa obligatwa)';
     $('tipNote').textContent = 'Enfliyansè, atis, kreyatè kontni : kreye pwòp konsèp kad ou, epi touche sou chak itilizasyon.';
-    $('rezoNote').textContent = 'Pou vin kreyatè, fòk omwen yon kont gen 5 000 abonnés (Facebook : 10 000). N ap verifye yo apre enskripsyon an.';
+    $('rezoNote').textContent = 'Pou vin kreyatè, fòk omwen yon kont gen 5 000 abonnés (Facebook : 10 000). Apre enskripsyon an, w ap voye yon kapti ekran pwofil ou pou nou konfime.';
   }
 }
 document.addEventListener('click', (e) => { const b = e.target.closest('[data-tip]'); if (b) setTip(b.dataset.tip); });
@@ -640,27 +640,24 @@ async function loadRezo() {
   const own = ME.wol === 'pwopriyete';
   $('rzList').innerHTML = (r.data || []).map((x) => `<div class="pk" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b style="font-size:17px">${PLAT[x.platfom]} · @${esc(x.itilizate)}</b>${RZST[x.estati]}</div>
     <span class="sub">${(x.abonnes_verifye ?? x.abonnes ?? 0).toLocaleString('fr-FR')} abonnés ${x.abonnes_verifye != null ? '(verifye' + (x.otomatik ? ' otomatikman' : '') + ')' : '(deklare)'}${x.rezon ? ' · ' + esc(x.rezon) : ''}</span>
-    ${x.estati === 'ap_tann' && own ? `<p style="margin:8px 0 4px">1. Mete kòd sa a nan ${x.platfom === 'youtube' ? 'deskripsyon chèn ou a' : 'bio ou'} : <span class="kods">${esc(x.kod)}</span></p>
-      <p style="margin:4px 0">2. ${x.platfom === 'youtube' ? 'Klike « Verifye » : n ap tcheke chèn ou a otomatikman. (Si sa pa mache, mete yon kapti ekran tou.)' : 'Fè yon kapti ekran paj pwofil ou (kote nou wè kòd la ak kantite abonnés yo).'}</p>
-      ${x.kapti_path ? '<p class="sub" style="margin:4px 0">✓ Kapti ekran voye. Ekip la ap verifye l.</p>' : ''}
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input type="file" accept="image/*" data-rzf="${x.id}" /><button class="btn main" type="button" data-rzv="${x.id}">Verifye</button><button class="btn" type="button" data-rzx="${x.id}">Retire</button></div><p class="msg" id="rzm${x.id}"></p>` : ''}
+    ${x.estati === 'ap_tann' && own ? (x.kapti_path ? '<p class="sub" style="margin:8px 0 4px">✓ Kapti ekran an rive. Ekip la ap verifye l. (Ou ka voye yon lòt si w vle.)</p>' : '<p style="margin:8px 0 4px">📷 Voye yon kapti ekran paj pwofil ou, kote nou wè kantite abonnés yo.</p>') + `
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input type="file" accept="image/*" data-rzf="${x.id}" /><button class="btn main" type="button" data-rzv="${x.id}">Voye kapti a</button><button class="btn" type="button" data-rzx="${x.id}">Retire</button></div><p class="msg" id="rzm${x.id}"></p>` : ''}
     ${x.estati === 'refize' && own ? `<button class="btn" type="button" data-rzx="${x.id}" style="margin-top:8px">Retire epi eseye ankò</button>` : ''}</div>`).join('') || '<p class="sub">Pa gen kont ankò.</p>';
 }
 let ELIJ = false;
-const RZERR = { pa_jwenn: 'Nou pa jwenn chèn YouTube sa a. Tcheke non itilizatè a (@…).', kod_pa_jwenn: 'Nou pa wè kòd la nan deskripsyon chèn nan. Mete l, tann 1-2 minit, epi eseye ankò.', abonnes_kache: 'Kantite abonnés yo kache sou chèn nan. Mete yon kapti ekran pito.', kapti: 'Chwazi yon kapti ekran paj pwofil ou anvan.' };
+const RZERR = { kapti: 'Chwazi yon kapti ekran paj pwofil ou anvan.' };
 document.addEventListener('click', async (e) => {
   const v = e.target.closest('[data-rzv]'); if (v) {
-    const id = +v.dataset.rzv, f = document.querySelector(`[data-rzf="${id}"]`).files[0]; v.disabled = true;
+    const id = +v.dataset.rzv, f = document.querySelector(`[data-rzf="${id}"]`).files[0]; if (!f) return msg('rzm' + id, RZERR.kapti); v.disabled = true;
     try {
-      if (f) { const pth = `org/${ORG.id}/rezo-${id}-${Date.now()}.jpg`; const up = await sb.storage.from('verifikasyon').upload(pth, await shrink(f), { contentType: 'image/jpeg' }); if (up.error) throw up.error; const u2 = await sb.from('rezo_kont').update({ kapti_path: pth }).eq('id', id); if (u2.error) throw u2.error; }
+      { const pth = `org/${ORG.id}/rezo-${id}-${Date.now()}.jpg`; const up = await sb.storage.from('verifikasyon').upload(pth, await shrink(f), { contentType: 'image/jpeg' }); if (up.error) throw up.error; const u2 = await sb.from('rezo_kont').update({ kapti_path: pth }).eq('id', id); if (u2.error) throw u2.error; }
       const { data: ss } = await sb.auth.getSession();
       const r = await fetch(`${S.SUPABASE_URL}/functions/v1/souriyo-org`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ss.session.access_token}` }, body: JSON.stringify({ action: 'rezo_verifye', id }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error('Verifikasyon an pa mache. Eseye ankò.');
       if (!j.ok) { v.disabled = false; return msg('rzm' + id, RZERR[j.rezon] || 'Verifikasyon an pa mache.'); }
       await loadRezo();
-      if (j.otomatik) msg('rzMsg', j.elijib ? `✓ Chèn nan verifye : ${j.abonnes.toLocaleString('fr-FR')} abonnés.` : `Chèn nan verifye, men li gen ${j.abonnes.toLocaleString('fr-FR')} abonnés (minimòm ${j.min.toLocaleString('fr-FR')}).`, j.elijib ? 'ok' : 'err');
-      else msg('rzMsg', '✓ Kapti ekran an rive. Ekip Souriyo a ap verifye l byento.', 'ok');
+      msg('rzMsg', '✓ Kapti ekran an rive. Ekip Souriyo a ap verifye l byento.', 'ok');
     } catch (er) { v.disabled = false; msg('rzm' + id, er.message && !/api|fetch/i.test(er.message) ? er.message : friendly(er)); }
     return;
   }
@@ -669,7 +666,7 @@ document.addEventListener('click', async (e) => {
 $('rzAdd').addEventListener('click', async () => {
   const u = $('rzU').value.trim().replace(/^@+/, ''); if (!u) return msg('rzMsg', 'Mete non itilizatè a.');
   const { error } = await sb.from('rezo_kont').insert({ org_id: ORG.id, platfom: $('rzP').value, itilizate: u, abonnes: Math.max(0, +$('rzA').value || 0) });
-  if (error) return msg('rzMsg', friendly(error)); $('rzU').value = ''; $('rzA').value = ''; msg('rzMsg', '✓ Kont lan ajoute. Verifye l kounya.', 'ok'); loadRezo();
+  if (error) return msg('rzMsg', friendly(error)); $('rzU').value = ''; $('rzA').value = ''; msg('rzMsg', '✓ Kont lan ajoute. Voye kapti ekran an kounya.', 'ok'); loadRezo();
 });
 
 /* ---------- Konsèp (kreyatè / pwopriyetè) ---------- */
