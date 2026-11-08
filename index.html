@@ -78,7 +78,7 @@
 
   .dark { background: var(--ink); color: #fff; }
   .dark .sub { color: #c9cdf2; }
-  .uses { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .uses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
   .use { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 22px; padding: 22px; }
   .use .e { font-size: 30px; }
   .use h3 { font-size: 20px; margin: 10px 0 6px; }
@@ -113,6 +113,7 @@
   .final h2 { font-size: clamp(32px, 5vw, 52px); margin-bottom: 12px; }
   .final p { margin: 0 0 24px; font-size: 18px; opacity: .92; }
   .final .btn { background: #fff; color: var(--coral); }
+  .flinks { margin-bottom: 8px; } .flinks a { color: var(--ink); font-weight: 600; text-decoration: none; }
   footer { text-align: center; padding: 0 20px 40px; font-size: 14px; color: var(--ink-2); }
 
   @media (max-width: 900px) {
@@ -164,6 +165,13 @@
   </div>
 </section>
 
+<section class="block" id="poukisa" style="padding-bottom:0">
+  <div class="wrap">
+    <span class="kick" data-t="kP"></span><h2 data-t="hP"></h2><p class="sub" data-t="sP"></p>
+    <div class="steps"><div class="step"><h3 data-t="p1t"></h3><p data-t="p1"></p></div><div class="step"><h3 data-t="p2t"></h3><p data-t="p2"></p></div><div class="step"><h3 data-t="p3t"></h3><p data-t="p3"></p></div></div>
+  </div>
+</section>
+
 <section class="block" id="kijan">
   <div class="wrap">
     <span class="kick" data-t="k1"></span><h2 data-t="h2a"></h2><p class="sub" data-t="s2a"></p>
@@ -183,6 +191,8 @@
       <div class="use"><div class="e">🎤</div><h3 data-t="u2"></h3><p data-t="u2p"></p></div>
       <div class="use"><div class="e">⛪</div><h3 data-t="u3"></h3><p data-t="u3p"></p></div>
       <div class="use"><div class="e">💼</div><h3 data-t="u4"></h3><p data-t="u4p"></p></div>
+      <div class="use"><div class="e">🗳️</div><h3 data-t="u5"></h3><p data-t="u5p"></p></div>
+      <div class="use"><div class="e">💍</div><h3 data-t="u6"></h3><p data-t="u6p"></p></div>
     </div>
   </div>
 </section>
@@ -225,25 +235,26 @@
 </section>
 
 <div class="final"><h2 data-t="fh"></h2><p data-t="fp"></p><a class="btn wa" target="_blank" rel="noopener" data-t="cta"></a></div>
-<footer data-t="foot"></footer>
+<footer><nav class="flinks"><a href="kont/" data-t="fl1"></a> · <a href="klasman/" data-t="fl4"></a> · <a href="kondisyon/" data-t="fl2"></a> · <a href="kondisyon/#konfidansyalite" data-t="fl3"></a></nav><span data-t="foot"></span></footer>
 
 <script>
 const WA = (window.SOURIYO && window.SOURIYO.WA) || '50900000000';
 const T = {
   ht: {
+    kP: 'Poukisa Souriyo', hP: 'Plis pase yon foto.', sP: 'Souriyo transfòme yon selfi an twa bagay ki gen valè pou ou.', p1t: '📣 Maketing', p1: 'Chak foto ki pataje se yon piblisite gratis pou mak ou, evènman w oswa kòz ou. Kad ou a vwayaje sou WhatsApp, Instagram, Facebook ak TikTok.', p2t: '🔥 Angajman', p2: 'Moun yo patisipe, yo pataje, yo envite zanmi yo. Klasman an ak tablodbò w la montre w konbyen moun ki la, an dirèk.', p3t: '💛 Souvni', p3: 'Gradyasyon, maryaj, konferans, konvansyon : nou imotalize bèl moman yo nan yon foto moun ap kenbe pou tout tan.', u5: 'Kanpay & mouvman', u5p: 'Kandida, pati, kòz sosyal : sipòtè yo afiche angajman yo — ak kont verifye pou evite fo pwofil.', u6: 'Fanmi & bèl moman', u6p: 'Maryaj, anivèsè, batèm, rasanbleman fanmi : chak envite pati ak yon souvni pèsonalize.', fl1: 'Espas òganizasyon', fl2: 'Kondisyon itilizasyon', fl3: 'Konfidansyalite', fl4: 'Klasman',
     navK: 'Espas òganizasyon', grpK: 'Kreye kont gwoup ou (gratis)',
     k6: 'Kad gwoup', h2f: 'Menm selfi a. Kad gwoup ou.', s2f: 'Pa gen IA isit la : se selfi w la jan l ye a, nan kad lekòl ou oswa evènman w. Gratis pou chak manm, pare pou pataje.', kf1: '🎓 Lekòl : « Fyète m » · Pwomo 2027', kf2: '🎤 Evènman : « M ap la ! »', kfn: 'Lekòl, evènman ak moun yo se egzanp fiktif.',
-    nav1: 'Kijan l mache', nav2: 'Pou ki gwoup', nav3: 'Pri', cta: 'Pale ak nou sou WhatsApp', cta2: 'Wè pou ki gwoup',
-    pill: 'Kad gwoup ak pòtrè IA, fèt an Ayiti', h1: 'Foto pa w, <em>fyète nou</em>.',
-    lead: 'Souriyo mete selfi w nan kad lekòl ou, evènman w oswa gwoup ou — epi IA a ka fè w yon pòtrè pwofesyonèl. Pataje l, montre tout moun ou fè pati l.',
-    tr1: 'Kad gwoup gratis', tr2: 'Figi w rete figi w', tr3: 'Peman MonCash',
+    nav1: 'Kijan l mache', nav2: 'Pou ki gwoup', nav3: 'Pri', cta: 'Pale ak nou sou WhatsApp', cta2: 'Dekouvri Souriyo',
+    pill: 'Maketing · Angajman · Souvni — fèt an Ayiti', h1: 'Chak bèl moman merite <em>yon bèl kad</em>.',
+    lead: 'Souriyo se yon zouti maketing ak angajman pou lekòl, evènman, legliz, antrepriz, kanpay — ak tout moun ki gen yon bèl moman pou selebre. Piblik ou a mete selfi l nan kad ou, li pataje l : chak foto vin yon piblisite, yon souvni, yon fyète.',
+    tr1: 'Kad gwoup gratis', tr2: 'Kont verifye ✓', tr3: 'Peman MonCash',
     before: 'Anvan', after: 'Apre', ex1: 'Egzanp 1', ex2: 'Egzanp 2', fict: 'Pòtrè IA. Moun fiktif, kreye pou egzanp lan. Glise pou w konpare.',
     k1: 'Kijan l mache', h2a: 'Souri, ou nan kad la.', s2a: 'Tout bagay fèt sou telefòn ou, nan mwens pase yon minit.',
     st1: 'Jwenn kad gwoup ou', st1p: 'Chak lekòl, inivèsite, evènman oswa asosyasyon gen pwòp paj pa l ak kad pa l : souriyo.com/upnch, souriyo.com/bst…',
     st2: 'Voye yon selfi', st2p: 'Foto w parèt touswit nan kad la. Ou vle plis ? IA a fè w yon pòtrè pwofesyonèl : tòj, blouz doktè, kostim…',
     st3: 'Pataje fyète w', st3p: 'Estati WhatsApp, story Instagram, LinkedIn : chak foto ki pataje montre gwoup ou a, epi li fè lòt moun vin pran pa yo.',
-    k2: 'Pou ki gwoup', h2b: 'Pou tout gwoup ki fyè de tèt yo.', s2b: 'Ou kreye kad la yon fwa. Tout manm yo pran foto yo. Gwoup ou a parèt toupatou.',
-    u1: 'Lekòl & inivèsite', u1p: '« UPNCH, fyète m », « Pwomo 2027 », finisan ak tòj : elèv yo ak etidyan yo pote koulè lekòl yo.',
+    k2: 'Pou ki moun', h2b: 'Pou tout moun ki gen yon moman pou selebre.', s2b: 'Ou kreye kad la yon fwa. Moun yo pran foto yo, yo pataje yo, epi moman an viv pou tout tan.',
+    u1: 'Lekòl & inivèsite', u1p: '« Fyète m », « Pwomo 2027 », finisan ak tòj : elèv yo ak etidyan yo pote koulè lekòl yo.',
     u2: 'Evènman', u2p: 'Konferans, seminè, konsè, lansman : « M ap la ! » anvan, « Mwen te la ! » apre. Chak patisipan fè piblisite pou evènman an.',
     u3: 'Legliz & asosyasyon', u3p: 'Konvansyon, kan, jounen espesyal, klib, mouvman jèn : tout manm yo nan menm kad la.',
     u4: 'Antrepriz & ekip', u4p: 'Menm estil foto pou tout ekip la : sit entènèt, badj, rezo sosyal, lansman pwodwi.',
@@ -259,19 +270,20 @@ const T = {
     waMsg: 'Bonjou Souriyo 👋 Mwen enterese nan kad gwoup ak pòtrè IA.',
   },
   fr: {
+    kP: 'Pourquoi Souriyo', hP: 'Plus qu’une photo.', sP: 'Souriyo transforme un selfie en trois choses qui ont de la valeur pour vous.', p1t: '📣 Marketing', p1: 'Chaque photo partagée est une publicité gratuite pour votre marque, votre événement ou votre cause. Votre cadre voyage sur WhatsApp, Instagram, Facebook et TikTok.', p2t: '🔥 Engagement', p2: 'Les gens participent, partagent, invitent leurs amis. Le classement et votre tableau de bord montrent la participation en direct.', p3t: '💛 Souvenirs', p3: 'Remises de diplômes, mariages, conférences, conventions : nous immortalisons les beaux moments dans une photo qu’on garde pour toujours.', u5: 'Campagnes & mouvements', u5p: 'Candidats, partis, causes sociales : les sympathisants affichent leur engagement — avec des comptes vérifiés contre les faux profils.', u6: 'Famille & beaux moments', u6p: 'Mariages, anniversaires, baptêmes, réunions de famille : chaque invité repart avec un souvenir personnalisé.', fl1: 'Espace organisations', fl2: 'Conditions d’utilisation', fl3: 'Confidentialité', fl4: 'Classement',
     navK: 'Espace organisations', grpK: 'Créer le compte de votre groupe (gratuit)',
     k6: 'Cadres de groupe', h2f: 'Le même selfie. Le cadre de ton groupe.', s2f: 'Pas d’IA ici : ton selfie tel quel, dans le cadre de ton école ou de ton événement. Gratuit pour chaque membre, prêt à partager.', kf1: '🎓 École : « Ma fierté » · Promo 2027', kf2: '🎤 Événement : « J’y serai ! »', kfn: 'École, événement et personnes fictifs, pour l’exemple.',
-    nav1: 'Comment ça marche', nav2: 'Pour quels groupes', nav3: 'Tarifs', cta: 'Écrivez-nous sur WhatsApp', cta2: 'Voir pour qui',
-    pill: 'Cadres de groupe et portraits IA, made in Haïti', h1: 'Ta photo, <em>notre fierté</em>.',
-    lead: 'Souriyo met ton selfie dans le cadre de ton école, de ton événement ou de ton groupe — et l’IA peut te créer un portrait professionnel. Partage-le, montre à tous que tu en fais partie.',
-    tr1: 'Cadre de groupe gratuit', tr2: 'Ton visage reste le tien', tr3: 'Paiement MonCash',
+    nav1: 'Comment ça marche', nav2: 'Pour quels groupes', nav3: 'Tarifs', cta: 'Écrivez-nous sur WhatsApp', cta2: 'Découvrir Souriyo',
+    pill: 'Marketing · Engagement · Souvenirs — made in Haïti', h1: 'Chaque beau moment mérite <em>un beau cadre</em>.',
+    lead: 'Souriyo est un outil de marketing et d’engagement pour les écoles, événements, églises, entreprises, campagnes — et tous ceux qui ont un beau moment à célébrer. Votre public met son selfie dans votre cadre et le partage : chaque photo devient une publicité, un souvenir, une fierté.',
+    tr1: 'Cadre de groupe gratuit', tr2: 'Comptes vérifiés ✓', tr3: 'Paiement MonCash',
     before: 'Avant', after: 'Après', ex1: 'Exemple 1', ex2: 'Exemple 2', fict: 'Portrait IA. Personnes fictives, créées pour l’exemple. Glisse pour comparer.',
     k1: 'Comment ça marche', h2a: 'Souris, tu es dans le cadre.', s2a: 'Tout se fait sur ton téléphone, en moins d’une minute.',
     st1: 'Trouve le cadre de ton groupe', st1p: 'Chaque école, université, événement ou association a sa page et son cadre : souriyo.com/upnch, souriyo.com/bst…',
     st2: 'Envoie un selfie', st2p: 'Ta photo apparaît tout de suite dans le cadre. Envie de plus ? L’IA crée ton portrait pro : toge, blouse de médecin, costume…',
     st3: 'Partage ta fierté', st3p: 'Statut WhatsApp, story Instagram, LinkedIn : chaque partage met ton groupe en avant et donne envie aux autres.',
-    k2: 'Pour quels groupes', h2b: 'Pour tous les groupes fiers d’eux.', s2b: 'Tu crées le cadre une fois. Tous les membres prennent leur photo. Ton groupe est visible partout.',
-    u1: 'Écoles & universités', u1p: '« Fier d’être UPNCH », « Promo 2027 », finissants en toge : élèves et étudiants portent les couleurs de leur école.',
+    k2: 'Pour qui', h2b: 'Pour tous ceux qui ont un moment à célébrer.', s2b: 'Vous créez le cadre une fois. Chacun prend sa photo, la partage, et le moment vit pour toujours.',
+    u1: 'Écoles & universités', u1p: '« Ma fierté », « Promo 2027 », finissants en toge : élèves et étudiants portent les couleurs de leur école.',
     u2: 'Événements', u2p: 'Conférences, séminaires, concerts, lancements : « J’y serai ! » avant, « J’y étais ! » après. Chaque participant fait la promo.',
     u3: 'Églises & associations', u3p: 'Conventions, camps, journées spéciales, clubs, mouvements de jeunes : tous les membres dans le même cadre.',
     u4: 'Entreprises & équipes', u4p: 'Le même style de photo pour toute l’équipe : site web, badges, réseaux sociaux, lancements.',
@@ -287,19 +299,20 @@ const T = {
     waMsg: 'Bonjour Souriyo 👋 Je suis intéressé(e) par les cadres de groupe et les portraits IA.',
   },
   en: {
+    kP: 'Why Souriyo', hP: 'More than a photo.', sP: 'Souriyo turns a selfie into three things that matter to you.', p1t: '📣 Marketing', p1: 'Every shared photo is free advertising for your brand, event or cause. Your frame travels across WhatsApp, Instagram, Facebook and TikTok.', p2t: '🔥 Engagement', p2: 'People join in, share and invite friends. The leaderboard and your dashboard show participation live.', p3t: '💛 Memories', p3: 'Graduations, weddings, conferences, conventions: we immortalize great moments in a photo people keep forever.', u5: 'Campaigns & movements', u5p: 'Candidates, parties, social causes: supporters show their commitment — with verified accounts against fake profiles.', u6: 'Family & great moments', u6p: 'Weddings, birthdays, baptisms, family reunions: every guest leaves with a personalized keepsake.', fl1: 'For organizations', fl2: 'Terms of use', fl3: 'Privacy', fl4: 'Leaderboard',
     navK: 'For organizations', grpK: 'Create your group account (free)',
     k6: 'Group frames', h2f: 'Same selfie. Your group’s frame.', s2f: 'No AI here: your selfie as is, in your school or event frame. Free for every member, ready to share.', kf1: '🎓 School: “My pride” · Class of 2027', kf2: '🎤 Event: “I’ll be there!”', kfn: 'School, event and people are fictional examples.',
-    nav1: 'How it works', nav2: 'Which groups', nav3: 'Pricing', cta: 'Chat with us on WhatsApp', cta2: 'See which groups',
-    pill: 'Group frames and AI portraits, made in Haiti', h1: 'Your photo, <em>our pride</em>.',
-    lead: 'Souriyo puts your selfie in the frame of your school, event or group — and AI can create a professional portrait of you. Share it and show everyone you belong.',
-    tr1: 'Free group frame', tr2: 'Your face stays yours', tr3: 'MonCash payment',
+    nav1: 'How it works', nav2: 'Which groups', nav3: 'Pricing', cta: 'Chat with us on WhatsApp', cta2: 'Discover Souriyo',
+    pill: 'Marketing · Engagement · Memories — made in Haiti', h1: 'Every great moment deserves <em>a great frame</em>.',
+    lead: 'Souriyo is a marketing and engagement tool for schools, events, churches, companies, campaigns — and anyone with a great moment to celebrate. Your audience puts their selfie in your frame and shares it: every photo becomes an ad, a memory, a source of pride.',
+    tr1: 'Free group frame', tr2: 'Verified accounts ✓', tr3: 'MonCash payment',
     before: 'Before', after: 'After', ex1: 'Example 1', ex2: 'Example 2', fict: 'AI portrait. Fictional people, created for this example. Slide to compare.',
     k1: 'How it works', h2a: 'Smile, you’re in the frame.', s2a: 'Everything happens on your phone, in under a minute.',
     st1: 'Find your group’s frame', st1p: 'Every school, university, event or association has its own page and frame: souriyo.com/upnch, souriyo.com/bst…',
     st2: 'Send a selfie', st2p: 'Your photo appears in the frame instantly. Want more? AI creates your pro portrait: cap and gown, doctor’s coat, suit…',
     st3: 'Share your pride', st3p: 'WhatsApp status, Instagram story, LinkedIn: every share puts your group in the spotlight and makes others want theirs.',
-    k2: 'Which groups', h2b: 'For every group that’s proud of itself.', s2b: 'You create the frame once. Every member takes their photo. Your group shows up everywhere.',
-    u1: 'Schools & universities', u1p: '“Proud to be UPNCH”, “Class of 2027”, graduates in caps and gowns: students wear their school colors.',
+    k2: 'Who it’s for', h2b: 'For anyone with a moment to celebrate.', s2b: 'You create the frame once. Everyone takes their photo, shares it, and the moment lives forever.',
+    u1: 'Schools & universities', u1p: '“My pride”, “Class of 2027”, graduates in caps and gowns: students wear their school colors.',
     u2: 'Events', u2p: 'Conferences, seminars, concerts, launches: “I’ll be there!” before, “I was there!” after. Every attendee promotes the event.',
     u3: 'Churches & associations', u3p: 'Conventions, camps, special days, clubs, youth movements: every member in the same frame.',
     u4: 'Companies & teams', u4p: 'One photo style for the whole team: website, badges, social media, launches.',

@@ -29,6 +29,8 @@
   .hero .lg { height: 64px; max-width: 220px; object-fit: contain; background: #fff; border-radius: 14px; padding: 6px 10px; margin-bottom: 12px; }
   .hero h1 { font-size: clamp(28px, 7vw, 42px); line-height: 1.08; }
   .hero p { margin: 8px auto 0; max-width: 520px; opacity: .88; }
+  .hero .ote { display: inline-flex; gap: 6px; align-items: center; background: rgba(255,255,255,.14); border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 700; opacity: 1; }
+  .hero .ote b { background: #22c55e; color: #fff; border-radius: 999px; padding: 1px 8px; }
   .wrap { max-width: 720px; margin: -46px auto 40px; padding: 0 16px; }
   .card { background: #fff; border-radius: 22px; box-shadow: 0 10px 40px rgba(21,24,72,.10); padding: 20px; margin-bottom: 14px; }
   .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #f3efe9; border-radius: 16px; padding: 5px; margin-bottom: 16px; }
@@ -85,6 +87,7 @@
   <header class="hero">
     <img class="lg hidden" id="glogo" alt="" />
     <h1 id="gname"></h1>
+    <p class="ote hidden" id="ote"></p>
     <p data-t="heroP"></p>
   </header>
   <main class="wrap">
@@ -261,6 +264,7 @@ async function boot() {
   document.title = `${g.nom} · Souriyo`;
   document.documentElement.style.setProperty('--g1', g.c1); document.documentElement.style.setProperty('--g2', g.c2);
   $('gname').textContent = g.nom;
+  S.api('rpc/kanpay_ote', { method: 'POST', body: JSON.stringify({ p_slug: slug }) }).then((r) => { const o = r && r[0]; if (!o) return; $('ote').innerHTML = `${o.verifye ? '<b>✓ Verifye</b>' : ''} ${{ ht: 'Kreye pa', fr: 'Créé par', en: 'Created by' }[st.lang] || 'Kreye pa'} ${String(o.non).replace(/[<>&]/g, '')}`; $('ote').classList.remove('hidden'); }).catch(() => {});
   if (g.logo_url) { $('glogo').src = g.logo_url; $('glogo').alt = g.nom; $('glogo').classList.remove('hidden'); }
   $('tabs').classList.toggle('hidden', !(g.mod_kad && g.mod_ia));
   st.mode = g.mod_kad ? 'kad' : 'ia';

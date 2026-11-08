@@ -212,6 +212,7 @@
         <div><label class="f" for="cfEst">Pri estime pa pòtrè ($)</label><input class="t" id="cfEst" type="number" min="0.001" step="0.001" /></div>
         <div><label class="f" for="cfAlet">Alèt si pri mwayen depase ($)</label><input class="t" id="cfAlet" type="number" min="0.001" step="0.001" /></div>
         <div><label class="f" for="cfKredi">Kredi pou 1 pòtrè</label><input class="t" id="cfKredi" type="number" min="1" max="10" /></div>
+        <div><label class="f" for="cfVer">Modèl IA pou verifikasyon idantite</label><input class="t" id="cfVer" maxlength="120" /></div>
       </div>
       <label class="tog" style="margin-top:12px"><input type="checkbox" id="cfAktif" /> <b>IA a aktif</b> — retire kwochèt la pou w kanpe tout pòtrè IA yo touswit</label>
       <p class="sub">Si pri IA a monte, ou ka : mete <b>plis kredi pou 1 pòtrè</b> (pa egzanp 2), oswa chanje <b>modèl la</b>. Pri an goud yo ak kontra yo pa chanje.</p>
@@ -438,14 +439,14 @@ const usd = (n) => '$' + Number(n || 0).toFixed(2), usd3 = (n) => '$' + Number(n
 let CFG = null;
 async function loadRanta() {
   const since = haiti(new Date(Date.now() - 30 * 864e5));
-  const [c, j, k] = await Promise.all([sb.from('ia_config').select('*').eq('id', 1).single(), sb.from('ia_jounal').select('jou, groupe_id, estati, kout_usd').gte('jou', since).limit(50000), sb.from('coupons').select('prix_htg, groupe_id, itilize_nan, kreye_le').gte('kreye_le', since)]);
+  const [c, j, k] = await Promise.all([sb.from('ia_config').select('*').eq('id', 1).single(), sb.from('ia_jounal').select('jou, groupe_id, estati, kout_usd, operasyon').gte('jou', since).limit(50000), sb.from('coupons').select('prix_htg, groupe_id, itilize_nan, kreye_le').gte('kreye_le', since)]);
   if (c.error) return msg('cfMsg', friendly(c.error));
   CFG = c.data; const J = j.data || [], C = k.data || [], to = +CFG.to_htg;
-  $('cfModele').value = CFG.modele; $('cfBidje').value = CFG.bidje_jou_usd; $('cfTo').value = CFG.to_htg; $('cfEst').value = CFG.kout_estime_usd; $('cfAlet').value = CFG.alet_kout_usd; $('cfKredi').value = CFG.kredi_potre; $('cfAktif').checked = CFG.aktif;
+  $('cfModele').value = CFG.modele; $('cfBidje').value = CFG.bidje_jou_usd; $('cfTo').value = CFG.to_htg; $('cfEst').value = CFG.kout_estime_usd; $('cfAlet').value = CFG.alet_kout_usd; $('cfKredi').value = CFG.kredi_potre; $('cfVer').value = CFG.modele_verifikasyon || ''; $('cfAktif').checked = CFG.aktif;
   const today = haiti(), T = J.filter((x) => x.jou === today), spent = T.reduce((a, x) => a + +x.kout_usd, 0);
-  const ok = J.filter((x) => x.estati === 'ok'), ok7 = ok.filter((x) => x.jou >= haiti(new Date(Date.now() - 7 * 864e5)));
+  const ok = J.filter((x) => x.estati === 'ok' && x.operasyon !== 'verifikasyon'), ok7 = ok.filter((x) => x.jou >= haiti(new Date(Date.now() - 7 * 864e5)));
   const avg7 = ok7.length ? ok7.reduce((a, x) => a + +x.kout_usd, 0) / ok7.length : 0;
-  $('rToday').innerHTML = [['Pòtrè jodi a', T.filter((x) => x.estati === 'ok').length], ['Depans jodi a', `${usd(spent)} · ${htg(spent * to)}`], ['Pri mwayen (7 j)', avg7 ? usd3(avg7) : '—'], ['IA a', CFG.aktif ? '🟢 Aktif' : '🔴 Kanpe']].map(([a, b]) => `<div class="stat"><b>${b}</b><span>${a}</span></div>`).join('');
+  $('rToday').innerHTML = [['Pòtrè jodi a', T.filter((x) => x.estati === 'ok' && x.operasyon !== 'verifikasyon').length], ['Depans jodi a', `${usd(spent)} · ${htg(spent * to)}`], ['Pri mwayen (7 j)', avg7 ? usd3(avg7) : '—'], ['IA a', CFG.aktif ? '🟢 Aktif' : '🔴 Kanpe']].map(([a, b]) => `<div class="stat"><b>${b}</b><span>${a}</span></div>`).join('');
   const pct = CFG.bidje_jou_usd > 0 ? Math.min(100, spent / CFG.bidje_jou_usd * 100) : 100;
   $('rBar').style.width = pct + '%'; $('rBar').style.background = pct > 85 ? '#b3261e' : pct > 60 ? '#d97706' : '#1a7a3c';
   $('rBarT').textContent = `Bidjè jodi a : ${usd(spent)} / ${usd(CFG.bidje_jou_usd)} (${Math.round(pct)} %)`;
@@ -455,14 +456,14 @@ async function loadRanta() {
   if (!CFG.aktif) al.push('🔴 IA a kanpe : pèsonn pa ka fè pòtrè IA kounya.');
   $('rAlert').classList.toggle('hidden', !al.length); $('rAlert').innerHTML = al.map(esc).join('<br>');
   const byG = {};
-  J.forEach((x) => { const g = byG[x.groupe_id] ||= { n: 0, cost: 0, rev: 0 }; if (x.estati === 'ok') g.n++; g.cost += +x.kout_usd; });
+  J.forEach((x) => { const key = x.operasyon === 'verifikasyon' ? '__ver' : x.groupe_id; const g = byG[key] ||= { n: 0, cost: 0, rev: 0 }; if (x.estati === 'ok') g.n++; g.cost += +x.kout_usd; });
   C.forEach((x) => { const id = x.groupe_id || x.itilize_nan; const g = byG[id] ||= { n: 0, cost: 0, rev: 0 }; g.rev += x.prix_htg; });
-  $('rGroups').innerHTML = Object.entries(byG).sort((a, b) => b[1].n - a[1].n).map(([id, g]) => { const gr = G.find((x) => x.id === id); const m = g.rev - g.cost * to; return `<tr><td>${esc(gr ? gr.nom : '— (nenpòt gwoup)')}</td><td>${g.n}</td><td>${usd(g.cost)} · ${htg(g.cost * to)}</td><td>${htg(g.rev)}</td><td style="font-weight:700;color:${m >= 0 ? 'var(--ok)' : '#b3261e'}">${htg(m)}</td><td>${g.n ? usd3(g.cost / g.n) : '—'}</td></tr>`; }).join('') || '<tr><td colspan="6" class="sub">Pa gen done ankò.</td></tr>';
+  $('rGroups').innerHTML = Object.entries(byG).sort((a, b) => b[1].n - a[1].n).map(([id, g]) => { const gr = G.find((x) => x.id === id); const m = g.rev - g.cost * to; return `<tr><td>${id === '__ver' ? '🪪 Verifikasyon idantite' : esc(gr ? gr.nom : '— (nenpòt gwoup)')}</td><td>${g.n}</td><td>${usd(g.cost)} · ${htg(g.cost * to)}</td><td>${htg(g.rev)}</td><td style="font-weight:700;color:${m >= 0 ? 'var(--ok)' : '#b3261e'}">${htg(m)}</td><td>${g.n ? usd3(g.cost / g.n) : '—'}</td></tr>`; }).join('') || '<tr><td colspan="6" class="sub">Pa gen done ankò.</td></tr>';
   const byD = {}; J.forEach((x) => { const d = byD[x.jou] ||= { ok: 0, ko: 0, cost: 0 }; x.estati === 'echwe' ? d.ko++ : x.estati === 'ok' && d.ok++; d.cost += +x.kout_usd; });
   $('rDays').innerHTML = Object.entries(byD).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 14).map(([d, x]) => `<tr><td>${new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}</td><td>${x.ok}</td><td>${x.ko}</td><td>${usd(x.cost)}</td><td>${htg(x.cost * to)}</td><td>${x.ok ? usd3(x.cost / x.ok) : '—'}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen done ankò.</td></tr>';
 }
 $('cfSave').addEventListener('click', async () => {
-  const v = { modele: $('cfModele').value.trim(), bidje_jou_usd: +$('cfBidje').value, to_htg: +$('cfTo').value, kout_estime_usd: +$('cfEst').value, alet_kout_usd: +$('cfAlet').value, kredi_potre: parseInt($('cfKredi').value, 10), aktif: $('cfAktif').checked };
+  const v = { modele: $('cfModele').value.trim(), bidje_jou_usd: +$('cfBidje').value, to_htg: +$('cfTo').value, kout_estime_usd: +$('cfEst').value, alet_kout_usd: +$('cfAlet').value, kredi_potre: parseInt($('cfKredi').value, 10), modele_verifikasyon: $('cfVer').value.trim() || 'google/gemini-3.8-flash', aktif: $('cfAktif').checked };
   if (!v.modele || !(v.to_htg > 0) || !(v.kout_estime_usd > 0) || !(v.kredi_potre >= 1)) return msg('cfMsg', 'Verifye chif yo.');
   const { error } = await sb.from('ia_config').update(v).eq('id', 1);
   if (error) return msg('cfMsg', friendly(error)); msg('cfMsg', '✓ Paramèt yo anrejistre. Yo aplike touswit.', 'ok'); loadRanta();
@@ -470,16 +471,18 @@ $('cfSave').addEventListener('click', async () => {
 
 /* ---------- Òganizasyon ---------- */
 const OST = { ap_tann: '⏳ Ap tann', apwouve: '✅ Apwouve', sispann: '⛔ Sispann', refize: '✖ Refize' };
-const OKAL = { lekol: '🏫 Lekòl', inivesite: '🎓 Inivèsite', evenman: '🎤 Evènman', legliz: '⛪ Legliz', politik: '🗳️ Politik', asosyasyon: '🤝 Asosyasyon', antrepriz: '💼 Antrepriz', lot: '✨ Lòt' };
+const OKAL = { lekol: '🏫 Lekòl', inivesite: '🎓 Inivèsite', evenman: '🎤 Evènman', legliz: '⛪ Legliz', politik: '🗳️ Politik', asosyasyon: '🤝 Asosyasyon', antrepriz: '💼 Antrepriz', moun: '🙋 Moun', lot: '✨ Lòt' };
+let VERS = {};
 let ORGS = [], PARAM = null, OCUR = null;
 const pakeTxt = (a) => (a || []).map((p) => `${p.n}:${p.p}`).join(', ');
 const pakeParse = (t) => { const out = String(t || '').split(',').map((x) => x.split(':').map((y) => parseInt(y.replace(/\D/g, ''), 10))).filter(([n, p]) => n > 0 && p >= 0).map(([n, p]) => ({ n, p })); return out.length ? out : null; };
 async function loadOrgs() {
-  const [o, p, d] = await Promise.all([sb.from('organizations').select('*').order('kreye_le', { ascending: false }), sb.from('paramet').select('*').eq('id', 1).single(), sb.from('modele_demandes').select('*').order('kreye_le', { ascending: false }).limit(200)]);
+  const [o, p, d, v] = await Promise.all([sb.from('organizations').select('*').order('kreye_le', { ascending: false }), sb.from('paramet').select('*').eq('id', 1).single(), sb.from('modele_demandes').select('*').order('kreye_le', { ascending: false }).limit(200), sb.from('verifikasyon').select('*').order('kreye_le', { ascending: false }).limit(500)]);
+  VERS = {}; (v.data || []).forEach((x) => { if (!VERS[x.org_id]) VERS[x.org_id] = x; });
   if (o.error) return msg('pMsg', friendly(o.error));
   ORGS = o.data || []; PARAM = p.data;
   $('pKom').value = PARAM.komisyon_pct; $('pPake').value = pakeTxt(PARAM.pake_org);
-  const n = ORGS.filter((x) => x.estati === 'ap_tann').length; $('oBadge').textContent = n ? `(${n})` : '';
+  const n = ORGS.filter((x) => x.estati === 'ap_tann' || VERS[x.id]?.estati === 'ap_tann').length; $('oBadge').textContent = n ? `(${n})` : '';
   renderOrgs();
   const MS = ['nouvo', 'an_kou', 'fini', 'refize'];
   $('mdRows').innerHTML = (d.data || []).map((x) => { const og = ORGS.find((y) => y.id === x.org_id); return `<tr><td class="sub">${fmt(x.kreye_le)}</td><td>${esc(og ? og.non : '')}</td><td style="max-width:360px">${esc(x.deskripsyon)}${x.referans ? `<div class="sub">${esc(x.referans)}</div>` : ''}</td>
@@ -489,16 +492,49 @@ async function loadOrgs() {
 }
 function renderOrgs() {
   const f = $('oFilter').value, L = ORGS.filter((x) => !f || x.estati === f);
-  $('olist').innerHTML = L.map((x) => `<button type="button" class="gi" data-oid="${x.id}" aria-current="${OCUR && OCUR.id === x.id}"><span class="sw" style="display:grid;place-items:center;background:#f6f3ef;font-size:18px">${(OKAL[x.kalite] || '✨').split(' ')[0]}</span><span><b>${esc(x.non)}</b><span>${OST[x.estati]} · ${fmt(x.kreye_le)}</span></span></button>`).join('') || '<p class="sub">Okenn òganizasyon.</p>';
+  $('olist').innerHTML = L.map((x) => `<button type="button" class="gi" data-oid="${x.id}" aria-current="${OCUR && OCUR.id === x.id}"><span class="sw" style="display:grid;place-items:center;background:#f6f3ef;font-size:18px">${(OKAL[x.kalite] || '✨').split(' ')[0]}</span><span><b>${esc(x.non)}${x.verifye ? ' <span style="color:var(--ok)">✓</span>' : ''}</b><span>${OST[x.estati]}${VERS[x.id]?.estati === 'ap_tann' ? ' · 🪪 pyès pou verifye' : ''} · ${fmt(x.kreye_le)}</span></span></button>`).join('') || '<p class="sub">Okenn òganizasyon.</p>';
 }
 $('oFilter').addEventListener('change', renderOrgs);
+const DOKN = { CIN: 'CIN', NIF: 'NIF', paspo: 'Paspò', pemi: 'Pèmi', patant: 'Patant', lot: 'Lòt pyès' };
+async function renderVer(o) {
+  const v = VERS[o.id]; const box = $('verBox'); if (!box) return;
+  if (!v) { box.innerHTML = '<p class="sub">🪪 Pa gen pyès idantite voye ankò.</p>'; return; }
+  const r = v.ia_rezilta || {};
+  let imgs = '';
+  if (!v.dokiman_efase) {
+    const [a, b] = await Promise.all([sb.storage.from('verifikasyon').createSignedUrl(v.dokiman_path, 600), sb.storage.from('verifikasyon').createSignedUrl(v.selfie_path, 600)]);
+    imgs = `<div class="grid2" style="margin:8px 0"><figure style="margin:0"><img src="${esc(a.data?.signedUrl || '')}" alt="Pyès" style="width:100%;border-radius:12px;border:1px solid var(--line)" /><figcaption class="sub">Pyès (${DOKN[v.tip_dokiman] || v.tip_dokiman})</figcaption></figure><figure style="margin:0"><img src="${esc(b.data?.signedUrl || '')}" alt="Selfi" style="width:100%;border-radius:12px;border:1px solid var(--line)" /><figcaption class="sub">Selfi</figcaption></figure></div>`;
+  } else imgs = '<p class="sub">Foto yo efase apre desizyon an.</p>';
+  const col = r.meme_moun === 'wi' ? 'var(--ok)' : r.meme_moun === 'non' ? '#b3261e' : '#7a5200';
+  const iaTxt = r.meme_moun ? `<b style="color:${col}">${{ wi: '✓ Menm moun', non: '✖ Pa menm moun', pa_seten: '? Pa sèten' }[r.meme_moun] || r.meme_moun} (${r.konfyans ?? '?'} %)</b> · pyès : ${esc(r.tip_dokiman || '?')}${r.dokiman_lizib === false ? ' · <b style="color:#b3261e">pa lizib</b>' : ''}${r.foto_yon_ekran ? ' · <b style="color:#b3261e">foto yon ekran</b>' : ''}<br>Non sou pyès la : <b>${esc(r.non_sou_dokiman || '—')}</b> · non deklare : <b>${esc(v.non_deklare || '—')}</b> · non kont : <b>${esc(o.kontak_non || o.non)}</b>${(r.siy_manipilasyon || []).length ? `<br><b style="color:#b3261e">⚠️ ${esc(r.siy_manipilasyon.join(', '))}</b>` : ''}` : '';
+  box.innerHTML = `<fieldset><legend>🪪 Verifikasyon · ${{ ap_tann: '⏳ ap tann', ok: '✅ aksepte', refize: '✖ refize' }[v.estati]} · ${fmt(v.kreye_le)}</legend>${imgs}
+    <p style="margin:6px 0">🤖 <b>Analiz IA</b> (konsèy sèlman) : ${iaTxt || ''} ${r.not ? `<br><span class="sub">${esc(r.not)}</span>` : ''}</p>
+    ${v.estati === 'ap_tann' ? `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><button class="btn main" type="button" data-ver="ok">✓ Aksepte (apwouve + badj Verifye)</button><input class="t" id="verRezon" placeholder="Rezon si w refize" style="max-width:260px" /><button class="btn" type="button" data-ver="refize">✖ Refize</button></div>` : ''}
+    ${!v.dokiman_efase && v.estati !== 'ap_tann' ? '<button class="btn" type="button" data-ver="efase" style="margin-top:6px">🗑️ Efase foto yo</button>' : ''}</fieldset>`;
+}
+async function efaseFoto(v) { await sb.storage.from('verifikasyon').remove([v.dokiman_path, v.selfie_path].filter(Boolean)); await sb.from('verifikasyon').update({ dokiman_efase: true }).eq('id', v.id); }
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-ver]'); if (!b || !OCUR) return; const v = VERS[OCUR.id]; if (!v) return; b.disabled = true;
+  try {
+    if (b.dataset.ver === 'ok') {
+      const r1 = await sb.from('verifikasyon').update({ estati: 'ok', revize_le: new Date().toISOString() }).eq('id', v.id); if (r1.error) throw r1.error;
+      const r2 = await sb.from('organizations').update({ verifye: true, estati: 'apwouve' }).eq('id', OCUR.id); if (r2.error) throw r2.error;
+      await efaseFoto(v);
+    } else if (b.dataset.ver === 'refize') {
+      const r1 = await sb.from('verifikasyon').update({ estati: 'refize', rezon: ($('verRezon').value || '').trim() || null, revize_le: new Date().toISOString() }).eq('id', v.id); if (r1.error) throw r1.error;
+      await efaseFoto(v);
+    } else await efaseFoto(v);
+    await loadOrgs(); await showOrg(ORGS.find((x) => x.id === OCUR.id)); msg('oMsg', '✓ Fèt. Foto pyès yo efase.', 'ok');
+  } catch (err) { msg('oMsg', friendly(err)); b.disabled = false; }
+});
 document.addEventListener('click', (e) => { const b = e.target.closest('[data-oid]'); if (b) showOrg(ORGS.find((x) => x.id === b.dataset.oid)); });
 async function showOrg(o) {
   OCUR = o; renderOrgs();
   const g = await sb.from('groupes').select('nom, slug, aktif, mod_ia, mod_pey').eq('org_id', o.id);
   const waN = wa(o.kontak_tel);
   $('oDet').innerHTML = `<h2>${esc(o.non)} <span class="pill ${o.estati === 'apwouve' ? 'ok' : 'w'}">${OST[o.estati]}</span></h2>
-    <p class="sub">${OKAL[o.kalite] || ''} · enskri ${fmt(o.kreye_le)}${o.apwouve_le ? ' · apwouve ' + fmt(o.apwouve_le) : ''}</p>
+    <p class="sub">${o.tip_kont === 'moun' ? '🙋 Kont moun' : '🏢 Òganizasyon'} · ${OKAL[o.kalite] || ''}${o.kalite_presizyon ? ' (' + esc(o.kalite_presizyon) + ')' : ''} · enskri ${fmt(o.kreye_le)}${o.apwouve_le ? ' · apwouve ' + fmt(o.apwouve_le) : ''}${o.verifye ? ' · <b style="color:var(--ok)">✓ Verifye</b>' : ''}</p>
+    <div id="verBox"></div>
     ${o.deskripsyon ? `<p>${esc(o.deskripsyon)}</p>` : ''}
     <p><b>${esc(o.kontak_non || '')}</b> · ${esc(o.kontak_tel || '')} · ${esc(o.kontak_imel || '')} ${waN ? `<a class="btn wa" style="padding:4px 10px" target="_blank" rel="noopener" href="https://wa.me/${waN}">WhatsApp</a>` : ''}</p>
     ${o.kalite === 'politik' ? '<p class="msg err" style="margin:0 0 8px">🗳️ Kanpay politik : verifye idantite responsab la ak kontni kad yo. Pri yo ka negosye.</p>' : ''}
@@ -508,10 +544,13 @@ async function showOrg(o) {
       <div style="grid-column:span 2"><label class="f" for="oPake">Pakè espesyal (vid = pakè jeneral yo)</label><input class="t" id="oPake" value="${esc(pakeTxt(o.pake_org))}" placeholder="${esc(pakeTxt(PARAM.pake_org))}" /></div>
     </div>
     <label class="tog"><input type="checkbox" id="oNeg" ${o.pri_negosye ? 'checked' : ''} /> Pri negosye (òganizasyon an wè « Sou mezi » olye pri yo)</label>
+    <label class="tog"><input type="checkbox" id="oKa" ${o.ka_komisyon ? 'checked' : ''} /> Ka itilize mòd « piblik la peye » ak komisyon (retire l pou pati politik, elatriye)</label>
+    <label class="tog"><input type="checkbox" id="oVer" ${o.verifye ? 'checked' : ''} /> Badj ✓ Verifye</label>
     <label class="f" for="oNota">Nòt admin (prive)</label><textarea class="t" id="oNota" maxlength="2000">${esc(o.nota_admin || '')}</textarea>
     <button class="btn main" type="button" id="oSave" style="margin-top:10px">Anrejistre</button><p class="msg" id="oMsg"></p>
     <h2 style="margin-top:16px">Kanpay (${(g.data || []).length})</h2>
     ${(g.data || []).map((c) => `<div class="sub">${c.aktif ? '🟢' : '⚪'} <b>${esc(c.nom)}</b> · <a href="${esc(S.groupUrl(c.slug))}" target="_blank" rel="noopener">/${esc(c.slug)}</a> · ${c.mod_ia ? 'IA ' + c.mod_pey : 'kad sèlman'}</div>`).join('') || '<p class="sub">Pa gen kanpay ankò.</p>'}`;
+  await renderVer(o);
 }
 document.addEventListener('click', async (e) => {
   const b = e.target.closest('[data-ost]'); if (!b || !OCUR) return;
@@ -521,7 +560,7 @@ document.addEventListener('click', async (e) => {
 document.addEventListener('click', async (e) => {
   if (e.target.id !== 'oSave' || !OCUR) return;
   const k = $('oKom').value.trim();
-  const v = { komisyon_pct: k === '' ? null : Math.max(0, Math.min(100, +k)), pake_org: $('oPake').value.trim() ? pakeParse($('oPake').value) : null, pri_negosye: $('oNeg').checked, nota_admin: $('oNota').value.trim() || null };
+  const v = { komisyon_pct: k === '' ? null : Math.max(0, Math.min(100, +k)), pake_org: $('oPake').value.trim() ? pakeParse($('oPake').value) : null, pri_negosye: $('oNeg').checked, ka_komisyon: $('oKa').checked, verifye: $('oVer').checked, nota_admin: $('oNota').value.trim() || null };
   const { error } = await sb.from('organizations').update(v).eq('id', OCUR.id); if (error) return msg('oMsg', friendly(error));
   await loadOrgs(); await showOrg(ORGS.find((x) => x.id === OCUR.id)); msg('oMsg', '✓ Anrejistre.', 'ok');
 });
