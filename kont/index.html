@@ -78,8 +78,17 @@
   table { width: 100%; border-collapse: collapse; font-size: 14px; } th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; } th { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); }
   .packs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
   .pk { border: 1.5px solid var(--line); border-radius: 16px; padding: 16px; } .pk b { display: block; font: 800 26px "Bricolage Grotesque", system-ui, sans-serif; }
+  .seg.s3 { grid-template-columns: repeat(3, 1fr); }
+  .rz { display: grid; grid-template-columns: 110px 1fr 120px; gap: 8px; align-items: center; margin-top: 6px; } .rz span { font-weight: 700; font-size: 14px; }
+  .kods { font: 800 18px "Bricolage Grotesque", system-ui, sans-serif; letter-spacing: .06em; background: #fff4d6; color: #7a5200; padding: 4px 10px; border-radius: 10px; display: inline-block; }
+  .kc { border: 1px solid var(--line); border-radius: 18px; padding: 14px; display: grid; grid-template-columns: 150px 1fr; gap: 14px; margin-bottom: 12px; }
+  .kc img { width: 150px; border-radius: 12px; display: block; background: #f3efe9; aspect-ratio: 4/5; object-fit: cover; }
+  .kc .ph { width: 150px; aspect-ratio: 4/5; border-radius: 12px; background: #f3efe9; display: grid; place-items: center; text-align: center; font-size: 13px; color: var(--ink-2); padding: 10px; }
+  .thread { background: #f8f5f1; border-radius: 12px; padding: 8px 10px; margin-top: 8px; max-height: 220px; overflow: auto; font-size: 14px; }
+  .thread p { margin: 4px 0; } .thread .me { color: var(--ink); } .thread .sr { color: #9a3412; }
+  .lib .kp { flex-direction: column; align-items: stretch; } .lib .kp small { color: var(--ink-2); font-weight: 500; } .lib .kp .pm { color: #9a3412; font-weight: 800; }
   @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } .pv { position: static; } .stats { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 560px) { .grid2, .grid3 { grid-template-columns: 1fr; } .models { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .grid2, .grid3 { grid-template-columns: 1fr; } .kc { grid-template-columns: 1fr; } .rz { grid-template-columns: 90px 1fr 90px; } .models { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -90,6 +99,8 @@
     <button type="button" data-tab="dash" aria-pressed="true">📊 Tablodbò</button>
     <button type="button" data-tab="ed" aria-pressed="false">🖼️ Kanpay</button>
     <button type="button" data-tab="mod" aria-pressed="false">🎨 Modèl pèsonalize</button>
+    <button type="button" data-tab="rez" aria-pressed="false" class="hidden">⭐ Rezo sosyal</button>
+    <button type="button" data-tab="kon" aria-pressed="false" class="hidden">💡 Konsèp</button>
     <button type="button" data-tab="ver" aria-pressed="false">🪪 Verifikasyon</button>
     <button type="button" data-tab="ekip" aria-pressed="false">👥 Ekip</button>
     <button type="button" data-tab="kob" aria-pressed="false">💰 Lajan</button>
@@ -112,12 +123,16 @@
     </form>
     <form id="fUp" class="hidden">
       <label class="f">Ki moun ou ye ?</label>
-      <div class="seg" style="margin-bottom:4px"><button type="button" data-tip="oganizasyon" aria-pressed="true">🏢 Yon òganizasyon</button><button type="button" data-tip="moun" aria-pressed="false">🙋 Yon moun</button></div>
+      <div class="seg s3" style="margin-bottom:4px"><button type="button" data-tip="oganizasyon" aria-pressed="true">🏢 Òganizasyon</button><button type="button" data-tip="moun" aria-pressed="false">🙋 Yon moun</button><button type="button" data-tip="enfliyanse" aria-pressed="false">⭐ Enfliyansè</button></div>
       <p class="sub" id="tipNote" style="margin:4px 0 0"></p>
       <label class="f" for="upNon" id="upNonL">Non òganizasyon an</label><input class="t" id="upNon" maxlength="100" required placeholder="ex. Lekòl Flanbwayan" />
       <div id="kalBox"><label class="f" for="upKal">Kalite</label>
       <select class="t" id="upKal"><option value="lekol">🏫 Lekòl</option><option value="inivesite">🎓 Inivèsite</option><option value="evenman">🎤 Evènman</option><option value="legliz">⛪ Legliz</option><option value="politik">🗳️ Pati / kanpay politik</option><option value="asosyasyon">🤝 Asosyasyon / klib</option><option value="antrepriz">💼 Antrepriz</option><option value="lot">✨ Lòt (presize)</option></select>
       <div id="presBox" class="hidden"><label class="f" for="upPres">Presize kisa òganizasyon an ye</label><input class="t" id="upPres" maxlength="80" placeholder="ex. Mizisyen, Klib foutbòl, Fondasyon…" /></div></div>
+      <div id="rezoBox" class="hidden"><label class="f">Rezo sosyal ou yo (omwen youn)</label>
+        <p class="sub" style="margin:0 0 4px" id="rezoNote"></p>
+        <div class="rz" style="margin-top:0"><span></span><small class="sub">Non itilizatè (@…)</small><small class="sub">Abonnés</small></div>
+        <div id="rezoRows"></div></div>
       <div class="grid2"><div id="konBox"><label class="f" for="upKon">Non responsab la</label><input class="t" id="upKon" maxlength="80" required /></div><div><label class="f" for="upTel">WhatsApp</label><input class="t" id="upTel" inputmode="tel" maxlength="25" required placeholder="3727 4672" /></div></div>
       <label class="f" for="upDesk" id="upDeskL">Kisa òganizasyon an fè ? (pa obligatwa)</label><textarea class="t" id="upDesk" maxlength="600" style="min-height:60px"></textarea>
       <div class="grid2"><div><label class="f" for="upE">Imèl</label><input class="t" id="upE" type="email" autocomplete="username" required /></div><div><label class="f" for="upP">Modpas (8 karaktè omwen)</label><input class="t" id="upP" type="password" autocomplete="new-password" minlength="8" required /></div></div>
@@ -166,6 +181,8 @@
       <h2 id="edT">Nouvo kanpay</h2>
       <label class="f">Kòmanse ak yon modèl nan bibliyotèk la</label>
       <div class="lib" id="lib"></div>
+      <div id="klibBox" class="hidden"><label class="f">⭐ Konsèp kreyatè yo</label><div class="lib" id="klib"></div></div>
+      <p class="sub" id="knSel" style="margin:6px 0 0;font-weight:700"></p>
       <div class="grid2">
         <div><label class="f" for="nom">Non kanpay la</label><input class="t" id="nom" maxlength="80" placeholder="ex. Pwomo 2027" /></div>
         <div><label class="f" for="slug">Adrès (souriyo.com/…)</label><input class="t" id="slug" maxlength="40" /></div>
@@ -235,6 +252,40 @@
       <button class="btn main" type="button" id="mdGo" style="margin-top:12px">Voye demann lan</button><p class="msg" id="mdMsg"></p>
     </section>
     <section class="card"><h2>Demann ou yo</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Deskripsyon</th><th>Estati</th><th>Pri</th><th>Repons Souriyo</th></tr></thead><tbody id="mdRows"></tbody></table></div></section>
+  </div>
+
+  <!-- ===== REZO SOSYAL (enfliyansè) ===== -->
+  <div id="tRez" class="hidden">
+    <section class="card"><h2>⭐ Rezo sosyal ou yo</h2>
+      <p class="sub">Pou w ka kreye konsèp sou Souriyo, fòk omwen yon kont gen <b id="rzMin"></b> abonnés (Facebook : <b id="rzMinFb"></b>). Pou pwouve kont lan se pou ou : mete <b>kòd la</b> nan bio (oswa deskripsyon chèn YouTube ou a), epi klike « Verifye ». Ou ka retire kòd la apre verifikasyon an.</p>
+      <div id="rzElig"></div>
+      <div id="rzList"></div>
+    </section>
+    <section class="card owner-only"><h2>➕ Ajoute yon kont</h2>
+      <div class="grid3"><div><label class="f" for="rzP">Platfòm</label><select class="t" id="rzP"><option value="instagram">Instagram</option><option value="tiktok">TikTok</option><option value="youtube">YouTube</option><option value="x">X (Twitter)</option><option value="facebook">Facebook</option></select></div>
+        <div><label class="f" for="rzU">Non itilizatè</label><input class="t" id="rzU" maxlength="100" placeholder="@…" /></div>
+        <div><label class="f" for="rzA">Abonnés</label><input class="t" id="rzA" type="number" min="0" /></div></div>
+      <button class="btn main" type="button" id="rzAdd" style="margin-top:12px">Ajoute kont lan</button><p class="msg" id="rzMsg"></p>
+    </section>
+  </div>
+
+  <!-- ===== KONSÈP ===== -->
+  <div id="tKon" class="hidden">
+    <div class="stats" id="knStats"></div>
+    <section class="card owner-only" id="knAsk"><h2>💡 Mande yon nouvo konsèp</h2>
+      <p class="sub">Dekri konsèp kad ou vle a. Ekip Souriyo a ap fè yon pwopozisyon, nou chanje l ansanm jiskaske ou kontan, epi lè w apwouve l li antre nan bibliyotèk la. <b>Ou touche <span id="knPct"></span> %</b> nan sa Souriyo fè sou li, epi ou ka vann li (ak revni l ap fè) bay yon lòt kont.</p>
+      <div id="knEligNote"></div>
+      <div id="knForm">
+        <div class="grid2"><div><label class="f" for="knT">Non konsèp la</label><input class="t" id="knT" maxlength="80" placeholder="ex. Kanaval Jakmèl 2027" /></div><div><label class="f" for="knTem">Tèm</label><input class="t" id="knTem" maxlength="120" placeholder="ex. Kanaval, Fèt Manman, Bakaloreya…" /></div></div>
+        <label class="f" for="knEs">Estil (koulè, ambyans, kalite tèks…)</label><input class="t" id="knEs" maxlength="300" placeholder="ex. Koulè vif, jòn ak vyolèt, ambyans fèt, tèks an kreyòl" />
+        <label class="f" for="knD">Deskripsyon</label><textarea class="t" id="knD" maxlength="3000" placeholder="Kisa kad la dwe montre ? Pou ki piblik ? Ki mesaj ?"></textarea>
+        <label class="f" for="knR">Lyen enspirasyon (pa obligatwa)</label><input class="t" id="knR" maxlength="500" placeholder="https://…" />
+        <button class="btn main" type="button" id="knGo" style="margin-top:12px">Voye demann lan</button>
+      </div><p class="msg" id="knMsg"></p>
+    </section>
+    <section class="card"><h2>Konsèp ou yo</h2><div id="knList"></div></section>
+    <section class="card"><h2>💰 Òf pou achte</h2><div id="knOf"></div></section>
+    <section class="card"><h2>🧾 Revni konsèp yo</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Konsèp</th><th>Kalite</th><th>Montan</th><th>Pati pa w</th><th>Peye</th></tr></thead><tbody id="knRev"></tbody></table></div></section>
   </div>
 
   <!-- ===== VERIFIKASYON ===== -->
@@ -316,6 +367,7 @@ function friendly(e) {
   const m = String(e?.message || e || ''); console.warn(e);
   if (/duplicate key|groupes_slug_key/.test(m)) return 'Adrès sa a deja pran. Chwazi yon lòt.';
   if (/slug/.test(m) && /check/.test(m)) return 'Adrès la dwe gen 3 a 40 lèt miniskil, chif oswa tirè (-).';
+  if (/Konsèp|konsep_of_yon_aktif/.test(m)) return /konsep_of_yon_aktif/.test(m) ? 'Ou gen yon òf ki an kou deja pou konsèp sa a.' : m;
   if (/check constraint/.test(m)) return 'Gen yon chan ki pa nan bon fòma.';
   if (/failed to fetch|network/i.test(m)) return 'Pa gen koneksyon. Eseye ankò.';
   if (/42501|permission|row-level/i.test(m)) return 'Ou pa gen aksè pou fè sa.';
@@ -337,6 +389,7 @@ const LIB = [
 ];
 const FIELDS = ['nom', 'slug', 'c1', 'c2', 'c3', 'sou_tit', 'tit', 'riban', 'badj', 'liy', 'lang'];
 const CHECKS = ['mod_kad', 'mod_ia', 'manm_selman', 'nan_klasman', 'aktif'];
+let KONSEP = null, KLIB = [], KLIS = new Set(), KCRE = {};
 let ME = null, ORG = null, PARAM = null, CAMPS = [], STATS = {}, CUR = null, MODEL = 'sek', LOGO_URL = null, LOGO_FILE = null, LOGO_IMG = null, PV = 'kad', SAMPLE = {}, slugTouched = false;
 const kom = () => +(ORG?.komisyon_pct ?? PARAM?.komisyon_pct ?? 30);
 
@@ -348,21 +401,32 @@ $('fIn').addEventListener('submit', async (e) => {
   if (error) return msg('inMsg', 'Imèl oswa modpas la pa bon.'); startAfterLogin(data.session);
 });
 let TIP = 'oganizasyon';
+const PLAT = { instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube', x: 'X', facebook: 'Facebook' };
+$('rezoRows').innerHTML = Object.entries(PLAT).map(([k, v]) => `<div class="rz"><span>${v}</span><input class="t" data-rzu="${k}" maxlength="100" placeholder="@…" /><input class="t" data-rza="${k}" type="number" min="0" placeholder="0" /></div>`).join('');
 function setTip(t) {
   TIP = t; document.querySelectorAll('[data-tip]').forEach((x) => x.setAttribute('aria-pressed', x.dataset.tip === t));
-  const m = t === 'moun';
+  const e = t === 'enfliyanse'; $('rezoBox').classList.toggle('hidden', !e);
+  const m = t === 'moun' || e;
   $('upNonL').textContent = m ? 'Non konplè ou' : 'Non òganizasyon an'; $('upNon').placeholder = m ? 'ex. Marie Joseph' : 'ex. Lekòl Flanbwayan';
   $('kalBox').classList.toggle('hidden', m); $('konBox').classList.toggle('hidden', m); $('upKon').required = !m;
   $('upDeskL').textContent = m ? 'Pou ki okazyon ou vle itilize Souriyo ? (maryaj, anivèsè, batèm, rasanbleman fanmi, piblik ou…)' : 'Kisa òganizasyon an fè ? (pa obligatwa)';
-  $('tipNote').textContent = m ? 'Maryaj, anivèsè, batèm, fèt fanmi, enfliyansè, atis, kreyatè kontni…' : 'Lekòl, inivèsite, evènman, legliz, pati politik, asosyasyon, antrepriz…';
+  $('tipNote').textContent = m ? 'Maryaj, anivèsè, batèm, fèt fanmi, atis…' : 'Lekòl, inivèsite, evènman, legliz, pati politik, asosyasyon, antrepriz…';
+  if (e) {
+    $('upNonL').textContent = 'Non kreyatè ou (jan piblik la konnen w)'; $('upNon').placeholder = 'ex. Ti Mari Kreyòl';
+    $('upDeskL').textContent = 'Ki kalite kontni ou fè ? (pa obligatwa)';
+    $('tipNote').textContent = 'Enfliyansè, atis, kreyatè kontni : kreye pwòp konsèp kad ou, epi touche sou chak itilizasyon.';
+    $('rezoNote').textContent = 'Pou vin kreyatè, fòk omwen yon kont gen 5 000 abonnés (Facebook : 10 000). N ap verifye yo apre enskripsyon an.';
+  }
 }
 document.addEventListener('click', (e) => { const b = e.target.closest('[data-tip]'); if (b) setTip(b.dataset.tip); });
 $('upKal').addEventListener('change', () => $('presBox').classList.toggle('hidden', $('upKal').value !== 'lot'));
 setTip('oganizasyon');
-const UPERR = { presizyon: 'Presize kisa òganizasyon an ye.', non: 'Mete non an.', kalite: 'Chwazi kalite òganizasyon an.', imel: 'Imèl la pa bon.', tel: 'Mete yon nimewo WhatsApp ki gen 8 chif omwen.', modpas: 'Modpas la dwe gen 8 karaktè omwen.', kondisyon: 'Ou dwe dakò ak kondisyon yo.', imel_egziste: 'Gen yon kont ak imèl sa a deja. Konekte pito.', server: 'Yon erè rive. Eseye ankò.' };
+const UPERR = { rezo: 'Mete omwen yon kont rezo sosyal.', presizyon: 'Presize kisa òganizasyon an ye.', non: 'Mete non an.', kalite: 'Chwazi kalite òganizasyon an.', imel: 'Imèl la pa bon.', tel: 'Mete yon nimewo WhatsApp ki gen 8 chif omwen.', modpas: 'Modpas la dwe gen 8 karaktè omwen.', kondisyon: 'Ou dwe dakò ak kondisyon yo.', imel_egziste: 'Gen yon kont ak imèl sa a deja. Konekte pito.', server: 'Yon erè rive. Eseye ankò.' };
 $('fUp').addEventListener('submit', async (e) => {
   e.preventDefault(); msg('upMsg', '');
-  const body = { action: 'enskri', tip_kont: TIP, non: $('upNon').value, kalite: $('upKal').value, kalite_presizyon: $('upPres').value, kontak_non: TIP === 'moun' ? $('upNon').value : $('upKon').value, tel: $('upTel').value, deskripsyon: $('upDesk').value, imel: $('upE').value, modpas: $('upP').value, kondisyon: $('upOk').checked, siwo: $('upHp').value };
+  const rezo = Object.keys(PLAT).map((k) => ({ platfom: k, itilizate: document.querySelector(`[data-rzu="${k}"]`).value.trim(), abonnes: +document.querySelector(`[data-rza="${k}"]`).value || 0 })).filter((x) => x.itilizate);
+  if (TIP === 'enfliyanse' && !rezo.length) return msg('upMsg', UPERR.rezo);
+  const body = { action: 'enskri', tip_kont: TIP, non: $('upNon').value, kalite: $('upKal').value, kalite_presizyon: $('upPres').value, kontak_non: TIP !== 'oganizasyon' ? $('upNon').value : $('upKon').value, tel: $('upTel').value, deskripsyon: $('upDesk').value, imel: $('upE').value, modpas: $('upP').value, kondisyon: $('upOk').checked, siwo: $('upHp').value, rezo: TIP === 'enfliyanse' ? rezo : undefined };
   const btn = e.submitter; btn.disabled = true;
   try {
     const r = await fetch(`${S.SUPABASE_URL}/functions/v1/souriyo-org`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -389,6 +453,12 @@ async function start(session) {
   renderMoney(); fillProfile();
   document.querySelectorAll('.owner-only').forEach((x) => x.classList.toggle('hidden', ME.wol !== 'pwopriyete'));
   if (ME.wol !== 'pwopriyete') { document.querySelector('[data-tab="pro"]').classList.add('hidden'); }
+  const ENF = ORG.tip_kont === 'enfliyanse';
+  document.querySelector('[data-tab="rez"]').classList.toggle('hidden', !ENF);
+  let hasKon = ENF;
+  if (!ENF) { const [a, b] = await Promise.all([sb.from('konsep').select('id', { count: 'exact', head: true }).eq('pwopriyete_org', ORG.id), sb.from('konsep_of').select('id', { count: 'exact', head: true })]); hasKon = (a.count || 0) + (b.count || 0) > 0; }
+  document.querySelector('[data-tab="kon"]').classList.toggle('hidden', !hasKon);
+  if (ENF) { document.querySelector('[data-tab="mod"]').classList.add('hidden'); }
   await loadCamps();
 }
 function banner() {
@@ -400,7 +470,8 @@ function banner() {
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-tab]'), g = e.target.closest('[data-goto]'); const t = b ? b.dataset.tab : g ? g.dataset.goto : null; if (!t) return; if (g) e.preventDefault();
   document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', x.dataset.tab === t));
-  ['dash', 'ed', 'mod', 'ver', 'ekip', 'kob', 'pro'].forEach((k) => $('t' + k[0].toUpperCase() + k.slice(1)).classList.toggle('hidden', k !== t));
+  ['dash', 'ed', 'mod', 'rez', 'kon', 'ver', 'ekip', 'kob', 'pro'].forEach((k) => $('t' + k[0].toUpperCase() + k.slice(1)).classList.toggle('hidden', k !== t));
+  if (t === 'rez') loadRezo(); if (t === 'kon') loadKonsep(); if (t === 'ed') loadKonLib();
   if (t === 'mod') loadModeles(); if (t === 'ver') loadVer(); if (t === 'ekip') loadEkip(); if (t === 'ed' && !CUR && !$('nom').value) newCamp(); if (t === 'dash') loadCamps();
 });
 
@@ -427,11 +498,11 @@ function go(t) { document.querySelector(`[data-tab="${t}"]`).click(); }
 
 /* ---------- Editè ---------- */
 const sub = (s) => String(s || '').replaceAll('{org}', ORG ? ORG.non : '');
-function applyLib(l) { MODEL = l.modele; ['c1', 'c2', 'c3'].forEach((k) => ($(k).value = l[k])); ['sou_tit', 'tit', 'riban', 'badj', 'liy'].forEach((k) => ($(k).value = sub(l[k]).slice(0, +$(k).maxLength))); setModel(MODEL); }
-document.addEventListener('click', (e) => { const b = e.target.closest('[data-lib]'); if (b) applyLib(LIB[+b.dataset.lib]); const m = e.target.closest('[data-m]'); if (m) setModel(m.dataset.m); const p = e.target.closest('[data-pv]'); if (p) { PV = p.dataset.pv; document.querySelectorAll('[data-pv]').forEach((x) => x.setAttribute('aria-pressed', x === p)); preview(); } });
+function applyLib(l, kid = null) { KONSEP = kid; $('knSel').textContent = kid ? `⭐ Konsèp : ${(KLIB.find((k) => k.id === kid) || {}).tit || ''}` : ''; MODEL = l.modele; ['c1', 'c2', 'c3'].forEach((k) => ($(k).value = l[k])); ['sou_tit', 'tit', 'riban', 'badj', 'liy'].forEach((k) => ($(k).value = sub(l[k]).slice(0, +$(k).maxLength))); setModel(MODEL); }
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-lib]'); if (b) applyLib(LIB[+b.dataset.lib]); const kb = e.target.closest('[data-klib]'); if (kb) useKonsep(kb.dataset.klib); const ob = e.target.closest('[data-kof]'); if (ob) ofKonsep(ob.dataset.kof); const m = e.target.closest('[data-m]'); if (m) setModel(m.dataset.m); const p = e.target.closest('[data-pv]'); if (p) { PV = p.dataset.pv; document.querySelectorAll('[data-pv]').forEach((x) => x.setAttribute('aria-pressed', x === p)); preview(); } });
 function setModel(m) { MODEL = m; document.querySelectorAll('[data-m]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.m === m)); preview(); }
 function current() {
-  const g = { modele: MODEL, logo_url: LOGO_URL, org_id: ORG.id, type: G_TYPE[ORG.kalite] || 'lot' };
+  const g = { modele: MODEL, logo_url: LOGO_URL, org_id: ORG.id, type: G_TYPE[ORG.kalite] || 'lot', konsep_id: KONSEP };
   FIELDS.forEach((f) => (g[f] = $(f).value.trim())); CHECKS.forEach((c) => (g[c] = $(c).checked));
   g.slug = slugify(g.slug); g.mod_pey = ORG.ka_komisyon ? ((document.querySelector('[name=pay]:checked') || {}).value || 'ofri') : 'ofri'; g.pri_piblik_htg = Math.max(25, Math.min(2000, parseInt($('pri').value || '100', 10)));
   return g;
@@ -458,7 +529,7 @@ $('logoX').addEventListener('click', () => { LOGO_FILE = null; LOGO_URL = null; 
 function fill(g) {
   FIELDS.forEach((f) => ($(f).value = g[f] ?? '')); CHECKS.forEach((c) => ($(c).checked = !!g[c]));
   (document.querySelector(`[name=pay][value="${g.mod_pey || 'ofri'}"]`) || {}).checked = true; $('pri').value = g.pri_piblik_htg || 100;
-  LOGO_URL = g.logo_url || null; LOGO_FILE = null; $('logoF').value = ''; $('mList').value = ''; setModel(g.modele || 'sek');
+  LOGO_URL = g.logo_url || null; LOGO_FILE = null; $('logoF').value = ''; $('mList').value = ''; KONSEP = g.konsep_id || null; $('knSel').textContent = KONSEP ? '⭐ Kanpay sa a itilize yon konsèp kreyatè' : ''; setModel(g.modele || 'sek');
 }
 function newCamp() {
   CUR = null; slugTouched = false; $('edT').textContent = 'Nouvo kanpay'; $('kit').classList.add('hidden'); msg('edMsg', ''); LOGO_IMG = null;
@@ -527,6 +598,142 @@ $('mAdd').addEventListener('click', async () => {
   $('mList').value = ''; msg('edMsg', `✓ ${rows.length} manm ajoute.`, 'ok'); editCamp(CUR);
 });
 $('mClear').addEventListener('click', async () => { if (!CUR || !confirm('Efase tout lis manm lan ?')) return; const { error } = await sb.from('manm').delete().eq('groupe_id', CUR.id); if (error) return msg('edMsg', friendly(error)); editCamp(CUR); });
+
+/* ---------- Konsèp nan bibliyotèk editè a ---------- */
+const kModel = (k) => Object.assign({ modele: 'sek', c1: '#151848', c2: '#FF5A36', c3: '#ffffff', sou_tit: '', tit: '', riban: '', badj: '', liy: '' }, k.modele || {});
+const kPreview = (k) => { K.draw($('cv'), Object.assign({}, kModel(k), { sou_tit: sub(kModel(k).sou_tit), tit: sub(kModel(k).tit), liy: sub(kModel(k).liy), riban: sub(kModel(k).riban) }), SAMPLE.kad, { prenom: 'Nadège' }); return $('cv').toDataURL('image/jpeg', .75); };
+const kOk = (k) => !k.premium || k.pwopriyete_org === ORG.id || KLIS.has(k.id);
+async function loadKonLib() {
+  const [k, l] = await Promise.all([sb.from('konsep').select('*').eq('estati', 'apwouve').order('apwouve_le', { ascending: false }), sb.from('konsep_lisans').select('konsep_id').eq('org_id', ORG.id)]);
+  KLIB = (k.data || []).filter((x) => x.modele); KLIS = new Set((l.data || []).map((x) => x.konsep_id));
+  const ids = [...new Set(KLIB.map((x) => x.kreyate_org))];
+  if (ids.length) { const { data } = await sb.rpc('kreyate_info', { p_ids: ids }); KCRE = Object.fromEntries((data || []).map((x) => [x.id, x])); }
+  $('klibBox').classList.toggle('hidden', !KLIB.length);
+  $('klib').innerHTML = KLIB.map((x) => { const m = kModel(x); const c = KCRE[x.kreyate_org]; return `<button type="button" class="kp" data-klib="${x.id}"><span style="display:flex;gap:8px;align-items:center"><span class="sw" style="background:linear-gradient(135deg,${esc(m.c1)} 55%,${esc(m.c2)} 55%)"></span>${esc(x.tit)}</span>
+    <small>pa ${esc(c?.non || 'kreyatè')}${c?.verifye ? ' ✓' : ''}</small>${x.premium ? `<small class="pm">${kOk(x) ? '✓ Lisans ou' : '🔒 Premium · ' + (+x.lisans_htg).toLocaleString('fr-FR') + ' G'}</small>` : '<small>Gratis</small>'}</button>`; }).join('');
+}
+function useKonsep(id) {
+  const k = KLIB.find((x) => x.id === id); if (!k) return;
+  applyLib(kModel(k), k.id);
+  if (!kOk(k)) {
+    const pri = (+k.lisans_htg).toLocaleString('fr-FR') + ' G';
+    $('knSel').innerHTML = `🔒 <b>${esc(k.tit)}</b> se yon konsèp premium (${pri}, yon sèl fwa). Ou ka wè l, men pou w anrejistre kanpay la ak li : voye ${pri} sou MonCash nan <b>${esc(S.MONCASH.num)}</b>, epi <a target="_blank" rel="noopener" href="https://wa.me/${S.WA}?text=${encodeURIComponent(`Bonjou Souriyo 👋 Se ${ORG.non}. Mwen peye ${pri} pou lisans konsèp « ${k.tit} ». Men screenshot la :`)}">voye screenshot la sou WhatsApp</a>.`;
+  }
+  if (ME.wol === 'pwopriyete' && k.pwopriyete_org !== ORG.id) $('knSel').innerHTML += ` <a href="#" data-kof="${k.id}">💰 Fè yon òf pou achte konsèp sa a</a>`;
+}
+async function ofKonsep(id) {
+  const k = KLIB.find((x) => x.id === id); if (!k) return;
+  const m = parseInt(prompt(`Konbyen goud ou ofri pou w achte konsèp « ${k.tit} » (ak tout revni li ap fè apre) ?`) || '', 10); if (!(m > 0)) return;
+  const note = (prompt('Yon ti mesaj pou kreyatè a (pa obligatwa) :') || '').slice(0, 1000);
+  const { error } = await sb.from('konsep_of').insert({ konsep_id: k.id, achte_org: ORG.id, vann_org: k.pwopriyete_org, montan_htg: m, mesaj: note || null });
+  if (error) return msg('edMsg', friendly(error));
+  document.querySelector('[data-tab="kon"]').classList.remove('hidden'); msg('edMsg', '✓ Òf la voye. W ap wè repons lan nan onglè « 💡 Konsèp ».', 'ok');
+}
+
+/* ---------- Rezo sosyal ---------- */
+const RZST = { ap_tann: '<span class="pill w">⏳ Pa verifye</span>', ok: '<span class="pill ok">✓ Verifye</span>', refize: '<span class="pill off">✖ Refize</span>' };
+async function loadRezo() {
+  const [r, e] = await Promise.all([sb.from('rezo_kont').select('*').eq('org_id', ORG.id).order('kreye_le'), sb.rpc('enfliyanse_elijib', { p_org: ORG.id })]);
+  const min = PARAM?.min_abonnes ?? 5000, mfb = PARAM?.min_abonnes_fb ?? 10000; $('rzMin').textContent = min.toLocaleString('fr-FR'); $('rzMinFb').textContent = mfb.toLocaleString('fr-FR');
+  ELIJ = !!e.data;
+  $('rzElig').innerHTML = ELIJ ? '<div class="banner ok">✓ Ou elijib : ou ka mande konsèp nan onglè « 💡 Konsèp ».</div>' : '<div class="banner wait">⏳ Verifye omwen yon kont ki gen ase abonnés pou w ka kreye konsèp.</div>';
+  const own = ME.wol === 'pwopriyete';
+  $('rzList').innerHTML = (r.data || []).map((x) => `<div class="pk" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b style="font-size:17px">${PLAT[x.platfom]} · @${esc(x.itilizate)}</b>${RZST[x.estati]}</div>
+    <span class="sub">${(x.abonnes_verifye ?? x.abonnes ?? 0).toLocaleString('fr-FR')} abonnés ${x.abonnes_verifye != null ? '(verifye' + (x.otomatik ? ' otomatikman' : '') + ')' : '(deklare)'}${x.rezon ? ' · ' + esc(x.rezon) : ''}</span>
+    ${x.estati === 'ap_tann' && own ? `<p style="margin:8px 0 4px">1. Mete kòd sa a nan ${x.platfom === 'youtube' ? 'deskripsyon chèn ou a' : 'bio ou'} : <span class="kods">${esc(x.kod)}</span></p>
+      <p style="margin:4px 0">2. ${x.platfom === 'youtube' ? 'Klike « Verifye » : n ap tcheke chèn ou a otomatikman. (Si sa pa mache, mete yon kapti ekran tou.)' : 'Fè yon kapti ekran paj pwofil ou (kote nou wè kòd la ak kantite abonnés yo).'}</p>
+      ${x.kapti_path ? '<p class="sub" style="margin:4px 0">✓ Kapti ekran voye. Ekip la ap verifye l.</p>' : ''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input type="file" accept="image/*" data-rzf="${x.id}" /><button class="btn main" type="button" data-rzv="${x.id}">Verifye</button><button class="btn" type="button" data-rzx="${x.id}">Retire</button></div><p class="msg" id="rzm${x.id}"></p>` : ''}
+    ${x.estati === 'refize' && own ? `<button class="btn" type="button" data-rzx="${x.id}" style="margin-top:8px">Retire epi eseye ankò</button>` : ''}</div>`).join('') || '<p class="sub">Pa gen kont ankò.</p>';
+}
+let ELIJ = false;
+const RZERR = { pa_jwenn: 'Nou pa jwenn chèn YouTube sa a. Tcheke non itilizatè a (@…).', kod_pa_jwenn: 'Nou pa wè kòd la nan deskripsyon chèn nan. Mete l, tann 1-2 minit, epi eseye ankò.', abonnes_kache: 'Kantite abonnés yo kache sou chèn nan. Mete yon kapti ekran pito.', kapti: 'Chwazi yon kapti ekran paj pwofil ou anvan.' };
+document.addEventListener('click', async (e) => {
+  const v = e.target.closest('[data-rzv]'); if (v) {
+    const id = +v.dataset.rzv, f = document.querySelector(`[data-rzf="${id}"]`).files[0]; v.disabled = true;
+    try {
+      if (f) { const pth = `org/${ORG.id}/rezo-${id}-${Date.now()}.jpg`; const up = await sb.storage.from('verifikasyon').upload(pth, await shrink(f), { contentType: 'image/jpeg' }); if (up.error) throw up.error; const u2 = await sb.from('rezo_kont').update({ kapti_path: pth }).eq('id', id); if (u2.error) throw u2.error; }
+      const { data: ss } = await sb.auth.getSession();
+      const r = await fetch(`${S.SUPABASE_URL}/functions/v1/souriyo-org`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ss.session.access_token}` }, body: JSON.stringify({ action: 'rezo_verifye', id }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error('Verifikasyon an pa mache. Eseye ankò.');
+      if (!j.ok) { v.disabled = false; return msg('rzm' + id, RZERR[j.rezon] || 'Verifikasyon an pa mache.'); }
+      await loadRezo();
+      if (j.otomatik) msg('rzMsg', j.elijib ? `✓ Chèn nan verifye : ${j.abonnes.toLocaleString('fr-FR')} abonnés.` : `Chèn nan verifye, men li gen ${j.abonnes.toLocaleString('fr-FR')} abonnés (minimòm ${j.min.toLocaleString('fr-FR')}).`, j.elijib ? 'ok' : 'err');
+      else msg('rzMsg', '✓ Kapti ekran an rive. Ekip Souriyo a ap verifye l byento.', 'ok');
+    } catch (er) { v.disabled = false; msg('rzm' + id, er.message && !/api|fetch/i.test(er.message) ? er.message : friendly(er)); }
+    return;
+  }
+  const x = e.target.closest('[data-rzx]'); if (x) { if (!confirm('Retire kont sa a ?')) return; const { error } = await sb.from('rezo_kont').delete().eq('id', +x.dataset.rzx); if (error) return msg('rzMsg', friendly(error)); loadRezo(); }
+});
+$('rzAdd').addEventListener('click', async () => {
+  const u = $('rzU').value.trim().replace(/^@+/, ''); if (!u) return msg('rzMsg', 'Mete non itilizatè a.');
+  const { error } = await sb.from('rezo_kont').insert({ org_id: ORG.id, platfom: $('rzP').value, itilizate: u, abonnes: Math.max(0, +$('rzA').value || 0) });
+  if (error) return msg('rzMsg', friendly(error)); $('rzU').value = ''; $('rzA').value = ''; msg('rzMsg', '✓ Kont lan ajoute. Verifye l kounya.', 'ok'); loadRezo();
+});
+
+/* ---------- Konsèp (kreyatè / pwopriyetè) ---------- */
+const KST = { demann: '<span class="pill w">📨 Demann</span>', an_kou: '<span class="pill w">🛠️ An kou</span>', pwopozisyon: '<span class="pill w">👀 Pwopozisyon pou w gade</span>', apwouve: '<span class="pill ok">✓ Nan bibliyotèk la</span>', refize: '<span class="pill off">Refize</span>', retire: '<span class="pill off">Retire</span>' };
+const OST = { ap_tann: '<span class="pill w">Ap tann</span>', aksepte: '<span class="pill ok">Aksepte · ap tann peman</span>', refize: '<span class="pill off">Refize</span>', anile: '<span class="pill off">Anile</span>', fini: '<span class="pill ok">✓ Fini</span>' };
+const RTIP = { lisans: '🔑 Lisans', potre: '✨ Pòtrè', transfe: '🤝 Vant konsèp' };
+let KMY = [];
+async function loadKonsep() {
+  const [k, st, of, rv, el] = await Promise.all([
+    sb.from('konsep').select('*').eq('pwopriyete_org', ORG.id).order('kreye_le', { ascending: false }),
+    sb.rpc('konsep_stats', { p_org: ORG.id }),
+    sb.from('konsep_of').select('*, konsep(tit)').order('kreye_le', { ascending: false }),
+    sb.from('konsep_revni').select('*, konsep(tit)').eq('benefisye_org', ORG.id).order('kreye_le', { ascending: false }),
+    sb.rpc('enfliyanse_elijib', { p_org: ORG.id })]);
+  KMY = k.data || []; ELIJ = !!el.data;
+  const S2 = Object.fromEntries((st.data || []).map((x) => [x.konsep_id, x]));
+  const ids = KMY.map((x) => x.id), ms = ids.length ? (await sb.from('konsep_mesaj').select('*').in('konsep_id', ids).order('kreye_le')).data || [] : [];
+  const R = rv.data || [], tot = R.reduce((a, x) => a + x.pati_htg, 0), pp = R.filter((x) => !x.peye).reduce((a, x) => a + x.pati_htg, 0);
+  $('knStats').innerHTML = [['Konsèp nan bibliyotèk', KMY.filter((x) => x.estati === 'apwouve').length], ['Kanpay ki itilize yo', Object.values(S2).reduce((a, x) => a + +x.kanpay, 0)], ['Foto ak konsèp ou yo', Object.values(S2).reduce((a, x) => a + +x.foto, 0)], ['Revni (G) · pa peye', `${tot.toLocaleString('fr-FR')} · ${pp.toLocaleString('fr-FR')}`]].map(([a, b]) => `<div class="stat"><span>${a}</span><b>${typeof b === 'number' ? b.toLocaleString('fr-FR') : b}</b></div>`).join('');
+  $('knPct').textContent = PARAM?.komisyon_kreyate_pct ?? 30;
+  const enf = ORG.tip_kont === 'enfliyanse';
+  $('knAsk').classList.toggle('hidden', !enf || ME.wol !== 'pwopriyete');
+  $('knForm').classList.toggle('hidden', !ELIJ);
+  $('knEligNote').innerHTML = ELIJ ? '' : '<div class="banner wait">⏳ Pou w ka mande konsèp, verifye omwen yon kont rezo sosyal ki gen ase abonnés. <a href="#" data-goto="rez">Ale nan « Rezo sosyal » →</a></div>';
+  const own = ME.wol === 'pwopriyete';
+  $('knList').innerHTML = KMY.map((x) => {
+    const s2 = S2[x.id] || { kanpay: 0, foto: 0 }, th = ms.filter((m) => m.konsep_id === x.id);
+    return `<div class="kc">${x.modele ? `<img src="${kPreview(x)}" alt="" />` : '<div class="ph">🛠️ Ekip Souriyo a ap travay sou pwopozisyon an</div>'}
+      <div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><b style="font-size:17px">${esc(x.tit)}</b>${KST[x.estati] || ''}${x.premium ? `<span class="pill w">💎 Premium · ${(+x.lisans_htg).toLocaleString('fr-FR')} G</span>` : ''}</div>
+      <span class="sub">${esc(x.tem || '')}${x.estil ? ' · ' + esc(x.estil) : ''}</span>
+      <p style="margin:6px 0">${esc(x.deskripsyon)}</p>
+      <span class="sub">${s2.kanpay} kanpay · ${(+s2.foto).toLocaleString('fr-FR')} foto${x.kreyate_org !== ORG.id ? ' · konsèp ou achte' : ''}</span>
+      <div class="thread">${th.map((m) => `<p class="${m.ote === 'kreyate' ? 'me' : 'sr'}"><b>${m.ote === 'kreyate' ? 'Ou' : 'Souriyo'} :</b> ${esc(m.mesaj)}</p>`).join('') || '<p class="sub">Pa gen mesaj ankò.</p>'}</div>
+      ${own && !['refize', 'retire'].includes(x.estati) ? `<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><input class="t" style="flex:1;min-width:180px" data-kmt="${x.id}" maxlength="2000" placeholder="Ekri yon mesaj (chanjman, ide…)" /><button class="btn" type="button" data-kms="${x.id}">Voye</button></div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">${x.estati === 'pwopozisyon' ? `<button class="btn main" type="button" data-kap="${x.id}">✓ Apwouve, mete l nan bibliyotèk la</button><button class="btn" type="button" data-kch="${x.id}">↺ Mande chanjman</button>` : ''}${x.estati === 'apwouve' ? `<button class="btn" type="button" data-kre="${x.id}">Retire nan bibliyotèk la</button>` : ''}</div>` : ''}
+      <p class="msg" id="kmm${x.id}"></p></div></div>`;
+  }).join('') || '<p class="sub">Pa gen konsèp ankò.</p>';
+  const O = of.data || [];
+  $('knOf').innerHTML = O.map((o) => { const vann = o.vann_org === ORG.id; return `<div class="pk" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b style="font-size:16px">${vann ? '📥 Resevwa' : '📤 Ou voye'} · « ${esc(o.konsep?.tit || '')} » · ${(+o.montan_htg).toLocaleString('fr-FR')} G</b>${OST[o.estati]}</div>
+    ${o.mesaj ? `<span class="sub">« ${esc(o.mesaj)} »</span>` : ''}${vann && o.estati === 'ap_tann' ? `<span class="sub">Si w aksepte : ou touche ${Math.round(o.montan_htg * (100 - (PARAM?.fre_transfe_pct ?? 10)) / 100).toLocaleString('fr-FR')} G (Souriyo pran ${PARAM?.fre_transfe_pct ?? 10} %), epi konsèp la ak revni l ap fè apre yo pase bay achtè a.</span>` : ''}
+    ${o.estati === 'aksepte' ? `<span class="sub">${vann ? 'Achtè a ap peye Souriyo. Transfè a fèt depi peman an konfime.' : `Voye ${(+o.montan_htg).toLocaleString('fr-FR')} G sou MonCash nan <b>${esc(S.MONCASH.num)}</b>, epi voye screenshot la sou WhatsApp. Konsèp la ap pase sou kont ou.`}</span>` : ''}
+    ${own ? `<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">${vann && o.estati === 'ap_tann' ? `<button class="btn main" type="button" data-ofa="${o.id}">Aksepte</button><button class="btn" type="button" data-ofr="${o.id}">Refize</button>` : ''}${!vann && ['ap_tann', 'aksepte'].includes(o.estati) ? `<button class="btn" type="button" data-ofx="${o.id}">Anile òf la</button>` : ''}${!vann && o.estati === 'aksepte' ? `<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${S.WA}?text=${encodeURIComponent(`Bonjou Souriyo 👋 Se ${ORG.non}. Mwen peye ${o.montan_htg} G pou achte konsèp « ${o.konsep?.tit || ''} » (òf #${o.id}). Men screenshot la :`)}">WhatsApp</a>` : ''}</div>` : ''}</div>`; }).join('') || '<p class="sub">Pa gen òf.</p>';
+  $('knRev').innerHTML = R.map((x) => `<tr><td class="sub">${new Date(x.kreye_le).toLocaleDateString('fr-FR')}</td><td>${esc(x.konsep?.tit || '')}</td><td>${RTIP[x.tip] || x.tip}</td><td>${(+x.montan_htg).toLocaleString('fr-FR')} G</td><td><b>${(+x.pati_htg).toLocaleString('fr-FR')} G</b></td><td>${x.peye ? '<span class="pill ok">✓</span>' : '<span class="pill w">Pa ankò</span>'}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen revni ankò.</td></tr>';
+}
+$('knGo').addEventListener('click', async () => {
+  const v = { pwopriyete_org: ORG.id, kreyate_org: ORG.id, tit: $('knT').value.trim(), tem: $('knTem').value.trim() || null, estil: $('knEs').value.trim() || null, deskripsyon: $('knD').value.trim(), referans: $('knR').value.trim() || null };
+  if (v.tit.length < 2) return msg('knMsg', 'Bay konsèp la yon non.'); if (v.deskripsyon.length < 10) return msg('knMsg', 'Dekri konsèp la ak omwen kèk mo.');
+  const { error } = await sb.from('konsep').insert(v); if (error) return msg('knMsg', friendly(error));
+  ['knT', 'knTem', 'knEs', 'knD', 'knR'].forEach((k) => ($(k).value = '')); msg('knMsg', '✓ Demann lan pati. Ekip Souriyo a ap voye yon pwopozisyon ba ou.', 'ok'); loadKonsep();
+});
+document.addEventListener('click', async (e) => {
+  const q = (s) => e.target.closest(s);
+  let b;
+  const upd = async (id, v, okT) => { const { data, error } = await sb.from('konsep').update(v).eq('id', id).select('estati').single(); if (error) return msg('kmm' + id, friendly(error)); if (v.estati && data?.estati !== v.estati) return msg('kmm' + id, 'Aksyon sa a pa posib kounya.'); await loadKonsep(); if (okT) msg('knMsg', okT, 'ok'); };
+  const say = async (id, t) => { if (!t) return; const { error } = await sb.from('konsep_mesaj').insert({ konsep_id: id, ote: 'kreyate', mesaj: t }); if (error) throw error; };
+  if ((b = q('[data-kms]'))) { const id = b.dataset.kms, t = document.querySelector(`[data-kmt="${id}"]`).value.trim(); if (!t) return; try { await say(id, t); loadKonsep(); } catch (er) { msg('kmm' + id, friendly(er)); } return; }
+  if ((b = q('[data-kap]'))) { if (!confirm('Apwouve pwopozisyon sa a ? Konsèp la ap antre nan bibliyotèk la pou tout kont yo.')) return; return upd(b.dataset.kap, { estati: 'apwouve' }, '✓ Konsèp la nan bibliyotèk la kounya !'); }
+  if ((b = q('[data-kch]'))) { const id = b.dataset.kch, t = document.querySelector(`[data-kmt="${id}"]`).value.trim(); if (!t) { document.querySelector(`[data-kmt="${id}"]`).focus(); return msg('kmm' + id, 'Ekri ki chanjman ou vle a nan bwat mesaj la anvan.'); } try { await say(id, t); } catch (er) { return msg('kmm' + id, friendly(er)); } return upd(id, { estati: 'an_kou' }, '✓ Demann chanjman an voye.'); }
+  if ((b = q('[data-kre]'))) { if (!confirm('Retire konsèp sa a nan bibliyotèk la ? Kanpay ki deja itilize l yo ap kontinye mache.')) return; return upd(b.dataset.kre, { estati: 'retire' }); }
+  const ofu = async (id, estati) => { const { data, error } = await sb.from('konsep_of').update({ estati }).eq('id', id).select('estati').single(); if (error) return alert(friendly(error)); if (data?.estati !== estati) alert('Aksyon sa a pa posib kounya.'); loadKonsep(); };
+  if ((b = q('[data-ofa]'))) { if (!confirm('Aksepte òf sa a ? Konsèp la ap pase bay achtè a depi li peye.')) return; return ofu(+b.dataset.ofa, 'aksepte'); }
+  if ((b = q('[data-ofr]'))) return ofu(+b.dataset.ofr, 'refize');
+  if ((b = q('[data-ofx]'))) { if (!confirm('Anile òf la ?')) return; return ofu(+b.dataset.ofx, 'anile'); }
+});
 
 /* ---------- Modèl pèsonalize ---------- */
 const MST = { nouvo: '<span class="pill w">Nouvo</span>', an_kou: '<span class="pill w">An kou</span>', fini: '<span class="pill ok">Fini</span>', refize: '<span class="pill off">Refize</span>' };

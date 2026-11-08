@@ -73,14 +73,17 @@
   .alert { background: #fde8e6; color: #9b1c12; border-radius: 14px; padding: 12px 16px; font-weight: 700; margin-bottom: 12px; }
   .budget { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; } .budget .bar { flex: 1; height: 12px; background: #e9e3dc; border-radius: 8px; overflow: hidden; } .budget .bar div { height: 100%; background: #1a7a3c; transition: width .4s; }
   .done { border: 2px solid var(--ok); background: #f1faf3; border-radius: 14px; padding: 14px; margin-top: 12px; text-align: center; } .done .code { font: 800 26px ui-monospace, Menlo, monospace; margin: 6px 0 10px; }
+  .kthread { background: #f6f3ef; border-radius: 12px; padding: 8px 10px; max-height: 240px; overflow: auto; font-size: 14px; margin-top: 6px; } .kthread p { margin: 4px 0; }
+  .kods { font-weight: 800; background: #fff4d6; color: #7a5200; padding: 2px 8px; border-radius: 8px; }
+  .kgrid { display: grid; grid-template-columns: 1fr 300px; gap: 14px; align-items: start; } .kgrid img { width: 100%; border-radius: 12px; display: block; }
   @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } .prev { position: static; } .glist { max-height: none; } }
-  @media (max-width: 600px) { .grid2, .grid3, .stats { grid-template-columns: 1fr 1fr; } .models { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .grid2, .grid3, .stats { grid-template-columns: 1fr 1fr; } .kgrid { grid-template-columns: 1fr; } .models { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 <header>
   <div class="brand"><img src="../assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span><small>admin</small></div>
-  <nav class="tabs hidden" id="nav"><button type="button" data-tab="o" aria-pressed="false">🏢 Òganizasyon <span id="oBadge"></span></button><button type="button" data-tab="g" aria-pressed="true">🖼️ Gwoup yo</button><button type="button" data-tab="c" aria-pressed="false">🎟️ Koupon</button><button type="button" data-tab="d" aria-pressed="false">💬 Demand metye</button><button type="button" data-tab="r" aria-pressed="false">💰 Rantabilite</button></nav>
+  <nav class="tabs hidden" id="nav"><button type="button" data-tab="o" aria-pressed="false">🏢 Òganizasyon <span id="oBadge"></span></button><button type="button" data-tab="k" aria-pressed="false">⭐ Kreyatè <span id="kBadge"></span></button><button type="button" data-tab="g" aria-pressed="true">🖼️ Gwoup yo</button><button type="button" data-tab="c" aria-pressed="false">🎟️ Koupon</button><button type="button" data-tab="d" aria-pressed="false">💬 Demand metye</button><button type="button" data-tab="r" aria-pressed="false">💰 Rantabilite</button></nav>
   <button class="out hidden" id="logout" type="button">Dekonekte</button>
 </header>
 
@@ -206,6 +209,33 @@
     <section class="card"><h2>🎨 Demand modèl pèsonalize</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Òganizasyon</th><th>Deskripsyon</th><th>Estati</th><th>Pri (G)</th><th>Repons</th><th></th></tr></thead><tbody id="mdRows"></tbody></table></div></section>
   </div>
 
+  <!-- ===== KREYATÈ ===== -->
+  <div id="tabK" class="hidden">
+    <section class="card"><h2>Paramèt kreyatè yo</h2>
+      <div class="grid3">
+        <div><label class="f" for="kMin">Minimòm abonnés (IG, TikTok, YouTube, X)</label><input class="t" id="kMin" type="number" min="0" step="500" /></div>
+        <div><label class="f" for="kMinFb">Minimòm abonnés Facebook</label><input class="t" id="kMinFb" type="number" min="0" step="500" /></div>
+        <div><label class="f" for="kPct">Pati kreyatè a sou sa Souriyo touche (%)</label><input class="t" id="kPct" type="number" min="0" max="100" step="1" /></div>
+        <div><label class="f" for="kFre">Frè Souriyo sou vant konsèp (%)</label><input class="t" id="kFre" type="number" min="0" max="100" step="1" /></div>
+      </div>
+      <button class="btn main" type="button" id="kpSave" style="margin-top:10px">Anrejistre</button><p class="msg" id="kpMsg"></p>
+    </section>
+    <section class="card"><h2>⭐ Rezo sosyal pou verifye</h2>
+      <p class="sub">Tcheke : 1) kòd la parèt nan bio a, 2) kantite abonnés yo, 3) se menm non itilizatè a. Louvri pwofil la pou w konfime an dirèk si sa nesesè.</p>
+      <div id="kRez"></div>
+    </section>
+    <div class="layout" style="grid-template-columns:340px 1fr">
+      <section class="card"><h2>💡 Konsèp yo</h2>
+        <select class="t" id="kFilter" style="margin-bottom:10px"><option value="aktif">📨 Pou travay (demann, an kou)</option><option value="pwopozisyon">👀 Pwopozisyon voye</option><option value="apwouve">✓ Nan bibliyotèk la</option><option value="">Tout</option></select>
+        <div class="glist" id="kList"></div>
+      </section>
+      <section class="card" id="kDet"><p class="sub">Chwazi yon konsèp.</p></section>
+    </div>
+    <section class="card"><h2>🤝 Òf achte konsèp</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Konsèp</th><th>Vandè → Achtè</th><th>Montan</th><th>Estati</th><th></th></tr></thead><tbody id="kOf"></tbody></table></div>
+      <p class="sub">Lè yon vandè aksepte, achtè a peye Souriyo sou MonCash. Lè w resevwa peman an, klike « Peman resevwa » : konsèp la ak revni l pase bay achtè a, epi vandè a gen pati pa l (montan − frè) nan lis revni anba a.</p></section>
+    <section class="card"><h2>🧾 Revni kreyatè pou peye</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Benefisyè</th><th>Konsèp</th><th>Kalite</th><th>Montan</th><th>Pati</th><th></th></tr></thead><tbody id="kRev"></tbody></table></div></section>
+  </div>
+
   <!-- ===== RANTABILITE ===== -->
   <div id="tabR" class="hidden">
     <div class="alert hidden" id="rAlert"></div>
@@ -264,7 +294,7 @@ let G = [], STATS = {}, CUR = null, MODEL = 'sek', LOGO_URL = null, LOGO_FILE = 
 /* ---------- Auth ---------- */
 async function showApp(session) {
   $('login').classList.toggle('hidden', !!session); ['app', 'nav', 'logout'].forEach((id) => $(id).classList.toggle('hidden', !session));
-  if (session) { await K.fontsReady(); SAMPLE.kad = await K.loadImage('../img/avant-f.jpg'); SAMPLE.ia = await K.loadImage('../img/apres-f.jpg'); await loadGroups(); newGroup(); loadOrgs(); }
+  if (session) { await K.fontsReady(); SAMPLE.kad = await K.loadImage('../img/avant-f.jpg'); SAMPLE.ia = await K.loadImage('../img/apres-f.jpg'); await loadGroups(); newGroup(); loadOrgs(); kBadge(); }
 }
 $('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault(); $('loginMsg').textContent = '';
@@ -276,8 +306,8 @@ $('logout').addEventListener('click', async () => { await sb.auth.signOut(); sho
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
   document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', x === b));
-  ['g', 'c', 'd', 'r', 'o'].forEach((k) => $('tab' + k.toUpperCase()).classList.toggle('hidden', b.dataset.tab !== k));
-  if (b.dataset.tab === 'o') loadOrgs();
+  ['g', 'c', 'd', 'r', 'o', 'k'].forEach((k) => $('tab' + k.toUpperCase()).classList.toggle('hidden', b.dataset.tab !== k));
+  if (b.dataset.tab === 'o') loadOrgs(); if (b.dataset.tab === 'k') loadKreyate();
   if (b.dataset.tab === 'c') loadCoupons(); if (b.dataset.tab === 'd') loadDemandes(); if (b.dataset.tab === 'r') loadRanta();
 });
 
@@ -478,7 +508,7 @@ $('cfSave').addEventListener('click', async () => {
 
 /* ---------- Òganizasyon ---------- */
 const OST = { ap_tann: '⏳ Ap tann', apwouve: '✅ Apwouve', sispann: '⛔ Sispann', refize: '✖ Refize' };
-const OKAL = { lekol: '🏫 Lekòl', inivesite: '🎓 Inivèsite', evenman: '🎤 Evènman', legliz: '⛪ Legliz', politik: '🗳️ Politik', asosyasyon: '🤝 Asosyasyon', antrepriz: '💼 Antrepriz', moun: '🙋 Moun', lot: '✨ Lòt' };
+const OKAL = { enfliyanse: '⭐ Enfliyansè', lekol: '🏫 Lekòl', inivesite: '🎓 Inivèsite', evenman: '🎤 Evènman', legliz: '⛪ Legliz', politik: '🗳️ Politik', asosyasyon: '🤝 Asosyasyon', antrepriz: '💼 Antrepriz', moun: '🙋 Moun', lot: '✨ Lòt' };
 let VERS = {};
 let ORGS = [], PARAM = null, OCUR = null;
 const pakeTxt = (a) => (a || []).map((p) => `${p.n}:${p.p}`).join(', ');
@@ -540,7 +570,7 @@ async function showOrg(o) {
   const [g, tm] = await Promise.all([sb.from('groupes').select('nom, slug, aktif, mod_ia, mod_pey').eq('org_id', o.id), sb.from('org_users').select('wol, non, imel').eq('org_id', o.id)]);
   const waN = wa(o.kontak_tel);
   $('oDet').innerHTML = `<h2>${esc(o.non)} <span class="pill ${o.estati === 'apwouve' ? 'ok' : 'w'}">${OST[o.estati]}</span></h2>
-    <p class="sub">${o.tip_kont === 'moun' ? '🙋 Kont moun' : '🏢 Òganizasyon'} · ${OKAL[o.kalite] || ''}${o.kalite_presizyon ? ' (' + esc(o.kalite_presizyon) + ')' : ''} · enskri ${fmt(o.kreye_le)}${o.apwouve_le ? ' · apwouve ' + fmt(o.apwouve_le) : ''}${o.verifye ? ' · <b style="color:var(--ok)">✓ Verifye</b>' : ''}</p>
+    <p class="sub">${o.tip_kont === 'moun' ? '🙋 Kont moun' : o.tip_kont === 'enfliyanse' ? '⭐ Enfliyansè' : '🏢 Òganizasyon'} · ${OKAL[o.kalite] || ''}${o.kalite_presizyon ? ' (' + esc(o.kalite_presizyon) + ')' : ''} · enskri ${fmt(o.kreye_le)}${o.apwouve_le ? ' · apwouve ' + fmt(o.apwouve_le) : ''}${o.verifye ? ' · <b style="color:var(--ok)">✓ Verifye</b>' : ''}</p>
     <div id="verBox"></div>
     ${o.deskripsyon ? `<p>${esc(o.deskripsyon)}</p>` : ''}
     <p><b>${esc(o.kontak_non || '')}</b> · ${esc(o.kontak_tel || '')} · ${esc(o.kontak_imel || '')} ${waN ? `<a class="btn wa" style="padding:4px 10px" target="_blank" rel="noopener" href="https://wa.me/${waN}">WhatsApp</a>` : ''}</p>
@@ -605,6 +635,102 @@ $('rsGo').addEventListener('click', async () => {
 });
 
 sb.auth.getSession().then(({ data }) => { if (!RECOVERY) showApp(data.session); });
+
+/* ---------- Kreyatè / konsèp ---------- */
+const PLAT = { instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube', x: 'X', facebook: 'Facebook' };
+const PURL = { instagram: (u) => `https://www.instagram.com/${u}/`, tiktok: (u) => `https://www.tiktok.com/@${u}`, youtube: (u) => `https://www.youtube.com/@${u}`, x: (u) => `https://x.com/${u}`, facebook: (u) => `https://www.facebook.com/${u}` };
+const KSTA = { demann: '<span class="pill w">📨 Demann</span>', an_kou: '<span class="pill w">🛠️ An kou</span>', pwopozisyon: '<span class="pill w">👀 Pwopozisyon</span>', apwouve: '<span class="pill ok">✓ Bibliyotèk</span>', refize: '<span class="pill">Refize</span>', retire: '<span class="pill">Retire</span>' };
+const OSTA = { ap_tann: '<span class="pill w">Ap tann vandè</span>', aksepte: '<span class="pill w">Aksepte · ap tann peman</span>', refize: '<span class="pill">Refize</span>', anile: '<span class="pill">Anile</span>', fini: '<span class="pill ok">✓ Fini</span>' };
+const KDEF = { modele: 'sek', c1: '#151848', c2: '#FF5A36', c3: '#ffffff', sou_tit: '', tit: '', riban: '', badj: '', liy: '' };
+let KK = [], KORG = {}, KCUR = null, KPAR = null;
+async function kBadge() {
+  const [a, b, c] = await Promise.all([sb.from('rezo_kont').select('id', { count: 'exact', head: true }).eq('estati', 'ap_tann').not('kapti_path', 'is', null), sb.from('konsep').select('id', { count: 'exact', head: true }).in('estati', ['demann', 'an_kou']), sb.from('konsep_of').select('id', { count: 'exact', head: true }).eq('estati', 'aksepte')]);
+  const n = (a.count || 0) + (b.count || 0) + (c.count || 0); $('kBadge').textContent = n ? `(${n})` : '';
+}
+async function loadKreyate() {
+  const [p, rz, k, of, rv, og] = await Promise.all([sb.from('paramet').select('*').eq('id', 1).single(), sb.from('rezo_kont').select('*').order('kreye_le', { ascending: false }).limit(300), sb.from('konsep').select('*').order('modifye_le', { ascending: false }).limit(500), sb.from('konsep_of').select('*').order('kreye_le', { ascending: false }).limit(200), sb.from('konsep_revni').select('*').eq('peye', false).order('kreye_le'), sb.from('organizations').select('id, non, tip_kont, kontak_tel, estati')]);
+  KPAR = p.data || {}; $('kMin').value = KPAR.min_abonnes ?? 5000; $('kMinFb').value = KPAR.min_abonnes_fb ?? 10000; $('kPct').value = KPAR.komisyon_kreyate_pct ?? 30; $('kFre').value = KPAR.fre_transfe_pct ?? 10;
+  KORG = Object.fromEntries((og.data || []).map((x) => [x.id, x])); KK = k.data || [];
+  const on = (id) => esc(KORG[id]?.non || '—');
+  const RZ = (rz.data || []).filter((x) => x.estati === 'ap_tann');
+  $('kRez').innerHTML = RZ.map((x) => { const min = x.platfom === 'facebook' ? KPAR.min_abonnes_fb : KPAR.min_abonnes; return `<div class="card" style="margin-bottom:8px;padding:14px"><div style="display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap"><b>${on(x.org_id)} · ${PLAT[x.platfom]} <a href="${esc(PURL[x.platfom](encodeURIComponent(x.itilizate)))}" target="_blank" rel="noopener">@${esc(x.itilizate)}</a></b><span class="sub">${fmt(x.kreye_le)}</span></div>
+    <span class="sub">Deklare : <b>${(+x.abonnes || 0).toLocaleString('fr-FR')}</b> abonnés (minimòm ${(+min).toLocaleString('fr-FR')}) · kòd : <span class="kods">${esc(x.kod)}</span> · ${x.kapti_path ? `<a href="#" data-kcap="${esc(x.kapti_path)}">📷 Wè kapti ekran an</a>` : '<i>pa gen kapti ekran ankò</i>'}</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center"><input class="t" style="width:150px" type="number" min="0" data-kab="${x.id}" value="${+x.abonnes || 0}" title="Abonnés verifye" /><button class="btn main" type="button" data-krok="${x.id}">✓ Verifye</button><button class="btn" type="button" data-krko="${x.id}">✖ Refize</button></div></div>`; }).join('') || '<p class="sub">Pa gen kont pou verifye.</p>';
+  renderKList();
+  const O = of.data || [], kt = (id) => esc((KK.find((x) => x.id === id) || {}).tit || '');
+  $('kOf').innerHTML = O.map((o) => `<tr><td class="sub">${fmt(o.kreye_le)}</td><td>${kt(o.konsep_id)}</td><td>${on(o.vann_org)} → ${on(o.achte_org)}${o.mesaj ? `<br><span class="sub">« ${esc(o.mesaj)} »</span>` : ''}</td><td><b>${(+o.montan_htg).toLocaleString('fr-FR')} G</b></td><td>${OSTA[o.estati]}</td><td>${o.estati === 'aksepte' ? `<button class="btn main" type="button" data-kofi="${o.id}">💵 Peman resevwa</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen òf.</td></tr>';
+  $('kRev').innerHTML = (rv.data || []).map((r) => `<tr><td class="sub">${fmt(r.kreye_le)}</td><td>${on(r.benefisye_org)}${KORG[r.benefisye_org]?.kontak_tel ? `<br><span class="sub">${esc(KORG[r.benefisye_org].kontak_tel)}</span>` : ''}</td><td>${kt(r.konsep_id)}</td><td>${{ lisans: '🔑 Lisans', potre: '✨ Pòtrè', transfe: '🤝 Vant' }[r.tip] || r.tip}</td><td>${(+r.montan_htg).toLocaleString('fr-FR')} G</td><td><b>${(+r.pati_htg).toLocaleString('fr-FR')} G</b></td><td><button class="btn" type="button" data-krp="${r.id}">✓ Peye</button></td></tr>`).join('') || '<tr><td colspan="7" class="sub">Tout revni yo peye.</td></tr>';
+  kBadge();
+}
+function renderKList() {
+  const f = $('kFilter').value, L = KK.filter((x) => !f || (f === 'aktif' ? ['demann', 'an_kou'].includes(x.estati) : x.estati === f));
+  $('kList').innerHTML = L.map((x) => `<button type="button" class="gi" data-kid="${x.id}" aria-current="${KCUR && KCUR.id === x.id}"><span class="sw" style="display:grid;place-items:center;background:${esc((x.modele || {}).c1 || '#f6f3ef')};font-size:18px">💡</span><span><b>${esc(x.tit)}${x.premium ? ' 💎' : ''}</b><span>${KSTA[x.estati]} · ${esc(KORG[x.kreyate_org]?.non || '')}</span></span></button>`).join('') || '<p class="sub">Okenn konsèp.</p>';
+}
+$('kFilter').addEventListener('change', renderKList);
+function kForm() { const m = {}; ['modele', 'c1', 'c2', 'c3', 'sou_tit', 'tit', 'riban', 'badj', 'liy'].forEach((k) => (m[k] = $('kf_' + k).value)); return m; }
+function kPrev() { const m = kForm(); K.draw($('cv'), m, SAMPLE.kad, { prenom: 'Nadège' }); $('kPv').src = $('cv').toDataURL('image/jpeg', .85); }
+async function showKonsep(k) {
+  KCUR = k; renderKList();
+  const m = Object.assign({}, KDEF, k.modele || {});
+  const { data: ms } = await sb.from('konsep_mesaj').select('*').eq('konsep_id', k.id).order('kreye_le');
+  const { data: li } = await sb.from('konsep_lisans').select('*').eq('konsep_id', k.id).order('kreye_le', { ascending: false });
+  const orgOpts = Object.values(KORG).filter((o) => o.estati === 'apwouve' && o.id !== k.pwopriyete_org).sort((a, b) => a.non.localeCompare(b.non)).map((o) => `<option value="${o.id}">${esc(o.non)}</option>`).join('');
+  $('kDet').innerHTML = `<h2>${esc(k.tit)} ${KSTA[k.estati]}</h2>
+    <p class="sub">Kreyatè : <b>${esc(KORG[k.kreyate_org]?.non || '')}</b>${k.pwopriyete_org !== k.kreyate_org ? ` · Pwopriyetè kounya : <b>${esc(KORG[k.pwopriyete_org]?.non || '')}</b>` : ''} · ${fmt(k.kreye_le)}</p>
+    <p><b>Tèm :</b> ${esc(k.tem || '—')} · <b>Estil :</b> ${esc(k.estil || '—')}</p><p>${esc(k.deskripsyon)}</p>${k.referans ? `<p class="sub">Referans : <a href="${esc(/^https?:\/\//.test(k.referans) ? k.referans : '#')}" target="_blank" rel="noopener">${esc(k.referans)}</a></p>` : ''}
+    <div class="kthread">${(ms || []).map((x) => `<p><b>${x.ote === 'kreyate' ? '⭐ Kreyatè' : '😊 Souriyo'} :</b> ${esc(x.mesaj)} <span class="sub">${fmt(x.kreye_le)}</span></p>`).join('') || '<p class="sub">Pa gen mesaj.</p>'}</div>
+    <div style="display:flex;gap:6px;margin-top:6px"><input class="t" id="kMsgT" maxlength="2000" placeholder="Mesaj pou kreyatè a…" /><button class="btn" type="button" id="kMsgGo">Voye</button></div>
+    <h2 style="margin-top:16px">🎨 Modèl la</h2>
+    <div class="kgrid"><div>
+      <div class="grid3"><div><label class="f" for="kf_modele">Modèl</label><select class="t" id="kf_modele"><option value="sek">🟢 Sèk</option><option value="polaroid">📷 Polaroid</option><option value="pwo">🏅 Pwo</option></select></div>
+        <div><label class="f" for="kf_c1">Fon</label><input class="t" type="color" id="kf_c1" style="height:42px;padding:3px" /></div><div><label class="f" for="kf_c2">Aksan</label><input class="t" type="color" id="kf_c2" style="height:42px;padding:3px" /></div>
+        <div><label class="f" for="kf_c3">Kad foto</label><input class="t" type="color" id="kf_c3" style="height:42px;padding:3px" /></div><div><label class="f" for="kf_sou_tit">Ti tèks anlè</label><input class="t" id="kf_sou_tit" maxlength="60" /></div><div><label class="f" for="kf_tit">Gwo tit</label><input class="t" id="kf_tit" maxlength="40" /></div>
+        <div><label class="f" for="kf_riban">Riban</label><input class="t" id="kf_riban" maxlength="30" /></div><div><label class="f" for="kf_badj">Badj</label><input class="t" id="kf_badj" maxlength="16" /></div><div><label class="f" for="kf_liy">Liy anba</label><input class="t" id="kf_liy" maxlength="60" /></div></div>
+      <p class="sub">Ou ka mete <code>{org}</code> : l ap ranplase pa non kont ki itilize konsèp la.</p>
+      <div class="grid3"><label class="tog" style="align-self:end"><input type="checkbox" id="kf_prem" ${k.premium ? 'checked' : ''} /> 💎 Premium (lisans)</label><div><label class="f" for="kf_pri">Pri lisans (G)</label><input class="t" id="kf_pri" type="number" min="0" step="50" value="${+k.lisans_htg || 0}" /></div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn" type="button" data-kact="sove">💾 Anrejistre</button>
+        <button class="btn main" type="button" data-kact="pwopozisyon">👀 Voye pwopozisyon bay kreyatè a</button>
+        ${k.estati !== 'apwouve' ? '<button class="btn" type="button" data-kact="apwouve">✓ Mete l nan bibliyotèk la dirèkteman</button>' : ''}
+        ${!['refize', 'retire'].includes(k.estati) ? '<button class="btn" type="button" data-kact="refize">✖ Refize</button>' : ''}
+      </div><p class="msg" id="kMsg"></p>
+    </div><div><img id="kPv" alt="Aperçu" /></div></div>
+    ${k.premium ? `<h2 style="margin-top:16px">🔑 Lisans</h2>
+      <div class="grid3"><div><label class="f" for="klOrg">Kont</label><select class="t" id="klOrg">${orgOpts}</select></div><div><label class="f" for="klPri">Montan peye (G)</label><input class="t" id="klPri" type="number" min="0" value="${+k.lisans_htg || 0}" /></div><div><label class="f" for="klNote">N° MonCash</label><input class="t" id="klNote" maxlength="200" /></div></div>
+      <button class="btn main" type="button" id="klGo" style="margin-top:8px">Bay lisans lan</button><p class="msg" id="klMsg"></p>
+      <p class="sub">${(li || []).map((l) => `${esc(KORG[l.org_id]?.non || '')} · ${(+l.pri_htg).toLocaleString('fr-FR')} G · ${fmt(l.kreye_le)}`).join('<br>') || 'Pa gen lisans ankò.'}</p>` : ''}`;
+  ['modele', 'c1', 'c2', 'c3', 'sou_tit', 'tit', 'riban', 'badj', 'liy'].forEach((f) => { $('kf_' + f).value = m[f] ?? ''; $('kf_' + f).addEventListener('input', kPrev); });
+  kPrev();
+  $('kMsgGo').addEventListener('click', async () => { const t = $('kMsgT').value.trim(); if (!t) return; const { error } = await sb.from('konsep_mesaj').insert({ konsep_id: k.id, ote: 'souriyo', mesaj: t }); if (error) return msg('kMsg', friendly(error)); showKonsep({ ...k, modele: kForm(), premium: $('kf_prem').checked, lisans_htg: +$('kf_pri').value || 0 }); });
+  if ($('klGo')) $('klGo').addEventListener('click', async () => {
+    const v = { konsep_id: k.id, org_id: $('klOrg').value, pri_htg: Math.max(0, parseInt($('klPri').value || '0', 10)), note: $('klNote').value.trim() || null };
+    if (!v.org_id) return msg('klMsg', 'Chwazi yon kont.');
+    const { error } = await sb.from('konsep_lisans').insert(v); if (error) return msg('klMsg', /duplicate/.test(error.message) ? 'Kont sa a gen lisans lan deja.' : friendly(error));
+    await showKonsep(k); msg('klMsg', '✓ Lisans lan bay. Pati kreyatè a ajoute nan revni pou peye.', 'ok');
+  });
+}
+document.addEventListener('click', async (e) => {
+  const q = (s) => e.target.closest(s); let b;
+  if ((b = q('[data-kid]'))) return showKonsep(KK.find((x) => x.id === b.dataset.kid));
+  if ((b = q('[data-kcap]'))) { e.preventDefault(); const { data } = await sb.storage.from('verifikasyon').createSignedUrl(b.dataset.kcap, 600); if (data?.signedUrl) window.open(data.signedUrl, '_blank', 'noopener'); return; }
+  if ((b = q('[data-krok]'))) { const id = +b.dataset.krok, ab = Math.max(0, parseInt(document.querySelector(`[data-kab="${id}"]`).value || '0', 10)); const { error } = await sb.from('rezo_kont').update({ estati: 'ok', abonnes_verifye: ab, rezon: null }).eq('id', id); if (error) return alert(friendly(error)); return loadKreyate(); }
+  if ((b = q('[data-krko]'))) { const r = prompt('Rezon (kreyatè a ap wè l) :', 'Nou pa wè kòd la nan bio a.'); if (r === null) return; const { error } = await sb.from('rezo_kont').update({ estati: 'refize', rezon: r.slice(0, 300) || null }).eq('id', +b.dataset.krko); if (error) return alert(friendly(error)); return loadKreyate(); }
+  if ((b = q('[data-kofi]'))) { if (!confirm('Ou resevwa peman achtè a ? Konsèp la ap pase sou kont achtè a.')) return; const { error } = await sb.from('konsep_of').update({ estati: 'fini' }).eq('id', +b.dataset.kofi); if (error) return alert(friendly(error)); return loadKreyate(); }
+  if ((b = q('[data-krp]'))) { const { error } = await sb.from('konsep_revni').update({ peye: true }).eq('id', +b.dataset.krp); if (error) return alert(friendly(error)); return loadKreyate(); }
+  if ((b = q('[data-kact]')) && KCUR) {
+    const a = b.dataset.kact, v = { modele: kForm(), premium: $('kf_prem').checked, lisans_htg: Math.max(0, parseInt($('kf_pri').value || '0', 10)) };
+    if (a !== 'sove') v.estati = a;
+    if (a === 'refize' && !confirm('Refize konsèp sa a ?')) return;
+    const { data, error } = await sb.from('konsep').update(v).eq('id', KCUR.id).select().single(); if (error) return msg('kMsg', friendly(error));
+    await loadKreyate(); await showKonsep(data);
+    msg('kMsg', { sove: '✓ Anrejistre.', pwopozisyon: '✓ Pwopozisyon an voye : kreyatè a ka apwouve l oswa mande chanjman.', apwouve: '✓ Konsèp la nan bibliyotèk la.', refize: 'Konsèp la refize.' }[a], 'ok');
+  }
+});
+$('kpSave').addEventListener('click', async () => {
+  const c = (id, d) => Math.max(0, parseInt($(id).value || d, 10));
+  const v = { min_abonnes: c('kMin', '5000'), min_abonnes_fb: c('kMinFb', '10000'), komisyon_kreyate_pct: Math.min(100, c('kPct', '30')), fre_transfe_pct: Math.min(100, c('kFre', '10')) };
+  const { error } = await sb.from('paramet').update(v).eq('id', 1); if (error) return msg('kpMsg', friendly(error)); msg('kpMsg', '✓ Anrejistre.', 'ok');
+});
 </script>
 </body>
 </html>
