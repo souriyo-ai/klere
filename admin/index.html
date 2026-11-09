@@ -767,10 +767,15 @@ async function loadPeman() {
   $('pmStats').innerHTML = [['Antre jodi a', sum(P.filter((x) => new Date(x.peye_le).toDateString() === jodi))], ['Antre 30 jou', sum(P)], ['Pòtrè piblik (30 j)', sum(P.filter((x) => x.tip === 'potre'))], ['Retrè pou voye', sum(R2.filter((x) => x.estati === 'ap_tann'))]].map(([a, v]) => `<div class="stat"><span>${a}</span><b>${(+v).toLocaleString('fr-FR')} G</b></div>`).join('');
   const RS = { ap_tann: '<span class="pill w">⏳ Pou voye</span>', peye: '<span class="pill ok">✓ Voye</span>', refize: '<span class="pill">Refize</span>' };
   $('pmRet').innerHTML = R2.map((x) => `<tr><td class="sub">${fmt(x.kreye_le)}</td><td>${esc(on[x.org_id] || '')}</td><td><b>${esc(x.moncash_tel)}</b></td><td><b>${(+x.montan_htg).toLocaleString('fr-FR')} G</b></td><td>${RS[x.estati]}${x.nota ? `<br><span class="sub">${esc(x.nota)}</span>` : ''}</td><td>${x.estati === 'ap_tann' ? `<button class="btn main" type="button" data-rok="${x.id}">✓ Voye</button> <button class="btn" type="button" data-rko="${x.id}">Refize</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen demann retrè.</td></tr>';
-  $('pmRows').innerHTML = (k.data || []).map((x) => `<tr><td class="sub">${fmt(x.peye_le || x.kreye_le)}</td><td>${PTIPA[x.tip] || x.tip}${x.kantite ? ' × ' + x.kantite : ''}</td><td>${esc(on[x.org_id] || '')}${x.tel ? `<br><span class="sub">${esc(x.tel)}</span>` : ''}</td><td><b>${(+x.montan_htg).toLocaleString('fr-FR')} G</b></td><td class="sub">${esc(x.moncash_tx || '')}${x.peye_pa ? '<br>' + esc(x.peye_pa) : ''}</td><td>${PSTA[x.estati]}${x.rezon ? `<br><span class="sub">${esc(x.rezon)}</span>` : ''}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen peman.</td></tr>';
+  $('pmRows').innerHTML = (k.data || []).map((x) => `<tr><td class="sub">${fmt(x.peye_le || x.kreye_le)}</td><td>${PTIPA[x.tip] || x.tip}${x.kantite ? ' × ' + x.kantite : ''}</td><td>${esc(on[x.org_id] || '')}${x.tel ? `<br><span class="sub">${esc(x.tel)}</span>` : ''}</td><td><b>${(+x.montan_htg).toLocaleString('fr-FR')} G</b></td><td class="sub">${esc(x.moncash_tx || '')}${x.peye_pa ? '<br>' + esc(x.peye_pa) : ''}</td><td>${PSTA[x.estati]}${x.rezon ? `<br><span class="sub">${esc(x.rezon)}</span>` : ''}${x.estati !== 'peye' ? `<br><button class="btn" type="button" data-pmv="${esc(x.order_id)}" style="margin-top:4px">🔄 Verifye kote MonCash</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen peman.</td></tr>';
   pBadge();
 }
 $('pmF').addEventListener('change', loadPeman);
+document.addEventListener('click', async (e) => {
+  const v = e.target.closest('[data-pmv]'); if (!v) return; v.disabled = true; v.textContent = '…';
+  try { const r = await fetch(S.PEMAN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'verifye', orderId: v.dataset.pmv }) }); const j = await r.json(); if (!j.ok) alert(j.estati === 'pa_peye' ? 'MonCash di peman sa a poko fèt.' : 'Erè : ' + (j.error || r.status)); } catch { alert('Pa gen koneksyon.'); }
+  loadPeman();
+});
 $('tesGo').addEventListener('click', async () => {
   $('tesGo').disabled = true; msg('tesMsg', 'N ap kreye peman an…', 'ok');
   const { data: ss } = await sb.auth.getSession();

@@ -53,9 +53,10 @@ async function check() {
   if (!tx && !ord) return show(false, 'Pa gen peman pou verifye', 'Si w te peye, voye screenshot la bay Souriyo sou WhatsApp.', `https://wa.me/${S.WA}`, 'Kontakte Souriyo');
   let j = {};
   try { const r = await fetch(S.PEMAN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'verifye', transactionId: tx || undefined, orderId: tx ? undefined : ord }) }); j = await r.json(); } catch {}
-  let back = saved.back || '../';
+  let back = q.get('back') || saved.back || '../';
+  try { if (new URL(back, location.href).origin !== location.origin) back = '../'; } catch { back = '../'; }
   if (j.ok) {
-    try { localStorage.removeItem('souriyo_peman'); } catch {}
+    try { if (saved.order) localStorage.setItem('souriyo_peman', JSON.stringify({ ...saved, fini: true })); } catch {}
     if (j.tip === 'potre' && j.slug) { const u = new URL(back, location.href); u.searchParams.set('peye', j.kantite); back = u.toString(); }
     return show(true, 'Peman an pase ! Mèsi 🎉', (TXT[j.tip] || (() => ''))(j.kantite), back, 'Kontinye');
   }
