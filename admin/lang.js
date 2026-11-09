@@ -273,6 +273,7 @@
   };
   // Fraz ak mo ki parèt anndan tèks ki chanje (chif, non…). Pi long yo an premye.
   const F = [
+    ['🔞 Kanpay pou granmoun (moun nan dwe konfime li gen 18 an, e se foto pa l)', '🔞 Campagne adultes (la personne confirme avoir 18 ans et que c’est sa photo)', '🔞 Adults-only campaign (the person confirms they are 18+ and it is their photo)'],
     ['inaktif', 'inactif', 'inactive'],
     ['foto', 'photos', 'photos'],
     ['Pri mwayen (7 j)', 'Prix moyen (7 j)', 'Average price (7 d)'],

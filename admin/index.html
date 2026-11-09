@@ -162,6 +162,7 @@
           <div><label class="f" for="galri_debi">Kòmanse</label><input class="t" id="galri_debi" type="date" /></div>
           <div><label class="f" for="galri_fen">Fini</label><input class="t" id="galri_fen" type="date" /></div>
         </div>
+        <label class="tog"><input type="checkbox" id="ia_granmoun" /> 🔞 Kanpay pou granmoun (moun nan dwe konfime li gen 18 an, e se foto pa l)</label>
         <label class="tog"><input type="checkbox" id="galri_chak_ane" checked /> Chak ane menm dat yo (retire l pou fèt ki chanje dat, tankou Kanaval)</label>
         <p class="sub" style="margin:4px 0">San dat = toujou disponib.</p>
         <div class="grid2">
@@ -391,7 +392,7 @@ function current() {
   g.ia_gratis = Math.max(0, Math.min(5, parseInt($('ia_gratis').value || '0', 10)));
   g.ia_plafond = Math.max(0, parseInt($('ia_plafond').value || '0', 10));
   g.slug = slugify(g.slug); g.fon_url = GFON; const tm = (GTEM || []).filter((x) => (x.prompt || '').trim()).map((x) => ({ id: x.id, non: (x.non || '').trim() || 'Pòtrè', prompt: x.prompt.trim() })); g.ia_tem = tm.length ? tm : null;
-  g.galri = $('galri').checked; g.galri_tem = $('galri_tem').value.trim() || null; g.galri_debi = $('galri_debi').value || null; g.galri_fen = $('galri_fen').value || null;
+  g.ia_granmoun = $('ia_granmoun').checked; g.galri = $('galri').checked; g.galri_tem = $('galri_tem').value.trim() || null; g.galri_debi = $('galri_debi').value || null; g.galri_fen = $('galri_fen').value || null;
   g.galri_chak_ane = $('galri_chak_ane').checked; g.galri_lod = Math.max(0, Math.min(100, parseInt($('galri_lod').value || '0', 10)));
   g.mod_pey = $('mod_pey').value; g.pri_piblik_htg = Math.max(1, Math.min(2000, parseInt($('pri_piblik_htg').value || '100', 10))); g.konsep_id = $('konsep_id').value || null;
   return g;
@@ -424,7 +425,7 @@ function fill(g, k) {
   CHECKS.forEach((c) => ($(c).checked = !!g[c]));
   $('ia_gratis').value = g.ia_gratis ?? 0; $('ia_plafond').value = g.ia_plafond ?? 0;
   GFON = g.fon_url || null; if (GFON) K.prep(g).then(preview); GTEM = Array.isArray(g.ia_tem) ? JSON.parse(JSON.stringify(g.ia_tem)) : [];
-  $('galri').checked = !!g.galri; $('galri_tem').value = g.galri_tem || ''; $('galri_debi').value = g.galri_debi || ''; $('galri_fen').value = g.galri_fen || '';
+  $('ia_granmoun').checked = !!g.ia_granmoun; $('galri').checked = !!g.galri; $('galri_tem').value = g.galri_tem || ''; $('galri_debi').value = g.galri_debi || ''; $('galri_fen').value = g.galri_fen || '';
   $('galri_chak_ane').checked = g.galri_chak_ane !== false; $('galri_lod').value = g.galri_lod ?? 0; $('mod_pey').value = g.mod_pey === 'ofri' ? 'ofri' : (g.mod_pey ? 'piblik' : 'ofri'); $('pri_piblik_htg').value = g.pri_piblik_htg ?? 100;
   kOpts().then(() => { const s = $('konsep_id'); s.querySelectorAll('[data-tmp]').forEach((o) => o.remove()); if (g.konsep_id && !KOPT.some((k) => k.id === g.konsep_id)) s.insertAdjacentHTML('beforeend', `<option value="${esc(g.konsep_id)}" data-tmp="1">(konsèp aktyèl la)</option>`); s.value = g.konsep_id || ''; });
   $('kNon').value = k?.non || ''; $('kTel').value = k?.telefon || ''; $('kImel').value = k?.imel || ''; $('kNota').value = k?.nota || '';

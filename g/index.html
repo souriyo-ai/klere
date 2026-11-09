@@ -325,8 +325,10 @@ $('kShare').addEventListener('click', async () => { drawKad(); if (await share(`
 $('kDl').addEventListener('click', () => { drawKad(); download(`souriyo-${slug}.jpg`); count(); });
 
 /* ---------- Pòtrè IA ---------- */
+const GRAN = { ht: ' Mwen gen 18 an oswa plis, e se foto pa m mwen voye (pa foto yon lòt moun).', fr: ' J’ai 18 ans ou plus, et c’est ma propre photo (pas celle de quelqu’un d’autre).', en: ' I am 18 or older, and this is my own photo (not someone else’s).' };
 function renderOpts() {
   const tm = TEM();
+  const cs = document.querySelector('[data-t="consent"]'); if (cs && st.g && st.g.ia_granmoun && !cs.querySelector('[data-gran]')) cs.insertAdjacentHTML('beforeend', `<b data-gran="1">${GRAN[st.lang] || GRAN.ht}</b>`);
   ['gender', 'pq', 'decorL', 'decors'].forEach((id) => $(id).classList.toggle('hidden', !!tm));
   if (tm) {
     $('reqBox').classList.add('hidden');
