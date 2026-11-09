@@ -234,7 +234,7 @@ const st = { lang: 'ht', g: null, logo: null, mode: 'kad', kImg: null, iImg: nul
 const t = () => T[st.lang];
 const q = new URLSearchParams(location.search);
 const slug = (q.get('s') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
-const TEM = () => (st.g && Array.isArray(st.g.ia_tem) && st.g.ia_tem.length ? st.g.ia_tem : null);
+const TEM = () => { const l = st.g && Array.isArray(st.g.ia_tem) ? st.g.ia_tem.filter((v) => v && v.valide !== false) : []; return l.length ? l : null; };
 const TEMT = { ht: ['Chwazi pòtrè ou 📸', 'IA a kenbe figi w, epi li mete w nan sèn nan.'], fr: ['Choisis ton portrait 📸', 'L’IA garde ton visage et te place dans la scène.'], en: ['Choose your portrait 📸', 'AI keeps your face and puts you in the scene.'] };
 const profTitle = () => { if (st.tem) { const v = (TEM() || []).find((x) => x.id === st.tem); return v ? v.non : ''; } const p = PROFS.find((x) => x.k === st.prof); return p ? p[st.lang][st.gender === 'f' ? 1 : 0] : ''; };
 const KEY = `souriyo_${slug}`;

@@ -89,7 +89,7 @@
 <body>
 <header>
   <div class="brand"><img src="../assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span><small>admin</small></div>
-  <nav class="tabs hidden" id="nav"><button type="button" data-tab="o" aria-pressed="false">🏢 Òganizasyon <span id="oBadge"></span></button><button type="button" data-tab="k" aria-pressed="false">⭐ Kreyatè <span id="kBadge"></span></button><button type="button" data-tab="p" aria-pressed="false">💳 Peman <span id="pBadge"></span></button><button type="button" data-tab="g" aria-pressed="true">🖼️ Gwoup yo</button><button type="button" data-tab="c" aria-pressed="false">🎟️ Koupon</button><button type="button" data-tab="d" aria-pressed="false">💬 Demand metye</button><button type="button" data-tab="r" aria-pressed="false">💰 Rantabilite</button></nav>
+  <nav class="tabs hidden" id="nav"><button type="button" data-tab="a" aria-pressed="false">🎨 Atelye</button><button type="button" data-tab="o" aria-pressed="false">🏢 Òganizasyon <span id="oBadge"></span></button><button type="button" data-tab="k" aria-pressed="false">⭐ Kreyatè <span id="kBadge"></span></button><button type="button" data-tab="p" aria-pressed="false">💳 Peman <span id="pBadge"></span></button><button type="button" data-tab="g" aria-pressed="true">🖼️ Gwoup yo</button><button type="button" data-tab="c" aria-pressed="false">🎟️ Koupon</button><button type="button" data-tab="d" aria-pressed="false">💬 Demand metye</button><button type="button" data-tab="r" aria-pressed="false">💰 Rantabilite</button></nav>
   <button class="out hidden" id="logout" type="button">Dekonekte</button>
 </header>
 
@@ -234,6 +234,22 @@
     <section class="card"><h2>🎨 Demand modèl pèsonalize</h2><div style="overflow:auto"><table><thead><tr><th>Dat</th><th>Òganizasyon</th><th>Deskripsyon</th><th>Estati</th><th>Pri (G)</th><th>Repons</th><th></th></tr></thead><tbody id="mdRows"></tbody></table></div></section>
   </div>
 
+  <!-- ===== ATELYE ===== -->
+  <div id="tabA" class="hidden">
+    <div class="layout" style="grid-template-columns:300px 1fr 360px">
+      <section class="card"><h2>🎨 Konsèp yo</h2>
+        <button class="btn main" type="button" id="aNew" style="width:100%;justify-content:center">➕ Nouvo konsèp</button>
+        <select class="t" id="aF" style="margin:10px 0"><option value="">Tout</option><option value="g">Kanpay Souriyo</option><option value="k">Konsèp kreyatè</option></select>
+        <div class="glist" id="aList"></div>
+      </section>
+      <section class="card" id="aMain"><p class="sub">Chwazi yon konsèp, oswa kreye youn.</p></section>
+      <aside class="card prev" id="aSide" style="align-self:start;position:sticky;top:12px">
+        <div class="seg"><button type="button" data-apv="kad" aria-pressed="true">📸 Kad</button><button type="button" data-apv="ia" aria-pressed="false">✨ Pòtrè IA</button></div>
+        <img id="aPv" alt="Aperçu" /><p class="sub" id="aPvN" style="margin:8px 0 0"></p>
+      </aside>
+    </div>
+  </div>
+
   <!-- ===== KREYATÈ ===== -->
   <div id="tabK" class="hidden">
     <section class="card"><h2>Paramèt kreyatè yo</h2>
@@ -357,8 +373,8 @@ $('logout').addEventListener('click', async () => { await sb.auth.signOut(); sho
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
   document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', x === b));
-  ['g', 'c', 'd', 'r', 'o', 'k', 'p'].forEach((k) => $('tab' + k.toUpperCase()).classList.toggle('hidden', b.dataset.tab !== k));
-  if (b.dataset.tab === 'o') loadOrgs(); if (b.dataset.tab === 'k') loadKreyate(); if (b.dataset.tab === 'p') loadPeman();
+  ['g', 'c', 'd', 'r', 'o', 'k', 'p', 'a'].forEach((k) => $('tab' + k.toUpperCase()).classList.toggle('hidden', b.dataset.tab !== k));
+  if (b.dataset.tab === 'o') loadOrgs(); if (b.dataset.tab === 'k') loadKreyate(); if (b.dataset.tab === 'p') loadPeman(); if (b.dataset.tab === 'a') loadAtelyeTab();
   if (b.dataset.tab === 'c') loadCoupons(); if (b.dataset.tab === 'd') loadDemandes(); if (b.dataset.tab === 'r') loadRanta();
 });
 
@@ -391,7 +407,7 @@ function current() {
   CHECKS.forEach((c) => (g[c] = $(c).checked));
   g.ia_gratis = Math.max(0, Math.min(5, parseInt($('ia_gratis').value || '0', 10)));
   g.ia_plafond = Math.max(0, parseInt($('ia_plafond').value || '0', 10));
-  g.slug = slugify(g.slug); g.fon_url = GFON; const tm = (GTEM || []).filter((x) => (x.prompt || '').trim()).map((x) => ({ id: x.id, non: (x.non || '').trim() || 'Pòtrè', prompt: x.prompt.trim() })); g.ia_tem = tm.length ? tm : null;
+  g.slug = slugify(g.slug); g.fon_url = GFON; const tm = (GTEM || []).filter((x) => (x.prompt || '').trim()).map((x) => ({ id: x.id, non: (x.non || '').trim() || 'Pòtrè', prompt: x.prompt.trim(), valide: x.valide !== false })); g.ia_tem = tm.length ? tm : null;
   g.ia_granmoun = $('ia_granmoun').checked; g.galri = $('galri').checked; g.galri_tem = $('galri_tem').value.trim() || null; g.galri_debi = $('galri_debi').value || null; g.galri_fen = $('galri_fen').value || null;
   g.galri_chak_ane = $('galri_chak_ane').checked; g.galri_lod = Math.max(0, Math.min(100, parseInt($('galri_lod').value || '0', 10)));
   g.mod_pey = $('mod_pey').value; g.pri_piblik_htg = Math.max(1, Math.min(2000, parseInt($('pri_piblik_htg').value || '100', 10))); g.konsep_id = $('konsep_id').value || null;
@@ -732,7 +748,7 @@ function renderKList() {
 }
 $('kFilter').addEventListener('change', renderKList);
 let KFON = null, KTEM = [];
-function kForm() { const m = {}; ['modele', 'c1', 'c2', 'c3', 'sou_tit', 'tit', 'riban', 'badj', 'liy'].forEach((k) => (m[k] = $('kf_' + k).value)); if (KFON) m.fon_url = KFON; const tm = KTEM.filter((x) => (x.prompt || '').trim()).map((x) => ({ id: x.id, non: (x.non || '').trim() || 'Pòtrè', prompt: x.prompt.trim() })); if (tm.length) m.ia_tem = tm; return m; }
+function kForm() { const m = {}; ['modele', 'c1', 'c2', 'c3', 'sou_tit', 'tit', 'riban', 'badj', 'liy'].forEach((k) => (m[k] = $('kf_' + k).value)); if (KFON) m.fon_url = KFON; const tm = KTEM.filter((x) => (x.prompt || '').trim()).map((x) => ({ id: x.id, non: (x.non || '').trim() || 'Pòtrè', prompt: x.prompt.trim(), valide: x.valide !== false })); if (tm.length) m.ia_tem = tm; return m; }
 function kPrev() { const m = kForm(); m.fon_url = KFON; K.draw($('cv'), m, SAMPLE.kad, { prenom: 'Nadège' }); $('kPv').src = $('cv').toDataURL('image/jpeg', .85); }
 async function showKonsep(k) {
   KCUR = k; renderKList();
@@ -860,13 +876,13 @@ async function atelye(box, tg, onUse) {
       <button class="btn${tg.fon() === x.fon_url ? '' : ' main'}" type="button" data-atl-use="${esc(x.fon_url)}">${tg.fon() === x.fon_url ? '✓ Chwazi' : 'Itilize l'}</button></div></div>`).join('')}</div></div>
     <div class="atl"><h3>🤠 Pòtrè IA konsèp la</h3>
     <p class="sub" style="margin:0 0 6px">Sa IA a ap fè ak selfi moun yo : kostim, dekò, pozisyon. Si w mete omwen yon variant, moun yo ap wè yo olye 28 metye yo. Klike « Anrejistre » pou yo pase an liy.</p>
-    <div data-atl="tem">${(tg.tem() || []).map((x, i) => `<div style="border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:6px"><div style="display:flex;gap:6px"><input class="t" data-tn="${i}" maxlength="40" placeholder="Non (ex. 🐎 Sou chwal la)" value="${esc(x.non || '')}" /><button class="btn" type="button" data-tx="${i}">✖</button></div>
+    <div data-atl="tem">${(tg.tem() || []).map((x, i) => `<div style="border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:6px"><div style="display:flex;gap:6px;align-items:center"><input class="t" data-tn="${i}" maxlength="40" placeholder="Non (ex. 🐎 Sou chwal la)" value="${esc(x.non || '')}" /><label class="pill ${x.valide === false ? 'w' : 'ok'}" style="white-space:nowrap;cursor:pointer"><input type="checkbox" data-tv="${i}" ${x.valide === false ? '' : 'checked'} style="vertical-align:middle" /> ${x.valide === false ? '📝 Bouyon' : '✅ Valide'}</label><button class="btn" type="button" data-tx="${i}">✖</button></div>
       <textarea class="t" data-tp="${i}" maxlength="1200" style="min-height:70px;margin-top:6px" placeholder="Dekri sèn nan an angle oswa kreyòl : rad, chapo, pozisyon, dekò…">${esc(x.prompt || '')}</textarea></div>`).join('')}</div>
     <button class="btn" type="button" data-atl="tadd">➕ Ajoute yon variant</button>
     <div style="margin-top:10px;background:#f6f3ef;border-radius:12px;padding:10px"><b>🧪 Teste sou yon foto</b>
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px"><input type="file" accept="image/*" data-atl="tf" /><select class="t" data-atl="tv" style="max-width:220px">${(tg.tem() || []).map((x, i) => `<option value="${i}">${esc(x.non || 'Variant ' + (i + 1))}</option>`).join('')}</select><button class="btn main" type="button" data-atl="tgo">Teste (≈ ${est} G)</button></div>
       <p class="msg" data-atl="tm"></p>
-      <div class="vgrid">${VP.map((x) => `<div class="vc"><img src="${esc(x.fon_url)}" alt="" data-atl-z="${esc(x.fon_url)}" loading="lazy" /><div><b>T${x.nimewo}</b> · ${(+x.kout_usd).toFixed(3)} $<br><span class="sub">${esc((x.deskripsyon || '').slice(0, 70))}</span></div></div>`).join('')}</div></div></div>`;
+      <div class="vgrid">${VP.map((x) => `<div class="vc"><img src="${esc(x.fon_url)}" alt="" data-atl-z="${esc(x.fon_url)}" loading="lazy" /><div><b>T${x.nimewo}</b> · ${(+x.kout_usd).toFixed(3)} $<br><span class="sub">${esc((x.deskripsyon || '').slice(0, 70))}</span>${tg.onPreview ? `<button class="btn" type="button" data-atl-pv="${esc(x.fon_url)}">👁️ Nan kad la</button>` : ''}</div></div>`).join('')}</div></div></div>`;
   const ta = box.querySelector('[data-atl="d"]'); ta.value = draft ?? V[0]?.deskripsyon ?? tg.deskripsyon ?? '';
   const m = (txt, k = 'err') => { const e = box.querySelector('[data-atl="m"]'); e.className = 'msg ' + k; e.textContent = txt; };
   box.querySelector('[data-atl="gen"]').onclick = async (e) => {
@@ -893,8 +909,9 @@ async function atelye(box, tg, onUse) {
   const tl = () => tg.tem() || [];
   box.querySelectorAll('[data-tn]').forEach((i) => (i.oninput = () => { const l = tl(); l[+i.dataset.tn].non = i.value; tg.onTem(l); }));
   box.querySelectorAll('[data-tp]').forEach((i) => (i.oninput = () => { const l = tl(); l[+i.dataset.tp].prompt = i.value; tg.onTem(l); }));
+  box.querySelectorAll('[data-tv]').forEach((i) => (i.onchange = async () => { const l = tl(); l[+i.dataset.tv].valide = i.checked; tg.onTem(l); await atelye(box, tg, onUse); }));
   box.querySelectorAll('[data-tx]').forEach((b) => (b.onclick = async () => { const l = tl(); l.splice(+b.dataset.tx, 1); tg.onTem(l); await atelye(box, tg, onUse); }));
-  box.querySelector('[data-atl="tadd"]').onclick = async () => { const l = tl(); if (l.length >= 6) return; l.push({ id: 'v' + Date.now().toString(36), non: '', prompt: '' }); tg.onTem(l); await atelye(box, tg, onUse); };
+  box.querySelector('[data-atl="tadd"]').onclick = async () => { const l = tl(); if (l.length >= 6) return; l.push({ id: 'v' + Date.now().toString(36), non: '', prompt: '', valide: false }); tg.onTem(l); await atelye(box, tg, onUse); };
   box.querySelector('[data-atl="tgo"]').onclick = async (e) => {
     const tm = (txt, k = 'err') => { const el = box.querySelector('[data-atl="tm"]'); el.className = 'msg ' + k; el.textContent = txt; };
     const f = box.querySelector('[data-atl="tf"]').files[0], vv = tl()[+box.querySelector('[data-atl="tv"]').value];
@@ -911,8 +928,88 @@ async function atelye(box, tg, onUse) {
   };
   const x = box.querySelector('[data-atl="x"]'); if (x) x.onclick = async () => { onUse(null); await atelye(box, tg, onUse); };
   box.querySelectorAll('[data-atl-use]').forEach((b) => (b.onclick = async () => { onUse(b.dataset.atlUse); await atelye(box, tg, onUse); }));
+  box.querySelectorAll('[data-atl-pv]').forEach((b) => (b.onclick = () => tg.onPreview(b.dataset.atlPv)));
   box.querySelectorAll('[data-atl-z]').forEach((i) => (i.onclick = () => window.open(i.dataset.atlZ, '_blank', 'noopener')));
 }
+
+/* ---------- 🎨 Onglè Atelye : kreye, ajoute variant, teste, valide, mete an liy ---------- */
+const AF = ['modele', 'c1', 'c2', 'c3', 'sou_tit', 'tit', 'riban', 'badj', 'liy'];
+let AP = null, AKON = [], APV = 'kad', ATIMG = null;
+async function loadAtelyeTab() {
+  const [g, k, o] = await Promise.all([sb.from('groupes').select('*').is('org_id', null).order('kreye_le', { ascending: false }), sb.from('konsep').select('*').order('modifye_le', { ascending: false }).limit(300), sb.from('organizations').select('id, non')]);
+  const on = Object.fromEntries((o.data || []).map((x) => [x.id, x.non]));
+  AKON = [...(g.data || []).map((x) => ({ kind: 'g', id: x.id, non: x.nom, row: x, st: x.aktif ? '🟢 An liy' : '📝 Bouyon', c1: x.c1, c2: x.c2 })),
+    ...(k.data || []).map((x) => ({ kind: 'k', id: x.id, non: x.tit, row: x, st: { demann: '📨 Demann', an_kou: '🛠️ An kou', pwopozisyon: '👀 Pwopozisyon', apwouve: '✅ Bibliyotèk', refize: 'Refize', retire: 'Retire' }[x.estati] + ' · ' + esc(on[x.kreyate_org] || ''), c1: x.modele?.c1, c2: x.modele?.c2 }))];
+  aRenderList();
+  if (AP) { const f = AKON.find((x) => x.kind === AP.kind && x.id === AP.id); if (f) aOpen(f.kind, f.id); }
+}
+function aRenderList() {
+  const f = $('aF').value;
+  $('aList').innerHTML = AKON.filter((x) => !f || x.kind === f).map((x) => `<button type="button" class="gi" data-aopen="${x.kind}:${x.id}" aria-current="${AP && AP.id === x.id}"><span class="sw" style="background:linear-gradient(135deg,${esc(x.c1 || '#ddd')} 60%,${esc(x.c2 || '#bbb')} 60%)"></span><span><b>${esc(x.non)}</b><span>${x.kind === 'g' ? '🖼️ ' : '⭐ '}${x.st}${(x.row.ia_tem || x.row.modele?.ia_tem || []).length ? ' · 🤠 ' + (x.row.ia_tem || x.row.modele?.ia_tem).length : ''}</span></span></button>`).join('') || '<p class="sub">Pa gen konsèp ankò.</p>';
+}
+$('aF').addEventListener('change', aRenderList);
+function aModel() { const m = {}; AF.forEach((k) => (m[k] = $('af_' + k).value)); m.fon_url = AP.fon; m.nom = AP.kind === 'g' ? $('af_nom').value : ''; m.slug = AP.row.slug; return m; }
+function aPrev() {
+  if (!AP) return; const m = aModel();
+  K.draw($('cv'), m, APV === 'ia' && ATIMG ? ATIMG : SAMPLE.kad, { prenom: 'Nadège', titre: APV === 'ia' ? ($('af_tit').value || '') : undefined });
+  $('aPv').src = $('cv').toDataURL('image/jpeg', .85);
+  $('aPvN').textContent = APV === 'ia' ? (ATIMG ? 'Rezilta tès la nan kad la.' : 'Teste yon variant, epi klike « 👁️ Nan kad la ».') : 'Aperçu ak yon selfi egzanp.';
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-aopen]'); if (b) { const [kd, id] = b.dataset.aopen.split(':'); return aOpen(kd, id); }
+  const v = e.target.closest('[data-apv]'); if (v) { APV = v.dataset.apv; document.querySelectorAll('[data-apv]').forEach((x) => x.setAttribute('aria-pressed', x === v)); aPrev(); }
+});
+async function aOpen(kind, id) {
+  const it = AKON.find((x) => x.kind === kind && x.id === id); if (!it) return;
+  const r = it.row, m = kind === 'g' ? r : Object.assign({ modele: 'sek', c1: '#151848', c2: '#FF5A36', c3: '#ffffff' }, r.modele || {});
+  AP = { kind, id, row: r, fon: m.fon_url || null, tem: JSON.parse(JSON.stringify(m.ia_tem || [])) }; ATIMG = null; aRenderList();
+  $('aMain').innerHTML = `<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><h2 style="margin:0">${kind === 'g' ? '🖼️' : '⭐'} ${esc(it.non)}</h2><span class="pill ${kind === 'g' && r.aktif || r.estati === 'apwouve' ? 'ok' : 'w'}">${it.st}</span></div>
+    ${kind === 'k' ? `<p class="sub">${esc(r.tem || '')}${r.estil ? ' · ' + esc(r.estil) : ''}</p><p style="margin:4px 0 10px">${esc(r.deskripsyon || '')}</p>` : `<p class="sub">souriyo.com/${esc(r.slug)} · 1 pòtrè = ${r.pri_piblik_htg || 100} G${r.ia_granmoun ? ' · 🔞 18 an+' : ''}</p>`}
+    <div class="grid3">${kind === 'g' ? `<div style="grid-column:1/-1"><label class="f" for="af_nom">Non</label><input class="t" id="af_nom" maxlength="80" /></div>` : ''}
+      <div><label class="f" for="af_modele">Modèl</label><select class="t" id="af_modele"><option value="sek">🟢 Sèk</option><option value="polaroid">📷 Polaroid</option><option value="pwo">🏅 Pwo</option></select></div>
+      <div><label class="f" for="af_c1">Fon</label><input class="t" type="color" id="af_c1" style="height:42px;padding:3px" /></div><div><label class="f" for="af_c2">Aksan</label><input class="t" type="color" id="af_c2" style="height:42px;padding:3px" /></div>
+      <div><label class="f" for="af_c3">Kad foto</label><input class="t" type="color" id="af_c3" style="height:42px;padding:3px" /></div><div><label class="f" for="af_sou_tit">Ti tèks anlè</label><input class="t" id="af_sou_tit" maxlength="60" /></div><div><label class="f" for="af_tit">Gwo tit</label><input class="t" id="af_tit" maxlength="40" /></div>
+      <div><label class="f" for="af_riban">Riban</label><input class="t" id="af_riban" maxlength="30" /></div><div><label class="f" for="af_badj">Badj</label><input class="t" id="af_badj" maxlength="16" /></div><div><label class="f" for="af_liy">Liy anba</label><input class="t" id="af_liy" maxlength="60" /></div></div>
+    <div id="aAtl"></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
+      <button class="btn" type="button" id="aSave">💾 Anrejistre</button>
+      ${kind === 'g' ? `<button class="btn main" type="button" id="aLive">${r.aktif ? '⏸️ Retire l an liy' : '🚀 Valide epi mete l an liy'}</button><button class="btn" type="button" id="aEd">⚙️ Lòt paramèt (pri, galri, 18 an…)</button>`
+        : `<button class="btn main" type="button" id="aProp">👀 Voye pwopozisyon bay kreyatè a</button>${r.estati !== 'apwouve' ? '<button class="btn" type="button" id="aLib">✅ Valide epi mete l nan bibliyotèk la</button>' : ''}`}
+    </div><p class="msg" id="aMsg"></p>`;
+  if (kind === 'g') $('af_nom').value = r.nom || '';
+  AF.forEach((k) => { $('af_' + k).value = m[k] ?? ''; $('af_' + k).addEventListener('input', aPrev); });
+  if (kind === 'g') $('af_nom').addEventListener('input', aPrev);
+  if (AP.fon) await K.prep({ fon_url: AP.fon });
+  aPrev();
+  atelye($('aAtl'), { [kind === 'g' ? 'groupe_id' : 'konsep_id']: id, modele: () => $('af_modele').value, deskripsyon: [r.tem, r.estil, r.deskripsyon, r.nom, r.tit].filter(Boolean).join('. '), fon: () => AP.fon, tem: () => AP.tem, onTem: (l) => { AP.tem = l; },
+    onPreview: async (u) => { ATIMG = await K.loadImage(u); APV = 'ia'; document.querySelectorAll('[data-apv]').forEach((x) => x.setAttribute('aria-pressed', x.dataset.apv === 'ia')); aPrev(); } },
+    (u) => { AP.fon = u; K.prep({ fon_url: u }).then(aPrev); msg('aMsg', u ? 'Fon an chwazi : klike « 💾 Anrejistre ».' : 'Fon an retire.', 'ok'); });
+  const save = async (extra = {}) => {
+    const m2 = {}; AF.forEach((k) => (m2[k] = $('af_' + k).value));
+    const tm = (AP.tem || []).filter((x) => (x.prompt || '').trim()).map((x) => ({ id: x.id, non: (x.non || '').trim() || 'Pòtrè', prompt: x.prompt.trim(), valide: x.valide !== false }));
+    let q;
+    if (kind === 'g') q = sb.from('groupes').update({ ...m2, nom: $('af_nom').value.trim() || r.nom, fon_url: AP.fon, ia_tem: tm.length ? tm : null, ...extra }).eq('id', id).select().single();
+    else q = sb.from('konsep').update({ modele: { ...m2, ...(AP.fon ? { fon_url: AP.fon } : {}), ...(tm.length ? { ia_tem: tm } : {}) }, ...extra }).eq('id', id).select().single();
+    const { data, error } = await q; if (error) { msg('aMsg', friendly(error)); return null; }
+    it.row = data; return data;
+  };
+  $('aSave').onclick = async () => { if (await save()) { msg('aMsg', '✓ Anrejistre.', 'ok'); loadAtelyeTab(); } };
+  const nValid = () => (AP.tem || []).filter((x) => x.valide !== false && (x.prompt || '').trim()).length;
+  if ($('aLive')) $('aLive').onclick = async () => {
+    if (!r.aktif && !confirm(`Mete « ${r.nom} » an liy sou souriyo.com/${r.slug} ? ${nValid()} variant pòtrè ki valide ap parèt.`)) return;
+    if (await save({ aktif: !r.aktif })) { msg('aMsg', r.aktif ? 'Kanpay la pa an liy ankò.' : `✓ An liy : souriyo.com/${r.slug}`, 'ok'); await loadGroups(); loadAtelyeTab(); }
+  };
+  if ($('aEd')) $('aEd').onclick = () => { document.querySelector('[data-tab="g"]').click(); editGroup(G.find((x) => x.id === id) || r); };
+  if ($('aProp')) $('aProp').onclick = async () => { if (await save({ estati: 'pwopozisyon' })) { msg('aMsg', '✓ Pwopozisyon an voye : kreyatè a ka apwouve l oswa mande chanjman.', 'ok'); loadAtelyeTab(); } };
+  if ($('aLib')) $('aLib').onclick = async () => { if (!confirm('Valide konsèp sa a epi mete l nan bibliyotèk la ?')) return; if (await save({ estati: 'apwouve' })) { msg('aMsg', '✓ Konsèp la nan bibliyotèk la.', 'ok'); loadAtelyeTab(); } };
+}
+$('aNew').addEventListener('click', async () => {
+  const non = (prompt('Non nouvo konsèp la (ex. Miss Ayiti) :') || '').trim(); if (non.length < 2) return;
+  let slug = slugify(non); if (slug.length < 3) slug = slug + '-sry';
+  const { data, error } = await sb.from('groupes').insert({ nom: non, slug, type: 'lot', modele: 'pwo', c1: '#151848', c2: '#FF5A36', c3: '#ffffff', tit: non.toUpperCase().slice(0, 40), mod_kad: true, mod_ia: true, ia_gratis: 0, aktif: false, nan_klasman: false, lang: 'ht', mod_pey: 'piblik', pri_piblik_htg: 100 }).select().single();
+  if (error) return alert(/duplicate|slug_key/.test(error.message) ? 'Adrès souriyo.com/' + slug + ' deja pran. Chwazi yon lòt non.' : friendly(error));
+  AP = { kind: 'g', id: data.id }; await loadAtelyeTab();
+});
 </script>
 </body>
 </html>
