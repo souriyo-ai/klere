@@ -11,6 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script src="../assets/config.js"></script>
+<script src="../assets/modal.js"></script>
 <script src="lang.js"></script>
 <script src="../assets/kad.js"></script>
 <style>
@@ -515,7 +516,7 @@ $('mAdd').addEventListener('click', async () => {
   $('mList').value = ''; msg('edMsg', `✓ ${rows.length} manm ajoute.`, 'ok'); editGroup(CUR);
 });
 $('mClear').addEventListener('click', async () => {
-  if (!CUR || !confirm(`Efase tout lis manm « ${CUR.nom} » a ?`)) return;
+  if (!CUR || !await SM.confirm(`Efase tout lis manm « ${CUR.nom} » a ?`)) return;
   const { error } = await sb.from('manm').delete().eq('groupe_id', CUR.id);
   if (error) return msg('edMsg', friendly(error)); msg('edMsg', '✓ Lis la efase.', 'ok'); editGroup(CUR);
 });
@@ -559,7 +560,7 @@ async function loadDemandes() {
   if (error) return;
   $('dRows').innerHTML = (data || []).map((x) => `<tr><td class="sub">${fmt(x.created_at)}</td><td><b>${esc(x.metye)}</b></td><td>${esc(x.groupe_slug || '—')}</td><td>${esc(x.telefon || '—')}</td><td>${esc((x.lang || '').toUpperCase())}</td><td><input type="checkbox" data-dem="${x.id}" ${x.trete ? 'checked' : ''} aria-label="Ajoute" /></td></tr>`).join('') || '<tr><td colspan="6" class="sub">Pa gen demand.</td></tr>';
 }
-document.addEventListener('change', async (e) => { const c = e.target.closest('[data-dem]'); if (!c) return; const { error } = await sb.from('demandes').update({ trete: c.checked }).eq('id', +c.dataset.dem); if (error) { c.checked = !c.checked; alert(friendly(error)); } });
+document.addEventListener('change', async (e) => { const c = e.target.closest('[data-dem]'); if (!c) return; const { error } = await sb.from('demandes').update({ trete: c.checked }).eq('id', +c.dataset.dem); if (error) { c.checked = !c.checked; SM.alert(friendly(error)); } });
 
 /* ---------- Rantabilite ---------- */
 const haiti = (d = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Port-au-Prince' }).format(d);
@@ -808,14 +809,14 @@ document.addEventListener('click', async (e) => {
   const q = (s) => e.target.closest(s); let b;
   if ((b = q('[data-kid]'))) return showKonsep(KK.find((x) => x.id === b.dataset.kid));
   if ((b = q('[data-kcap]'))) { e.preventDefault(); const { data } = await sb.storage.from('verifikasyon').createSignedUrl(b.dataset.kcap, 600); if (data?.signedUrl) window.open(data.signedUrl, '_blank', 'noopener'); return; }
-  if ((b = q('[data-krok]'))) { const id = +b.dataset.krok, ab = Math.max(0, parseInt(document.querySelector(`[data-kab="${id}"]`).value || '0', 10)); const { error } = await sb.from('rezo_kont').update({ estati: 'ok', abonnes_verifye: ab, rezon: null }).eq('id', id); if (error) return alert(friendly(error)); return loadKreyate(); }
-  if ((b = q('[data-krko]'))) { const r = prompt('Rezon (kreyatè a ap wè l) :', 'Nou pa wè kòd la nan bio a.'); if (r === null) return; const { error } = await sb.from('rezo_kont').update({ estati: 'refize', rezon: r.slice(0, 300) || null }).eq('id', +b.dataset.krko); if (error) return alert(friendly(error)); return loadKreyate(); }
-  if ((b = q('[data-kofi]'))) { if (!confirm('Ou resevwa peman achtè a ? Konsèp la ap pase sou kont achtè a.')) return; const { error } = await sb.from('konsep_of').update({ estati: 'fini' }).eq('id', +b.dataset.kofi); if (error) return alert(friendly(error)); return loadKreyate(); }
-  if ((b = q('[data-krp]'))) { const { error } = await sb.from('konsep_revni').update({ peye: true }).eq('id', +b.dataset.krp); if (error) return alert(friendly(error)); return loadKreyate(); }
+  if ((b = q('[data-krok]'))) { const id = +b.dataset.krok, ab = Math.max(0, parseInt(document.querySelector(`[data-kab="${id}"]`).value || '0', 10)); const { error } = await sb.from('rezo_kont').update({ estati: 'ok', abonnes_verifye: ab, rezon: null }).eq('id', id); if (error) return SM.alert(friendly(error)); return loadKreyate(); }
+  if ((b = q('[data-krko]'))) { const r = await SM.prompt('Rezon (kreyatè a ap wè l) :', 'Nou pa wè kòd la nan bio a.'); if (r === null) return; const { error } = await sb.from('rezo_kont').update({ estati: 'refize', rezon: r.slice(0, 300) || null }).eq('id', +b.dataset.krko); if (error) return SM.alert(friendly(error)); return loadKreyate(); }
+  if ((b = q('[data-kofi]'))) { if (!await SM.confirm('Ou resevwa peman achtè a ? Konsèp la ap pase sou kont achtè a.')) return; const { error } = await sb.from('konsep_of').update({ estati: 'fini' }).eq('id', +b.dataset.kofi); if (error) return SM.alert(friendly(error)); return loadKreyate(); }
+  if ((b = q('[data-krp]'))) { const { error } = await sb.from('konsep_revni').update({ peye: true }).eq('id', +b.dataset.krp); if (error) return SM.alert(friendly(error)); return loadKreyate(); }
   if ((b = q('[data-kact]')) && KCUR) {
     const a = b.dataset.kact, v = { modele: kForm(), premium: $('kf_prem').checked, lisans_htg: Math.max(0, parseInt($('kf_pri').value || '0', 10)) };
     if (a !== 'sove') v.estati = a;
-    if (a === 'refize' && !confirm('Refize konsèp sa a ?')) return;
+    if (a === 'refize' && !await SM.confirm('Refize konsèp sa a ?')) return;
     const { data, error } = await sb.from('konsep').update(v).eq('id', KCUR.id).select().single(); if (error) return msg('kMsg', friendly(error));
     await loadKreyate(); await showKonsep(data);
     msg('kMsg', { sove: '✓ Anrejistre.', pwopozisyon: '✓ Pwopozisyon an voye : kreyatè a ka apwouve l oswa mande chanjman.', apwouve: '✓ Konsèp la nan bibliyotèk la.', refize: 'Konsèp la refize.' }[a], 'ok');
@@ -851,7 +852,7 @@ async function loadPeman() {
 $('pmF').addEventListener('change', loadPeman);
 document.addEventListener('click', async (e) => {
   const v = e.target.closest('[data-pmv]'); if (!v) return; v.disabled = true; v.textContent = '…';
-  try { const r = await fetch(S.PEMAN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'verifye', orderId: v.dataset.pmv }) }); const j = await r.json(); if (!j.ok) alert(j.estati === 'pa_peye' ? 'MonCash di peman sa a poko fèt.' : 'Erè : ' + (j.error || r.status)); } catch { alert('Pa gen koneksyon.'); }
+  try { const r = await fetch(S.PEMAN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'verifye', orderId: v.dataset.pmv }) }); const j = await r.json(); if (!j.ok) SM.alert(j.estati === 'pa_peye' ? 'MonCash di peman sa a poko fèt.' : 'Erè : ' + (j.error || r.status)); } catch { SM.alert('Pa gen koneksyon.'); }
   loadPeman();
 });
 $('tesGo').addEventListener('click', async () => {
@@ -867,8 +868,8 @@ $('pmSave').addEventListener('click', async () => {
 document.addEventListener('click', async (e) => {
   const ok = e.target.closest('[data-rok]'), ko = e.target.closest('[data-rko]'); if (!ok && !ko) return;
   const id = +(ok || ko).dataset[ok ? 'rok' : 'rko'];
-  const nota = prompt(ok ? 'N° tranzaksyon MonCash ou voye a (pa obligatwa) :' : 'Rezon (kont lan ap wè l) :', ''); if (nota === null) return;
-  const { error } = await sb.from('retre').update({ estati: ok ? 'peye' : 'refize', nota: nota.slice(0, 300) || null }).eq('id', id); if (error) return alert(friendly(error)); loadPeman();
+  const nota = await SM.prompt(ok ? 'N° tranzaksyon MonCash ou voye a (pa obligatwa) :' : 'Rezon (kont lan ap wè l) :', ''); if (nota === null) return;
+  const { error } = await sb.from('retre').update({ estati: ok ? 'peye' : 'refize', nota: nota.slice(0, 300) || null }).eq('id', id); if (error) return SM.alert(friendly(error)); loadPeman();
 });
 
 /* ---------- 🎨 Atelye : fon IA, vèsyon, kout ---------- */
@@ -1032,18 +1033,18 @@ async function aOpen(kind, id) {
   $('aSave').onclick = async () => { if (await save()) { msg('aMsg', '✓ Anrejistre.', 'ok'); loadAtelyeTab(); } };
   const nValid = () => (AP.tem || []).filter((x) => x.valide !== false && (x.prompt || '').trim()).length;
   if ($('aLive')) $('aLive').onclick = async () => {
-    if (!r.aktif && !confirm(`Mete « ${r.nom} » an liy sou souriyo.com/${r.slug} ? ${nValid()} variant pòtrè ki valide ap parèt.`)) return;
+    if (!r.aktif && !await SM.confirm(`Mete « ${r.nom} » an liy sou souriyo.com/${r.slug} ? ${nValid()} variant pòtrè ki valide ap parèt.`)) return;
     if (await save({ aktif: !r.aktif })) { msg('aMsg', r.aktif ? 'Kanpay la pa an liy ankò.' : `✓ An liy : souriyo.com/${r.slug}`, 'ok'); await loadGroups(); loadAtelyeTab(); }
   };
   if ($('aEd')) $('aEd').onclick = () => { document.querySelector('[data-tab="g"]').click(); editGroup(G.find((x) => x.id === id) || r); };
   if ($('aProp')) $('aProp').onclick = async () => { if (await save({ estati: 'pwopozisyon' })) { msg('aMsg', '✓ Pwopozisyon an voye : kreyatè a ka apwouve l oswa mande chanjman.', 'ok'); loadAtelyeTab(); } };
-  if ($('aLib')) $('aLib').onclick = async () => { if (!confirm('Valide konsèp sa a epi mete l nan bibliyotèk la ?')) return; if (await save({ estati: 'apwouve' })) { msg('aMsg', '✓ Konsèp la nan bibliyotèk la.', 'ok'); loadAtelyeTab(); } };
+  if ($('aLib')) $('aLib').onclick = async () => { if (!await SM.confirm('Valide konsèp sa a epi mete l nan bibliyotèk la ?')) return; if (await save({ estati: 'apwouve' })) { msg('aMsg', '✓ Konsèp la nan bibliyotèk la.', 'ok'); loadAtelyeTab(); } };
 }
 $('aNew').addEventListener('click', async () => {
-  const non = (prompt('Non nouvo konsèp la (ex. Miss Ayiti) :') || '').trim(); if (non.length < 2) return;
+  const non = (await SM.prompt('Non nouvo konsèp la (ex. Miss Ayiti) :') || '').trim(); if (non.length < 2) return;
   let slug = slugify(non); if (slug.length < 3) slug = slug + '-sry';
   const { data, error } = await sb.from('groupes').insert({ nom: non, slug, type: 'lot', modele: 'pwo', c1: '#151848', c2: '#FF5A36', c3: '#ffffff', tit: non.toUpperCase().slice(0, 40), mod_kad: true, mod_ia: true, ia_gratis: 0, aktif: false, nan_klasman: false, lang: 'ht', mod_pey: 'piblik', pri_piblik_htg: 100 }).select().single();
-  if (error) return alert(/duplicate|slug_key/.test(error.message) ? 'Adrès souriyo.com/' + slug + ' deja pran. Chwazi yon lòt non.' : friendly(error));
+  if (error) return SM.alert(/duplicate|slug_key/.test(error.message) ? 'Adrès souriyo.com/' + slug + ' deja pran. Chwazi yon lòt non.' : friendly(error));
   AP = { kind: 'g', id: data.id }; await loadAtelyeTab();
 });
 

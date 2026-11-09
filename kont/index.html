@@ -11,6 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script src="../assets/config.js"></script>
+<script src="../assets/modal.js"></script>
 <script src="../assets/kad.js"></script>
 <style>
   :root { --ink: #151848; --ink-2: #4b5085; --coral: #FF5A36; --sun: #FFC93C; --cream: #fff8f2; --line: #ece4dc; --ok: #1a7a3c; }
@@ -607,7 +608,7 @@ $('mAdd').addEventListener('click', async () => {
   const { error } = await sb.from('manm').upsert(rows, { onConflict: 'groupe_id,tel' }); if (error) return msg('edMsg', friendly(error));
   $('mList').value = ''; msg('edMsg', `✓ ${rows.length} manm ajoute.`, 'ok'); editCamp(CUR);
 });
-$('mClear').addEventListener('click', async () => { if (!CUR || !confirm('Efase tout lis manm lan ?')) return; const { error } = await sb.from('manm').delete().eq('groupe_id', CUR.id); if (error) return msg('edMsg', friendly(error)); editCamp(CUR); });
+$('mClear').addEventListener('click', async () => { if (!CUR || !await SM.confirm('Efase tout lis manm lan ?')) return; const { error } = await sb.from('manm').delete().eq('groupe_id', CUR.id); if (error) return msg('edMsg', friendly(error)); editCamp(CUR); });
 
 /* ---------- Konsèp nan bibliyotèk editè a ---------- */
 const kModel = (k) => Object.assign({ modele: 'sek', c1: '#151848', c2: '#FF5A36', c3: '#ffffff', sou_tit: '', tit: '', riban: '', badj: '', liy: '' }, k.modele || {});
@@ -633,8 +634,8 @@ function useKonsep(id) {
 }
 async function ofKonsep(id) {
   const k = KLIB.find((x) => x.id === id); if (!k) return;
-  const m = parseInt(prompt(`Konbyen goud ou ofri pou w achte konsèp « ${k.tit} » (ak tout revni li ap fè apre) ?`) || '', 10); if (!(m > 0)) return;
-  const note = (prompt('Yon ti mesaj pou kreyatè a (pa obligatwa) :') || '').slice(0, 1000);
+  const m = parseInt(await SM.prompt(`Konbyen goud ou ofri pou w achte konsèp « ${k.tit} » (ak tout revni li ap fè apre) ?`) || '', 10); if (!(m > 0)) return;
+  const note = (await SM.prompt('Yon ti mesaj pou kreyatè a (pa obligatwa) :') || '').slice(0, 1000);
   const { error } = await sb.from('konsep_of').insert({ konsep_id: k.id, achte_org: ORG.id, vann_org: k.pwopriyete_org, montan_htg: m, mesaj: note || null });
   if (error) return msg('edMsg', friendly(error));
   document.querySelector('[data-tab="kon"]').classList.remove('hidden'); msg('edMsg', '✓ Òf la voye. W ap wè repons lan nan onglè « 💡 Konsèp ».', 'ok');
@@ -671,7 +672,7 @@ document.addEventListener('click', async (e) => {
     } catch (er) { v.disabled = false; msg('rzm' + id, er.message && !/api|fetch/i.test(er.message) ? er.message : friendly(er)); }
     return;
   }
-  const x = e.target.closest('[data-rzx]'); if (x) { if (!confirm('Retire kont sa a ?')) return; const { error } = await sb.from('rezo_kont').delete().eq('id', +x.dataset.rzx); if (error) return msg('rzMsg', friendly(error)); loadRezo(); }
+  const x = e.target.closest('[data-rzx]'); if (x) { if (!await SM.confirm('Retire kont sa a ?')) return; const { error } = await sb.from('rezo_kont').delete().eq('id', +x.dataset.rzx); if (error) return msg('rzMsg', friendly(error)); loadRezo(); }
 });
 $('rzAdd').addEventListener('click', async () => {
   const u = $('rzU').value.trim().replace(/^@+/, ''); if (!u) return msg('rzMsg', 'Mete non itilizatè a.');
@@ -734,13 +735,13 @@ document.addEventListener('click', async (e) => {
   const upd = async (id, v, okT) => { const { data, error } = await sb.from('konsep').update(v).eq('id', id).select('estati').single(); if (error) return msg('kmm' + id, friendly(error)); if (v.estati && data?.estati !== v.estati) return msg('kmm' + id, 'Aksyon sa a pa posib kounya.'); await loadKonsep(); if (okT) msg('knMsg', okT, 'ok'); };
   const say = async (id, t) => { if (!t) return; const { error } = await sb.from('konsep_mesaj').insert({ konsep_id: id, ote: 'kreyate', mesaj: t }); if (error) throw error; };
   if ((b = q('[data-kms]'))) { const id = b.dataset.kms, t = document.querySelector(`[data-kmt="${id}"]`).value.trim(); if (!t) return; try { await say(id, t); loadKonsep(); } catch (er) { msg('kmm' + id, friendly(er)); } return; }
-  if ((b = q('[data-kap]'))) { if (!confirm('Apwouve pwopozisyon sa a ? Konsèp la ap antre nan bibliyotèk la pou tout kont yo.')) return; return upd(b.dataset.kap, { estati: 'apwouve' }, '✓ Konsèp la nan bibliyotèk la kounya !'); }
+  if ((b = q('[data-kap]'))) { if (!await SM.confirm('Apwouve pwopozisyon sa a ? Konsèp la ap antre nan bibliyotèk la pou tout kont yo.')) return; return upd(b.dataset.kap, { estati: 'apwouve' }, '✓ Konsèp la nan bibliyotèk la kounya !'); }
   if ((b = q('[data-kch]'))) { const id = b.dataset.kch, t = document.querySelector(`[data-kmt="${id}"]`).value.trim(); if (!t) { document.querySelector(`[data-kmt="${id}"]`).focus(); return msg('kmm' + id, 'Ekri ki chanjman ou vle a nan bwat mesaj la anvan.'); } try { await say(id, t); } catch (er) { return msg('kmm' + id, friendly(er)); } return upd(id, { estati: 'an_kou' }, '✓ Demann chanjman an voye.'); }
-  if ((b = q('[data-kre]'))) { if (!confirm('Retire konsèp sa a nan bibliyotèk la ? Kanpay ki deja itilize l yo ap kontinye mache.')) return; return upd(b.dataset.kre, { estati: 'retire' }); }
-  const ofu = async (id, estati) => { const { data, error } = await sb.from('konsep_of').update({ estati }).eq('id', id).select('estati').single(); if (error) return alert(friendly(error)); if (data?.estati !== estati) alert('Aksyon sa a pa posib kounya.'); loadKonsep(); };
-  if ((b = q('[data-ofa]'))) { if (!confirm('Aksepte òf sa a ? Konsèp la ap pase bay achtè a depi li peye.')) return; return ofu(+b.dataset.ofa, 'aksepte'); }
+  if ((b = q('[data-kre]'))) { if (!await SM.confirm('Retire konsèp sa a nan bibliyotèk la ? Kanpay ki deja itilize l yo ap kontinye mache.')) return; return upd(b.dataset.kre, { estati: 'retire' }); }
+  const ofu = async (id, estati) => { const { data, error } = await sb.from('konsep_of').update({ estati }).eq('id', id).select('estati').single(); if (error) return SM.alert(friendly(error)); if (data?.estati !== estati) SM.alert('Aksyon sa a pa posib kounya.'); loadKonsep(); };
+  if ((b = q('[data-ofa]'))) { if (!await SM.confirm('Aksepte òf sa a ? Konsèp la ap pase bay achtè a depi li peye.')) return; return ofu(+b.dataset.ofa, 'aksepte'); }
   if ((b = q('[data-ofr]'))) return ofu(+b.dataset.ofr, 'refize');
-  if ((b = q('[data-ofx]'))) { if (!confirm('Anile òf la ?')) return; return ofu(+b.dataset.ofx, 'anile'); }
+  if ((b = q('[data-ofx]'))) { if (!await SM.confirm('Anile òf la ?')) return; return ofu(+b.dataset.ofx, 'anile'); }
 });
 
 /* ---------- Modèl pèsonalize ---------- */
@@ -814,7 +815,7 @@ async function loadBalans() {
 $('retGo').addEventListener('click', async () => {
   const m = parseInt($('retM').value || '0', 10), tl = $('retT').value.trim();
   if (!(m > 0)) return msg('retMsg', 'Mete montan an.'); if (tl.replace(/\D/g, '').length < 8) return msg('retMsg', 'Mete nimewo MonCash la.');
-  if (!confirm(`Mande yon retrè ${m.toLocaleString('fr-FR')} G sou MonCash ${tl} ?`)) return;
+  if (!await SM.confirm(`Mande yon retrè ${m.toLocaleString('fr-FR')} G sou MonCash ${tl} ?`)) return;
   const { error } = await sb.from('retre').insert({ org_id: ORG.id, montan_htg: m, moncash_tel: tl });
   if (error) return msg('retMsg', /Balans|minimòm/.test(error.message) ? error.message : friendly(error));
   $('retM').value = ''; msg('retMsg', '✓ Demann lan pati. Souriyo ap voye kòb la sou MonCash ou.', 'ok'); loadBalans();
@@ -920,7 +921,7 @@ $('ekGo').addEventListener('click', async () => {
 document.addEventListener('click', async (e) => {
   const c = e.target.closest('[data-cplink]'); if (c) { try { await navigator.clipboard.writeText(c.dataset.cplink); c.textContent = 'Kopye ✓'; } catch {} return; }
   const a = e.target.closest('[data-anile]'); if (a) { await sb.from('org_envitasyon').update({ estati: 'anile' }).eq('id', +a.dataset.anile); return loadEkip(); }
-  const r = e.target.closest('[data-retire]'); if (r) { if (!confirm('Retire responsab sa a nan ekip la ?')) return; const { error } = await sb.from('org_users').delete().eq('org_id', ORG.id).eq('user_id', r.dataset.retire); if (error) return msg('ekMsg', friendly(error)); return loadEkip(); }
+  const r = e.target.closest('[data-retire]'); if (r) { if (!await SM.confirm('Retire responsab sa a nan ekip la ?')) return; const { error } = await sb.from('org_users').delete().eq('org_id', ORG.id).eq('user_id', r.dataset.retire); if (error) return msg('ekMsg', friendly(error)); return loadEkip(); }
   const sd = e.target.closest('[data-sendinv]'); if (sd) {
     sd.disabled = true; const { data: ss } = await sb.auth.getSession();
     const res = await fetch(`${S.SUPABASE_URL}/functions/v1/souriyo-org`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ss.session.access_token}` }, body: JSON.stringify({ action: 'voye_envitasyon', id: +sd.dataset.sendinv }) });
