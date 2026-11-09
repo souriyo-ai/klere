@@ -168,6 +168,7 @@
         <div class="grid2">
           <div><label class="f" for="mod_pey">Pòtrè IA</label><select class="t" id="mod_pey"><option value="piblik">Piblik la peye</option><option value="ofri">Ofri (pakè)</option></select></div>
           <div><label class="f" for="pri_piblik_htg">Pri 1 pòtrè (G)</label><input class="t" id="pri_piblik_htg" type="number" min="1" max="2000" /></div>
+          <div style="grid-column:1/-1"><label class="f" for="ia_modele">🧠 Modèl IA pou pòtrè kanpay sa a</label><select class="t" id="ia_modele"><option value="">Modèl jeneral la (Rantabilite)</option><option value="google/gemini-nano-banana-2.1">Nano Banana 2.1 · ~5 G/pòtrè</option><option value="google/gemini-3-pro-image">Nano Banana Pro · ~19 G/pòtrè, pi bon figi</option><option value="google/gemini-3.1-flash-image">Nano Banana 2 · ~9 G/pòtrè</option><option value="google/gemini-2.5-flash-image">Nano Banana 2.5 · ~5 G/pòtrè</option><option value="openai/gpt-5-image">GPT-5 Image (OpenAI)</option></select></div>
           <div style="grid-column:1/-1"><label class="f" for="konsep_id">Konsèp enfliyansè (kreyatè a touche pati pa l)</label><select class="t" id="konsep_id"><option value="">— Okenn —</option></select></div>
         </div>
       </fieldset>
@@ -408,7 +409,7 @@ function current() {
   g.ia_gratis = Math.max(0, Math.min(5, parseInt($('ia_gratis').value || '0', 10)));
   g.ia_plafond = Math.max(0, parseInt($('ia_plafond').value || '0', 10));
   g.slug = slugify(g.slug); g.fon_url = GFON; const tm = (GTEM || []).filter((x) => (x.prompt || '').trim()).map((x) => ({ id: x.id, non: (x.non || '').trim() || 'Pòtrè', prompt: x.prompt.trim(), valide: x.valide !== false })); g.ia_tem = tm.length ? tm : null;
-  g.ia_granmoun = $('ia_granmoun').checked; g.galri = $('galri').checked; g.galri_tem = $('galri_tem').value.trim() || null; g.galri_debi = $('galri_debi').value || null; g.galri_fen = $('galri_fen').value || null;
+  g.ia_granmoun = $('ia_granmoun').checked; g.ia_modele = $('ia_modele').value || null; g.galri = $('galri').checked; g.galri_tem = $('galri_tem').value.trim() || null; g.galri_debi = $('galri_debi').value || null; g.galri_fen = $('galri_fen').value || null;
   g.galri_chak_ane = $('galri_chak_ane').checked; g.galri_lod = Math.max(0, Math.min(100, parseInt($('galri_lod').value || '0', 10)));
   g.mod_pey = $('mod_pey').value; g.pri_piblik_htg = Math.max(1, Math.min(2000, parseInt($('pri_piblik_htg').value || '100', 10))); g.konsep_id = $('konsep_id').value || null;
   return g;
@@ -441,7 +442,7 @@ function fill(g, k) {
   CHECKS.forEach((c) => ($(c).checked = !!g[c]));
   $('ia_gratis').value = g.ia_gratis ?? 0; $('ia_plafond').value = g.ia_plafond ?? 0;
   GFON = g.fon_url || null; if (GFON) K.prep(g).then(preview); GTEM = Array.isArray(g.ia_tem) ? JSON.parse(JSON.stringify(g.ia_tem)) : [];
-  $('ia_granmoun').checked = !!g.ia_granmoun; $('galri').checked = !!g.galri; $('galri_tem').value = g.galri_tem || ''; $('galri_debi').value = g.galri_debi || ''; $('galri_fen').value = g.galri_fen || '';
+  $('ia_granmoun').checked = !!g.ia_granmoun; $('ia_modele').value = g.ia_modele || ''; $('galri').checked = !!g.galri; $('galri_tem').value = g.galri_tem || ''; $('galri_debi').value = g.galri_debi || ''; $('galri_fen').value = g.galri_fen || '';
   $('galri_chak_ane').checked = g.galri_chak_ane !== false; $('galri_lod').value = g.galri_lod ?? 0; $('mod_pey').value = g.mod_pey === 'ofri' ? 'ofri' : (g.mod_pey ? 'piblik' : 'ofri'); $('pri_piblik_htg').value = g.pri_piblik_htg ?? 100;
   kOpts().then(() => { const s = $('konsep_id'); s.querySelectorAll('[data-tmp]').forEach((o) => o.remove()); if (g.konsep_id && !KOPT.some((k) => k.id === g.konsep_id)) s.insertAdjacentHTML('beforeend', `<option value="${esc(g.konsep_id)}" data-tmp="1">(konsèp aktyèl la)</option>`); s.value = g.konsep_id || ''; });
   $('kNon').value = k?.non || ''; $('kTel').value = k?.telefon || ''; $('kImel').value = k?.imel || ''; $('kNota').value = k?.nota || '';
@@ -967,7 +968,7 @@ async function loadAtelyeTab() {
 }
 function aRenderList() {
   const f = $('aF').value;
-  $('aList').innerHTML = AKON.filter((x) => !f || x.kind === f).map((x) => `<button type="button" class="gi" data-aopen="${x.kind}:${x.id}" aria-current="${AP && AP.id === x.id}"><span class="sw" style="background:linear-gradient(135deg,${esc(x.c1 || '#ddd')} 60%,${esc(x.c2 || '#bbb')} 60%)"></span><span><b>${esc(x.non)}</b><span>${x.kind === 'g' ? '🖼️ ' : '⭐ '}${x.st}${(x.row.ia_tem || x.row.modele?.ia_tem || []).length ? ' · 🤠 ' + (x.row.ia_tem || x.row.modele?.ia_tem).length : ''}</span></span></button>`).join('') || '<p class="sub">Pa gen konsèp ankò.</p>';
+  $('aList').innerHTML = AKON.filter((x) => !f || x.kind === f).map((x) => `<button type="button" class="gi" data-aopen="${x.kind}:${x.id}" aria-current="${AP && AP.id === x.id}"><span class="sw" style="background:linear-gradient(135deg,${esc(x.c1 || '#ddd')} 60%,${esc(x.c2 || '#bbb')} 60%)"></span><span><b>${esc(x.non)}</b><span>${x.kind === 'g' ? '🖼️ ' : '⭐ '}${x.st}${(x.row.ia_tem || x.row.modele?.ia_tem || []).length ? ' · 🤠 ' + (x.row.ia_tem || x.row.modele?.ia_tem).length : ''}${(x.row.ia_modele || x.row.modele?.ia_modele) ? ' · 🧠 ' + mdlN(x.row.ia_modele || x.row.modele?.ia_modele) : ''}</span></span></button>`).join('') || '<p class="sub">Pa gen konsèp ankò.</p>';
 }
 $('aF').addEventListener('change', aRenderList);
 function aModel() { const m = {}; AF.forEach((k) => (m[k] = $('af_' + k).value)); m.fon_url = AP.fon; m.nom = AP.kind === 'g' ? $('af_nom').value : ''; m.slug = AP.row.slug; return m; }
@@ -991,6 +992,7 @@ async function aOpen(kind, id) {
       <div><label class="f" for="af_modele">Modèl</label><select class="t" id="af_modele"><option value="sek">🟢 Sèk</option><option value="polaroid">📷 Polaroid</option><option value="pwo">🏅 Pwo</option></select></div>
       <div><label class="f" for="af_c1">Fon</label><input class="t" type="color" id="af_c1" style="height:42px;padding:3px" /></div><div><label class="f" for="af_c2">Aksan</label><input class="t" type="color" id="af_c2" style="height:42px;padding:3px" /></div>
       <div><label class="f" for="af_c3">Kad foto</label><input class="t" type="color" id="af_c3" style="height:42px;padding:3px" /></div><div><label class="f" for="af_sou_tit">Ti tèks anlè</label><input class="t" id="af_sou_tit" maxlength="60" /></div><div><label class="f" for="af_tit">Gwo tit</label><input class="t" id="af_tit" maxlength="40" /></div>
+      <div style="grid-column:1/-1"><label class="f" for="af_mdl">🧠 Modèl IA pou pòtrè piblik la</label><select class="t" id="af_mdl"><option value="">Modèl jeneral la (Rantabilite)</option><option value="google/gemini-nano-banana-2.1">Nano Banana 2.1 · ~5 G/pòtrè</option><option value="google/gemini-3-pro-image">Nano Banana Pro · ~19 G/pòtrè, pi bon figi</option><option value="google/gemini-3.1-flash-image">Nano Banana 2 · ~9 G/pòtrè</option><option value="google/gemini-2.5-flash-image">Nano Banana 2.5 · ~5 G/pòtrè</option><option value="openai/gpt-5-image">GPT-5 Image (OpenAI)</option></select></div>
       <div><label class="f" for="af_riban">Riban</label><input class="t" id="af_riban" maxlength="30" /></div><div><label class="f" for="af_badj">Badj</label><input class="t" id="af_badj" maxlength="16" /></div><div><label class="f" for="af_liy">Liy anba</label><input class="t" id="af_liy" maxlength="60" /></div></div>
     <div id="aAtl"></div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
@@ -999,6 +1001,7 @@ async function aOpen(kind, id) {
         : `<button class="btn main" type="button" id="aProp">👀 Voye pwopozisyon bay kreyatè a</button>${r.estati !== 'apwouve' ? '<button class="btn" type="button" id="aLib">✅ Valide epi mete l nan bibliyotèk la</button>' : ''}`}
     </div><p class="msg" id="aMsg"></p>`;
   if (kind === 'g') $('af_nom').value = r.nom || '';
+  $('af_mdl').value = (kind === 'g' ? r.ia_modele : m.ia_modele) || '';
   AF.forEach((k) => { $('af_' + k).value = m[k] ?? ''; $('af_' + k).addEventListener('input', aPrev); });
   if (kind === 'g') $('af_nom').addEventListener('input', aPrev);
   if (AP.fon) await K.prep({ fon_url: AP.fon });
@@ -1010,8 +1013,9 @@ async function aOpen(kind, id) {
     const m2 = {}; AF.forEach((k) => (m2[k] = $('af_' + k).value));
     const tm = (AP.tem || []).filter((x) => (x.prompt || '').trim()).map((x) => ({ id: x.id, non: (x.non || '').trim() || 'Pòtrè', prompt: x.prompt.trim(), valide: x.valide !== false }));
     let q;
-    if (kind === 'g') q = sb.from('groupes').update({ ...m2, nom: $('af_nom').value.trim() || r.nom, fon_url: AP.fon, ia_tem: tm.length ? tm : null, ...extra }).eq('id', id).select().single();
-    else q = sb.from('konsep').update({ modele: { ...m2, ...(AP.fon ? { fon_url: AP.fon } : {}), ...(tm.length ? { ia_tem: tm } : {}) }, ...extra }).eq('id', id).select().single();
+    const mdl = $('af_mdl').value || null;
+    if (kind === 'g') q = sb.from('groupes').update({ ...m2, nom: $('af_nom').value.trim() || r.nom, fon_url: AP.fon, ia_tem: tm.length ? tm : null, ia_modele: mdl, ...extra }).eq('id', id).select().single();
+    else q = sb.from('konsep').update({ modele: { ...m2, ...(AP.fon ? { fon_url: AP.fon } : {}), ...(tm.length ? { ia_tem: tm } : {}), ...(mdl ? { ia_modele: mdl } : {}) }, ...extra }).eq('id', id).select().single();
     const { data, error } = await q; if (error) { msg('aMsg', friendly(error)); return null; }
     it.row = data; return data;
   };

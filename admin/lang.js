@@ -276,6 +276,11 @@
   };
   // Fraz ak mo ki parèt anndan tèks ki chanje (chif, non…). Pi long yo an premye.
   const F = [
+    ['🧠 Modèl IA pou pòtrè kanpay sa a', '🧠 Modèle IA pour les portraits de cette campagne', '🧠 AI model for this campaign’s portraits'],
+    ['🧠 Modèl IA pou pòtrè piblik la', '🧠 Modèle IA pour les portraits du public', '🧠 AI model for public portraits'],
+    ['Modèl jeneral la (Rantabilite)', 'Modèle général (Rentabilité)', 'General model (Profitability)'],
+    ['pi bon figi', 'meilleur visage', 'best face match'],
+    ['G/pòtrè', 'G/portrait', 'G/portrait'],
     ['Modèl aktyèl la (Rantabilite)', 'Modèle actuel (Rentabilité)', 'Current model (Profitability)'],
     ['pi bon kalite, pi chè', 'meilleure qualité, plus cher', 'best quality, pricier'],
     ['pi bon mache', 'moins cher', 'cheapest'],
