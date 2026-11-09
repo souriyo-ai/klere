@@ -862,6 +862,9 @@ document.addEventListener('click', async (e) => {
 
 /* ---------- 🎨 Atelye : fon IA, vèsyon, kout ---------- */
 const ATL_URL = S.SUPABASE_URL + '/functions/v1/souriyo-atelye';
+const ATL_MDL = { '': 'Modèl aktyèl la (Rantabilite)', 'google/gemini-3-pro-image': 'Nano Banana Pro · pi bon kalite, pi chè', 'google/gemini-nano-banana-2.1': 'Nano Banana 2.1', 'google/gemini-3.1-flash-image': 'Nano Banana 2', 'google/gemini-2.5-flash-image': 'Nano Banana (2.5) · pi bon mache', 'openai/gpt-5-image': 'GPT-5 Image (OpenAI)' };
+let ATL_M = ''; try { ATL_M = localStorage.getItem('souriyo_atl_mdl') || ''; } catch {}
+const mdlN = (m) => ({ 'google/gemini-3-pro-image': 'Pro', 'google/gemini-nano-banana-2.1': 'NB 2.1', 'google/gemini-3.1-flash-image': 'NB 2', 'google/gemini-2.5-flash-image': 'NB 2.5', 'openai/gpt-5-image': 'GPT-5' }[m] || '');
 async function atelye(box, tg, onUse) {
   const col = tg.konsep_id ? 'konsep_id' : 'groupe_id', id = tg.konsep_id || tg.groupe_id;
   const [v, c, cf] = await Promise.all([sb.from('atelye_vesyon').select('*').eq(col, id).order('nimewo', { ascending: false }), sb.rpc('atelye_kout', { p_konsep: tg.konsep_id || null, p_groupe: tg.groupe_id || null }), sb.from('ia_config').select('kout_estime_usd, to_htg').eq('id', 1).single()]);
@@ -881,8 +884,9 @@ async function atelye(box, tg, onUse) {
     <button class="btn" type="button" data-atl="tadd">➕ Ajoute yon variant</button>
     <div style="margin-top:10px;background:#f6f3ef;border-radius:12px;padding:10px"><b>🧪 Teste sou yon foto</b>
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px"><input type="file" accept="image/*" data-atl="tf" /><select class="t" data-atl="tv" style="max-width:220px">${(tg.tem() || []).map((x, i) => `<option value="${i}">${esc(x.non || 'Variant ' + (i + 1))}</option>`).join('')}</select><button class="btn main" type="button" data-atl="tgo">Teste (≈ ${est} G)</button></div>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:6px"><span class="sub">🧠 Modèl IA :</span><select class="t" data-atl="mdl" style="max-width:300px">${Object.entries(ATL_MDL).map(([k, v]) => `<option value="${k}" ${k === ATL_M ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
       <p class="msg" data-atl="tm"></p>
-      <div class="vgrid">${VP.map((x) => `<div class="vc"><img src="${esc(x.fon_url)}" alt="" data-atl-z="${esc(x.fon_url)}" loading="lazy" /><div><b>T${x.nimewo}</b> · ${(+x.kout_usd).toFixed(3)} $<br><span class="sub">${esc((x.deskripsyon || '').slice(0, 70))}</span>${tg.onPreview ? `<button class="btn" type="button" data-atl-pv="${esc(x.fon_url)}">👁️ Nan kad la</button>` : ''}<button class="btn" type="button" data-atl-ed="${esc(x.fon_url)}" data-atl-de="T${x.nimewo}">✏️ Modifye</button></div></div>`).join('')}</div></div></div>`;
+      <div class="vgrid">${VP.map((x) => `<div class="vc"><img src="${esc(x.fon_url)}" alt="" data-atl-z="${esc(x.fon_url)}" loading="lazy" /><div><b>T${x.nimewo}</b> · ${(+x.kout_usd).toFixed(3)} $${mdlN(x.modele_ia) ? ' · ' + mdlN(x.modele_ia) : ''}<br><span class="sub">${esc((x.deskripsyon || '').slice(0, 70))}</span>${tg.onPreview ? `<button class="btn" type="button" data-atl-pv="${esc(x.fon_url)}">👁️ Nan kad la</button>` : ''}<button class="btn" type="button" data-atl-ed="${esc(x.fon_url)}" data-atl-de="T${x.nimewo}">✏️ Modifye</button>${x.orijinal_url ? `<button class="btn" type="button" data-atl-ed="${esc(x.fon_url)}" data-atl-de="T${x.nimewo}" data-atl-fig="1">🙂 Korije figi a</button>` : ''}</div></div>`).join('')}</div></div></div>`;
   const ta = box.querySelector('[data-atl="d"]'); ta.value = draft ?? V[0]?.deskripsyon ?? tg.deskripsyon ?? '';
   const m = (txt, k = 'err') => { const e = box.querySelector('[data-atl="m"]'); e.className = 'msg ' + k; e.textContent = txt; };
   box.querySelector('[data-atl="gen"]').onclick = async (e) => {
@@ -920,7 +924,7 @@ async function atelye(box, tg, onUse) {
     try {
       const b64 = await new Promise((res, rej) => { const i = new Image(); i.onload = () => { const k = Math.min(1, 1024 / Math.max(i.width, i.height)), c2 = document.createElement('canvas'); c2.width = Math.round(i.width * k); c2.height = Math.round(i.height * k); c2.getContext('2d').drawImage(i, 0, 0, c2.width, c2.height); res(c2.toDataURL('image/jpeg', .9).split(',')[1]); }; i.onerror = rej; i.src = URL.createObjectURL(f); });
       const { data: ss } = await sb.auth.getSession();
-      const r = await fetch(ATL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ss.session.access_token}` }, body: JSON.stringify({ action: 'potre_tes', konsep_id: tg.konsep_id, groupe_id: tg.groupe_id, deskripsyon: vv.prompt.trim(), image: b64 }) });
+      const r = await fetch(ATL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ss.session.access_token}` }, body: JSON.stringify({ action: 'potre_tes', modele_ia: ATL_M || undefined, konsep_id: tg.konsep_id, groupe_id: tg.groupe_id, deskripsyon: vv.prompt.trim(), image: b64 }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) { e.target.disabled = false; return tm({ budget: 'Bidjè IA jodi a fini.', paused: 'IA a an pòz.', bad_image: 'Foto a twò gwo.', api: 'IA a pa t ka fè pòtrè a. Eseye ankò oswa chanje deskripsyon an.' }[j.error] || 'Erè : ' + (j.error || r.status)); }
       await atelye(box, tg, onUse); const el = box.querySelector('[data-atl="tm"]'); el.className = 'msg ok'; el.textContent = `✓ T${j.vesyon.nimewo} pare (${(+j.vesyon.kout_usd).toFixed(3)} $).`;
@@ -928,15 +932,17 @@ async function atelye(box, tg, onUse) {
   };
   const x = box.querySelector('[data-atl="x"]'); if (x) x.onclick = async () => { onUse(null); await atelye(box, tg, onUse); };
   box.querySelectorAll('[data-atl-use]').forEach((b) => (b.onclick = async () => { onUse(b.dataset.atlUse); await atelye(box, tg, onUse); }));
+  const ms = box.querySelector('[data-atl="mdl"]'); if (ms) ms.onchange = () => { ATL_M = ms.value; try { localStorage.setItem('souriyo_atl_mdl', ATL_M); } catch {} };
   box.querySelectorAll('[data-atl-ed]').forEach((b) => (b.onclick = async () => {
     const de = b.dataset.atlDe, potre = de.startsWith('T');
-    const ch = (prompt(`Kisa pou IA a chanje nan ${de} ? Ekri yon sèl chanjman, pa egzanp : « mete yon chemiz wouj », « fè chwal la vin blan », « retire moun dèyè yo ».`) || '').trim();
+    const ch = b.dataset.atlFig ? 'Make the face look exactly like the person in the original reference photo (same facial features, face shape, eyes, nose, lips, skin tone, age). Change nothing else.' : (prompt(`Kisa pou IA a chanje nan ${de} ? Ekri yon sèl chanjman, pa egzanp : « mete yon chemiz wouj », « fè chwal la vin blan », « retire moun dèyè yo ».`) || '').trim();
+    ATL_M = box.querySelector('[data-atl="mdl"]')?.value ?? ATL_M;
     if (ch.length < 3) return;
     const el = box.querySelector(potre ? '[data-atl="tm"]' : '[data-atl="m"]'); const say = (txt, k = 'err') => { el.className = 'msg ' + k; el.textContent = txt; };
     b.disabled = true; say(`IA a ap modifye ${de}… (15 a 40 segonn)`, 'ok');
     try {
       const { data: ss } = await sb.auth.getSession();
-      const r = await fetch(ATL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ss.session.access_token}` }, body: JSON.stringify({ action: 'modifye', sous_url: b.dataset.atlEd, de, deskripsyon: ch, konsep_id: tg.konsep_id, groupe_id: tg.groupe_id }) });
+      const r = await fetch(ATL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ss.session.access_token}` }, body: JSON.stringify({ action: 'modifye', modele_ia: ATL_M || undefined, sous_url: b.dataset.atlEd, de, deskripsyon: ch, konsep_id: tg.konsep_id, groupe_id: tg.groupe_id }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) { b.disabled = false; return say({ budget: 'Bidjè IA jodi a fini.', paused: 'IA a an pòz.', api: 'IA a pa t ka modifye imaj la. Eseye ankò oswa ekri chanjman an yon lòt jan.' }[j.error] || 'Erè : ' + (j.error || r.status)); }
       await atelye(box, tg, onUse);

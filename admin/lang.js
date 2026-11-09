@@ -276,6 +276,11 @@
   };
   // Fraz ak mo ki parèt anndan tèks ki chanje (chif, non…). Pi long yo an premye.
   const F = [
+    ['Modèl aktyèl la (Rantabilite)', 'Modèle actuel (Rentabilité)', 'Current model (Profitability)'],
+    ['pi bon kalite, pi chè', 'meilleure qualité, plus cher', 'best quality, pricier'],
+    ['pi bon mache', 'moins cher', 'cheapest'],
+    ['🙂 Korije figi a', '🙂 Corriger le visage', '🙂 Fix the face'],
+    ['Modèl IA :', 'Modèle IA :', 'AI model:'],
     ['Kisa pou IA a chanje nan', 'Que doit changer l’IA dans', 'What should the AI change in'],
     ['Ekri yon sèl chanjman, pa egzanp : « mete yon chemiz wouj », « fè chwal la vin blan », « retire moun dèyè yo ».', 'Écrivez un seul changement, par exemple : « mets une chemise rouge », « rends le cheval blanc », « retire les gens derrière ».', 'Write one change, for example: « put on a red shirt », « make the horse white », « remove the people behind ».'],
     ['IA a ap modifye', 'L’IA modifie', 'AI is editing'],
