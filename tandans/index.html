@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tandans · Souriyo</title>
+<meta name="description" content="Kad sezon yo : Nwèl, Fèt Endepandans, Kanaval, Fèt Manman, Bakaloreya… Mete selfi w nan kad la gratis, epi fè yon pòtrè IA." />
+<meta property="og:title" content="Tandans Souriyo ✨ Kad sezon yo" />
+<meta property="og:image" content="../img/og.jpg" />
+<link rel="icon" href="../assets/souriyo-icone.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@1,500&display=swap" />
+<script src="../assets/config.js"></script>
+<script src="../assets/kad.js"></script>
+<style>
+  :root { --ink: #151848; --ink-2: #4b5085; --coral: #FF5A36; --cream: #fff8f2; --line: #ece4dc; --ok: #1a7a3c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.5 "DM Sans", system-ui, sans-serif; color: var(--ink); background: var(--cream); }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; max-width: 1100px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; gap: 8px; font: 800 20px "Bricolage Grotesque", system-ui, sans-serif; text-decoration: none; color: var(--ink); }
+  .brand img { width: 30px; height: 30px; } .brand b { color: var(--coral); }
+  .langs { display: flex; gap: 4px; }
+  .langs button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 4px 10px; font: 700 12px "DM Sans", system-ui, sans-serif; cursor: pointer; color: var(--ink-2); }
+  .langs button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  main { max-width: 1100px; margin: 0 auto; padding: 6px 16px 48px; }
+  h1 { font: 800 clamp(32px, 7vw, 52px)/1.05 "Bricolage Grotesque", system-ui, sans-serif; margin: 10px 0 8px; letter-spacing: -.02em; }
+  h2 { font: 800 24px "Bricolage Grotesque", system-ui, sans-serif; margin: 30px 0 12px; letter-spacing: -.01em; }
+  .sub { color: var(--ink-2); margin: 0 0 8px; max-width: 640px; }
+  .next { background: #fff4d6; color: #7a5200; border-radius: 16px; padding: 12px 16px; font-weight: 600; margin: 16px 0 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform .15s, box-shadow .15s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(21,24,72,.14); }
+  .card img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; background: #f3efe9; }
+  .card .bd { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card b { font: 800 18px "Bricolage Grotesque", system-ui, sans-serif; }
+  .chip { display: inline-block; align-self: flex-start; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+  .chip.on { background: #e2f4e7; color: var(--ok); } .chip.soon { background: #fff4d6; color: #7a5200; }
+  .meta { font-size: 13px; color: var(--ink-2); }
+  .go { margin-top: auto; background: var(--coral); color: #fff; border-radius: 999px; padding: 10px; text-align: center; font-weight: 700; }
+  .top5 { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .top5 a { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 10px 14px; text-decoration: none; color: inherit; }
+  .top5 .rk { font: 800 20px "Bricolage Grotesque", system-ui, sans-serif; text-align: center; }
+  .top5 .ct { font: 800 20px "Bricolage Grotesque", system-ui, sans-serif; text-align: right; } .top5 .ct span { display: block; font: 500 12px "DM Sans", system-ui, sans-serif; color: var(--ink-2); }
+  .empty { color: var(--ink-2); background: #fff; border: 1px dashed var(--line); border-radius: 18px; padding: 22px; text-align: center; }
+  .cta { margin-top: 34px; background: var(--ink); color: #fff; border-radius: 24px; padding: 24px; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .cta b { font: 800 22px "Bricolage Grotesque", system-ui, sans-serif; } .cta p { margin: 4px 0 0; opacity: .85; }
+  .cta a { background: var(--coral); color: #fff; text-decoration: none; font-weight: 700; padding: 12px 20px; border-radius: 999px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="brand" href="../"><img src="../assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span></a>
+  <div class="langs" role="group" aria-label="Lang"><button type="button" data-lang="ht">KR</button><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button></div>
+</div>
+<main>
+  <h1 data-t="h1"></h1><p class="sub" data-t="sub"></p>
+  <p class="next hidden" id="next"></p>
+  <section id="nowBox"><h2 data-t="now"></h2><div class="grid" id="now"></div></section>
+  <section id="popBox" class="hidden"><h2 data-t="pop"></h2><ol class="top5" id="pop"></ol></section>
+  <section id="soonBox"><h2 data-t="soon"></h2><div class="grid" id="soon"></div></section>
+  <div class="cta"><div><b data-t="ctaT"></b><p data-t="ctaS"></p></div><a href="../kont/" data-t="ctaB"></a></div>
+</main>
+<canvas id="cv" class="hidden"></canvas>
+<script>
+const S = window.SOURIYO, K = window.SouriyoKad, $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const T = {
+  ht: { h1: '✨ Tandans : kad sezon yo', sub: 'Chak fèt, chak moman : mete selfi w nan kad la gratis, pataje l, oswa fè yon pòtrè IA. Kad gwoup yo toujou gratis.', now: '🟢 An sezon kounya', soon: '🗓️ Ap vini', pop: '🔥 Pi popilè semèn sa a', go: '📸 Fè foto m', until: (d) => `Jiska ${d}`, inDays: (n) => n <= 0 ? 'Kòmanse jodi a' : n === 1 ? 'Demen' : `Nan ${n} jou`, ready: 'Ou ka deja fè foto w', always: 'Toujou disponib', photos: 'foto', week: 'foto sou 7 jou', by: (n) => `Konsèp pa ${n}`, noNow: 'Pa gen sezon an kou jodi a.', next: (t, n) => `⏳ Pwochen sezon an : ${t}, ${n <= 1 ? 'demen' : 'nan ' + n + ' jou'}. Ou ka deja fè foto w !`, ctaT: 'Ou vle yon kad pou gwoup ou ?', ctaS: 'Lekòl, legliz, evènman, antrepriz : kreye kad pa w gratis.', ctaB: 'Kreye kad mwen' },
+  fr: { h1: '✨ Tendances : les cadres de saison', sub: 'Chaque fête, chaque moment : mets ton selfie dans le cadre gratuitement, partage-le ou crée un portrait IA. Les cadres de groupe sont toujours gratuits.', now: '🟢 De saison en ce moment', soon: '🗓️ À venir', pop: '🔥 Les plus populaires cette semaine', go: '📸 Faire ma photo', until: (d) => `Jusqu’au ${d}`, inDays: (n) => n <= 0 ? 'Commence aujourd’hui' : n === 1 ? 'Demain' : `Dans ${n} jours`, ready: 'Tu peux déjà faire ta photo', always: 'Toujours disponible', photos: 'photos', week: 'photos sur 7 jours', by: (n) => `Concept de ${n}`, noNow: 'Aucune saison en cours aujourd’hui.', next: (t, n) => `⏳ Prochaine saison : ${t}, ${n <= 1 ? 'demain' : 'dans ' + n + ' jours'}. Tu peux déjà faire ta photo !`, ctaT: 'Un cadre pour ton groupe ?', ctaS: 'École, église, événement, entreprise : crée ton cadre gratuitement.', ctaB: 'Créer mon cadre' },
+  en: { h1: '✨ Trending: seasonal frames', sub: 'Every holiday, every moment: put your selfie in the frame for free, share it, or create an AI portrait. Group frames are always free.', now: '🟢 In season now', soon: '🗓️ Coming up', pop: '🔥 Most popular this week', go: '📸 Make my photo', until: (d) => `Until ${d}`, inDays: (n) => n <= 0 ? 'Starts today' : n === 1 ? 'Tomorrow' : `In ${n} days`, ready: 'You can already make your photo', always: 'Always available', photos: 'photos', week: 'photos in 7 days', by: (n) => `Concept by ${n}`, noNow: 'No season running today.', next: (t, n) => `⏳ Next season: ${t}, ${n <= 1 ? 'tomorrow' : 'in ' + n + ' days'}. You can already make your photo!`, ctaT: 'Want a frame for your group?', ctaS: 'School, church, event, company: create your own frame for free.', ctaB: 'Create my frame' },
+};
+const LOC = { ht: 'fr-FR', fr: 'fr-FR', en: 'en-US' };
+let L = 'ht', ROWS = [], IMG = {}, SAMPLE = null;
+const today = () => { const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Port-au-Prince' })); d.setHours(0, 0, 0, 0); return d; };
+const days = (s) => Math.round((new Date(s + 'T00:00:00') - today()) / 864e5);
+const MW = ['janvye', 'fevriye', 'mas', 'avril', 'me', 'jen', 'jiyè', 'out', 'septanm', 'oktòb', 'novanm', 'desanm'];
+const fd = (s) => { const d = new Date(s + 'T00:00:00'); return L === 'ht' ? `${d.getDate() === 1 ? '1ye' : d.getDate()} ${MW[d.getMonth()]}` : d.toLocaleDateString(LOC[L], { day: 'numeric', month: 'long' }); };
+function preview(r) {
+  if (IMG[r.slug]) return IMG[r.slug];
+  K.draw($('cv'), { modele: r.modele, c1: r.c1, c2: r.c2, c3: r.c3, sou_tit: r.sou_tit, tit: r.tit, riban: r.riban, badj: r.badj, liy: (r.liy || '').replaceAll('{org}', 'Souriyo') }, SAMPLE, { prenom: 'Nadège', logo: null });
+  return (IMG[r.slug] = $('cv').toDataURL('image/jpeg', .72));
+}
+function card(r) {
+  const t = T[L], on = r.estati === 'kounya' || r.estati === 'toujou';
+  const chip = r.estati === 'kounya' ? `<span class="chip on">${t.until(fd(r.fen))}</span>` : r.estati === 'toujou' ? `<span class="chip on">${t.always}</span>` : `<span class="chip soon">${t.inDays(days(r.debi))} · ${fd(r.debi)}</span>`;
+  return `<a class="card" href="${esc(S.groupUrl(r.slug))}"><img src="${preview(r)}" alt="${esc(r.nom)}" loading="lazy" /><div class="bd">
+    <b>${esc(r.tem || r.nom)}</b>${chip}
+    <span class="meta">${on ? `${(+r.foto_tout).toLocaleString(LOC[L])} ${t.photos}` : t.ready}${r.kreyate ? ' · ' + esc(t.by(r.kreyate)) : ''}</span>
+    <span class="go">${t.go}</span></div></a>`;
+}
+function render() {
+  const t = T[L]; document.documentElement.lang = L;
+  document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === L));
+  document.querySelectorAll('[data-t]').forEach((el) => { const v = t[el.dataset.t]; if (typeof v === 'string') el.textContent = v; });
+  if (!SAMPLE) return;
+  const now = ROWS.filter((r) => r.estati === 'kounya' || r.estati === 'toujou').sort((a, b) => (b.estati === 'kounya') - (a.estati === 'kounya') || b.lod - a.lod || b.foto_7j - a.foto_7j);
+  const soon = ROWS.filter((r) => r.estati === 'ap_vini').sort((a, b) => a.debi.localeCompare(b.debi));
+  $('now').innerHTML = now.map(card).join('') || `<div class="empty">${t.noNow}</div>`;
+  $('nowBox').classList.toggle('hidden', !now.length && !!soon.length);
+  $('soon').innerHTML = soon.map(card).join('');
+  $('soonBox').classList.toggle('hidden', !soon.length);
+  const nx = soon[0]; $('next').classList.toggle('hidden', !!now.filter((r) => r.estati === 'kounya').length || !nx);
+  if (nx) $('next').textContent = t.next(nx.tem || nx.nom, days(nx.debi));
+  const pop = ROWS.filter((r) => +r.foto_7j > 0).sort((a, b) => b.foto_7j - a.foto_7j).slice(0, 5);
+  $('popBox').classList.toggle('hidden', !pop.length);
+  $('pop').innerHTML = pop.map((r, i) => `<li><a href="${esc(S.groupUrl(r.slug))}"><span class="rk">${['🥇', '🥈', '🥉', '4', '5'][i]}</span><b>${esc(r.tem || r.nom)}</b><span class="ct">${(+r.foto_7j).toLocaleString(LOC[L])}<span>${t.week}</span></span></a></li>`).join('');
+}
+document.addEventListener('click', (e) => { const l = e.target.closest('[data-lang]'); if (l) { L = l.dataset.lang; try { localStorage.setItem('souriyo_lang', L); } catch {} render(); } });
+try { L = new URLSearchParams(location.search).get('lang') || localStorage.getItem('souriyo_lang') || 'ht'; } catch {}
+if (!T[L]) L = 'ht';
+render();
+(async () => {
+  try { ROWS = await S.api('rpc/galri', { method: 'POST', body: '{}' }) || []; } catch { ROWS = []; }
+  await K.fontsReady(); SAMPLE = await K.loadImage('../img/avant-f.jpg'); render();
+})();
+</script>
+</body>
+</html>

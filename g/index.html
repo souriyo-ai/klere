@@ -265,6 +265,8 @@ async function boot() {
   document.documentElement.style.setProperty('--g1', g.c1); document.documentElement.style.setProperty('--g2', g.c2);
   $('gname').textContent = g.nom;
   S.api('rpc/kanpay_ote', { method: 'POST', body: JSON.stringify({ p_slug: slug }) }).then((r) => { const o = r && r[0]; if (!o) return; $('ote').innerHTML = `${o.verifye ? '<b>✓ Verifye</b>' : ''} ${{ ht: 'Kreye pa', fr: 'Créé par', en: 'Created by' }[st.lang] || 'Kreye pa'} ${String(o.non).replace(/[<>&]/g, '')}`; $('ote').classList.remove('hidden'); }).catch(() => {});
+  if (g.konsep_id) S.api('rpc/kanpay_kreyate', { method: 'POST', body: JSON.stringify({ p_slug: slug }) }).then((n) => { if (!n) return; $('ote').innerHTML += `${$('ote').innerHTML ? ' · ' : ''}✨ ${{ ht: 'Konsèp pa', fr: 'Concept de', en: 'Concept by' }[st.lang] || 'Konsèp pa'} ${String(n).replace(/[<>&]/g, '')}`; $('ote').classList.remove('hidden'); }).catch(() => {});
+  if (g.galri) { const a = document.createElement('a'); a.href = '../tandans/'; a.textContent = { ht: '✨ Lòt kad sezon yo', fr: '✨ Autres cadres de saison', en: '✨ More seasonal frames' }[st.lang] || '✨ Lòt kad sezon yo'; a.style.marginLeft = '12px'; $('klasLink').after(a); }
   if (g.logo_url) { $('glogo').src = g.logo_url; $('glogo').alt = g.nom; $('glogo').classList.remove('hidden'); }
   $('tabs').classList.toggle('hidden', !(g.mod_kad && g.mod_ia));
   st.mode = g.mod_kad ? 'kad' : 'ia';

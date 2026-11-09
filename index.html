@@ -39,6 +39,11 @@
   .btn.ghost { background: #fff; border: 1.5px solid var(--line); color: var(--ink); }
   .btn.sm { padding: 9px 16px; font-size: 14px; }
 
+  .sezon { padding: 0 0 8px; }
+  .szc { display: flex; align-items: center; gap: 14px; background: #fff; border: 1.5px solid var(--line); border-radius: 22px; padding: 14px 18px; text-decoration: none; color: var(--ink); }
+  .szc:hover { border-color: var(--ink); } .szi { font-size: 30px; } .szc b { display: block; font: 800 19px "Bricolage Grotesque", system-ui, sans-serif; } .szc span span { color: var(--ink-2); font-size: 15px; }
+  .szb { margin-left: auto; background: var(--coral); color: #fff; border-radius: 999px; padding: 9px 16px; font-weight: 700; font-size: 14px; white-space: nowrap; }
+  @media (max-width: 640px) { .szb { display: none; } }
   /* Hero */
   .hero { padding: 64px 0 40px; }
   .hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
@@ -137,7 +142,7 @@
 <header>
   <div class="wrap">
     <a class="logo" href="#"><img src="assets/souriyo-icone.svg" alt="" /><span>souri<b>yo</b></span></a>
-    <nav><a href="#kijan" data-t="nav1"></a><a href="#pou-ki-moun" data-t="nav2"></a><a href="#kad" data-t="k6"></a><a href="kont/" data-t="navK" style="font-weight:700;color:var(--ink)"></a><a href="#pri" data-t="nav3"></a></nav>
+    <nav><a href="#kijan" data-t="nav1"></a><a href="#pou-ki-moun" data-t="nav2"></a><a href="#kad" data-t="k6"></a><a href="tandans/" data-t="nav5"></a><a href="kont/" data-t="navK" style="font-weight:700;color:var(--ink)"></a><a href="#pri" data-t="nav3"></a></nav>
     <div class="langs" role="group" aria-label="Lang"><button type="button" data-lang="ht">KR</button><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button></div>
     <a class="btn main sm wa" target="_blank" rel="noopener" data-t="cta"></a>
   </div>
@@ -164,6 +169,8 @@
     </div>
   </div>
 </section>
+
+<section class="sezon"><div class="wrap"><a href="tandans/" class="szc"><span class="szi">✨</span><span><b data-t="szT"></b><span id="szS"></span></span><span class="szb" data-t="szB"></span></a></div></section>
 
 <section class="block" id="poukisa" style="padding-bottom:0">
   <div class="wrap">
@@ -235,12 +242,13 @@
 </section>
 
 <div class="final"><h2 data-t="fh"></h2><p data-t="fp"></p><a class="btn wa" target="_blank" rel="noopener" data-t="cta"></a></div>
-<footer><nav class="flinks"><a href="kont/" data-t="fl1"></a> · <a href="klasman/" data-t="fl4"></a> · <a href="kondisyon/" data-t="fl2"></a> · <a href="kondisyon/#konfidansyalite" data-t="fl3"></a> · <a href="https://www.instagram.com/souriyo.ai/" target="_blank" rel="noopener">📸 @souriyo.ai</a></nav><span data-t="foot"></span></footer>
+<footer><nav class="flinks"><a href="kont/" data-t="fl1"></a> · <a href="klasman/" data-t="fl4"></a> · <a href="tandans/" data-t="nav5"></a> · <a href="kondisyon/" data-t="fl2"></a> · <a href="kondisyon/#konfidansyalite" data-t="fl3"></a> · <a href="https://www.instagram.com/souriyo.ai/" target="_blank" rel="noopener">📸 @souriyo.ai</a></nav><span data-t="foot"></span></footer>
 
 <script>
 const WA = (window.SOURIYO && window.SOURIYO.WA) || '50900000000';
 const T = {
   ht: {
+    nav5: 'Tandans', szT: 'Tandans : kad sezon yo', szB: 'Wè kad yo', szNow: (x) => `An sezon kounya : ${x}. Gratis !`, szNext: (x, n) => `Pwochen sezon : ${x}, ${n <= 1 ? 'demen' : 'nan ' + n + ' jou'}. Ou ka deja fè foto w.`, szAll: 'Nwèl, Fèt Endepandans, Kanaval, Fèt Manman, Bakaloreya…',
     kP: 'Poukisa Souriyo', hP: 'Plis pase yon foto.', sP: 'Souriyo transfòme yon selfi an twa bagay ki gen valè pou ou.', p1t: '📣 Maketing', p1: 'Chak foto ki pataje se yon piblisite gratis pou mak ou, evènman w oswa kòz ou. Kad ou a vwayaje sou WhatsApp, Instagram, Facebook ak TikTok.', p2t: '🔥 Angajman', p2: 'Moun yo patisipe, yo pataje, yo envite zanmi yo. Klasman an ak tablodbò w la montre w konbyen moun ki la, an dirèk.', p3t: '💛 Souvni', p3: 'Gradyasyon, maryaj, konferans, konvansyon : nou imotalize bèl moman yo nan yon foto moun ap kenbe pou tout tan.', u5: 'Kanpay & mouvman', u5p: 'Kandida, pati, kòz sosyal : sipòtè yo afiche angajman yo — ak kont verifye pou evite fo pwofil.', u6: 'Fanmi & bèl moman', u6p: 'Maryaj, anivèsè, batèm, rasanbleman fanmi : chak envite pati ak yon souvni pèsonalize.', fl1: 'Espas òganizasyon', fl2: 'Kondisyon itilizasyon', fl3: 'Konfidansyalite', fl4: 'Klasman',
     navK: 'Espas òganizasyon', grpK: 'Kreye kont gwoup ou (gratis)',
     k6: 'Kad gwoup', h2f: 'Menm selfi a. Kad gwoup ou.', s2f: 'Pa gen IA isit la : se selfi w la jan l ye a, nan kad lekòl ou oswa evènman w. Gratis pou chak manm, pare pou pataje.', kf1: '🎓 Lekòl : « Fyète m » · Pwomo 2027', kf2: '🎤 Evènman : « M ap la ! »', kfn: 'Lekòl, evènman ak moun yo se egzanp fiktif.',
@@ -270,6 +278,7 @@ const T = {
     waMsg: 'Bonjou Souriyo 👋 Mwen enterese nan kad gwoup ak pòtrè IA.',
   },
   fr: {
+    nav5: 'Tendances', szT: 'Tendances : les cadres de saison', szB: 'Voir les cadres', szNow: (x) => `De saison en ce moment : ${x}. Gratuit !`, szNext: (x, n) => `Prochaine saison : ${x}, ${n <= 1 ? 'demain' : 'dans ' + n + ' jours'}. Tu peux déjà faire ta photo.`, szAll: 'Noël, Fête de l’Indépendance, Carnaval, Fête des Mères, Bac…',
     kP: 'Pourquoi Souriyo', hP: 'Plus qu’une photo.', sP: 'Souriyo transforme un selfie en trois choses qui ont de la valeur pour vous.', p1t: '📣 Marketing', p1: 'Chaque photo partagée est une publicité gratuite pour votre marque, votre événement ou votre cause. Votre cadre voyage sur WhatsApp, Instagram, Facebook et TikTok.', p2t: '🔥 Engagement', p2: 'Les gens participent, partagent, invitent leurs amis. Le classement et votre tableau de bord montrent la participation en direct.', p3t: '💛 Souvenirs', p3: 'Remises de diplômes, mariages, conférences, conventions : nous immortalisons les beaux moments dans une photo qu’on garde pour toujours.', u5: 'Campagnes & mouvements', u5p: 'Candidats, partis, causes sociales : les sympathisants affichent leur engagement — avec des comptes vérifiés contre les faux profils.', u6: 'Famille & beaux moments', u6p: 'Mariages, anniversaires, baptêmes, réunions de famille : chaque invité repart avec un souvenir personnalisé.', fl1: 'Espace organisations', fl2: 'Conditions d’utilisation', fl3: 'Confidentialité', fl4: 'Classement',
     navK: 'Espace organisations', grpK: 'Créer le compte de votre groupe (gratuit)',
     k6: 'Cadres de groupe', h2f: 'Le même selfie. Le cadre de ton groupe.', s2f: 'Pas d’IA ici : ton selfie tel quel, dans le cadre de ton école ou de ton événement. Gratuit pour chaque membre, prêt à partager.', kf1: '🎓 École : « Ma fierté » · Promo 2027', kf2: '🎤 Événement : « J’y serai ! »', kfn: 'École, événement et personnes fictifs, pour l’exemple.',
@@ -299,6 +308,7 @@ const T = {
     waMsg: 'Bonjour Souriyo 👋 Je suis intéressé(e) par les cadres de groupe et les portraits IA.',
   },
   en: {
+    nav5: 'Trending', szT: 'Trending: seasonal frames', szB: 'See the frames', szNow: (x) => `In season now: ${x}. Free!`, szNext: (x, n) => `Next season: ${x}, ${n <= 1 ? 'tomorrow' : 'in ' + n + ' days'}. You can already make your photo.`, szAll: 'Christmas, Independence Day, Carnival, Mother’s Day, Bac…',
     kP: 'Why Souriyo', hP: 'More than a photo.', sP: 'Souriyo turns a selfie into three things that matter to you.', p1t: '📣 Marketing', p1: 'Every shared photo is free advertising for your brand, event or cause. Your frame travels across WhatsApp, Instagram, Facebook and TikTok.', p2t: '🔥 Engagement', p2: 'People join in, share and invite friends. The leaderboard and your dashboard show participation live.', p3t: '💛 Memories', p3: 'Graduations, weddings, conferences, conventions: we immortalize great moments in a photo people keep forever.', u5: 'Campaigns & movements', u5p: 'Candidates, parties, social causes: supporters show their commitment — with verified accounts against fake profiles.', u6: 'Family & great moments', u6p: 'Weddings, birthdays, baptisms, family reunions: every guest leaves with a personalized keepsake.', fl1: 'For organizations', fl2: 'Terms of use', fl3: 'Privacy', fl4: 'Leaderboard',
     navK: 'For organizations', grpK: 'Create your group account (free)',
     k6: 'Group frames', h2f: 'Same selfie. Your group’s frame.', s2f: 'No AI here: your selfie as is, in your school or event frame. Free for every member, ready to share.', kf1: '🎓 School: “My pride” · Class of 2027', kf2: '🎤 Event: “I’ll be there!”', kfn: 'School, event and people are fictional examples.',
@@ -340,9 +350,19 @@ function setLang(l) {
   document.querySelectorAll('[data-alt]').forEach((el) => { el.alt = t[el.dataset.alt] || ''; });
   const wa = `https://wa.me/${WA}?text=${encodeURIComponent(t.waMsg)}`;
   document.querySelectorAll('a.wa').forEach((a) => (a.href = wa));
+  szRender();
   $('prices').innerHTML = t.prices.map(([n, a, per, d, badge], i) => `<div class="price${badge ? ' hot' : ''}">${badge ? `<span class="badge">${badge}</span>` : ''}<h3>${n}</h3><div class="amt">${a}</div><div class="per">${per}</div><p>${d}</p>
     <a class="btn ${badge ? 'main' : 'ghost'}" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent(t.waMsg + ' — ' + n + ' (' + a + ')')}">${i === 0 ? t.free : t.choose}</a></div>`).join('');
 }
+let SZ = null;
+function szRender() {
+  const t = T[L]; if (!$('szS')) return;
+  if (!SZ) { $('szS').textContent = t.szAll; return; }
+  const now = SZ.filter((r) => r.estati === 'kounya'), nx = SZ.filter((r) => r.estati === 'ap_vini').sort((a, b) => a.debi.localeCompare(b.debi))[0];
+  const d0 = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Port-au-Prince' })); d0.setHours(0, 0, 0, 0);
+  $('szS').textContent = now.length ? t.szNow(now.map((r) => r.tem || r.nom).join(', ')) : nx ? t.szNext(nx.tem || nx.nom, Math.round((new Date(nx.debi + 'T00:00:00') - d0) / 864e5)) : t.szAll;
+}
+window.SOURIYO.api('rpc/galri', { method: 'POST', body: '{}' }).then((r) => { SZ = r || []; szRender(); }).catch(() => {});
 function setEx(k) { $('imgA').src = EX[k][0]; $('imgB').src = EX[k][1]; document.querySelectorAll('[data-ex]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.ex === k)); }
 $('baR').addEventListener('input', (e) => $('ba').style.setProperty('--x', e.target.value + '%'));
 document.addEventListener('click', (e) => { const l = e.target.closest('[data-lang]'); if (l) setLang(l.dataset.lang); const x = e.target.closest('[data-ex]'); if (x) setEx(x.dataset.ex); });

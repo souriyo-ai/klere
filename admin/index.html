@@ -148,6 +148,23 @@
         <label class="tog"><input type="checkbox" id="aktif" checked /> Gwoup la aktif (paj la an liy)</label>
       </fieldset>
 
+      <fieldset><legend>✨ Galri tandans (sezon)</legend>
+        <label class="tog"><input type="checkbox" id="galri" /> <b>Mete l nan paj Tandans lan</b> (souriyo.com/tandans)</label>
+        <div class="grid2">
+          <div><label class="f" for="galri_tem">Non sezon an (ak emoji)</label><input class="t" id="galri_tem" maxlength="60" placeholder="🎄 Nwèl" /></div>
+          <div><label class="f" for="galri_lod">Priyorite (pi gwo = pi anlè)</label><input class="t" id="galri_lod" type="number" min="0" max="100" /></div>
+          <div><label class="f" for="galri_debi">Kòmanse</label><input class="t" id="galri_debi" type="date" /></div>
+          <div><label class="f" for="galri_fen">Fini</label><input class="t" id="galri_fen" type="date" /></div>
+        </div>
+        <label class="tog"><input type="checkbox" id="galri_chak_ane" checked /> Chak ane menm dat yo (retire l pou fèt ki chanje dat, tankou Kanaval)</label>
+        <p class="sub" style="margin:4px 0">San dat = toujou disponib.</p>
+        <div class="grid2">
+          <div><label class="f" for="mod_pey">Pòtrè IA</label><select class="t" id="mod_pey"><option value="piblik">Piblik la peye</option><option value="ofri">Ofri (pakè)</option></select></div>
+          <div><label class="f" for="pri_piblik_htg">Pri 1 pòtrè (G)</label><input class="t" id="pri_piblik_htg" type="number" min="1" max="2000" /></div>
+          <div style="grid-column:1/-1"><label class="f" for="konsep_id">Konsèp enfliyansè (kreyatè a touche pati pa l)</label><select class="t" id="konsep_id"><option value="">— Okenn —</option></select></div>
+        </div>
+      </fieldset>
+
       <fieldset><legend>Kontak kliyan an (prive)</legend>
         <div class="grid3"><div><label class="f" for="kNon">Non</label><input class="t" id="kNon" maxlength="80" /></div><div><label class="f" for="kTel">Telefòn</label><input class="t" id="kTel" maxlength="25" /></div><div><label class="f" for="kImel">Imèl</label><input class="t" id="kImel" maxlength="120" /></div></div>
         <label class="f" for="kNota">Nòt (pri, kontra…)</label><textarea class="t" id="kNota" maxlength="1000"></textarea>
@@ -351,7 +368,7 @@ async function loadGroups() {
 function renderList() {
   $('glist').innerHTML = G.map((g) => { const s = STATS[g.id] || { kad: 0, ia: 0 }; return `<button type="button" class="gi${g.aktif ? '' : ' off'}" data-gid="${g.id}" aria-current="${CUR && CUR.id === g.id}">
     <span class="sw" style="background:linear-gradient(135deg,${esc(g.c1)} 60%,${esc(g.c2)} 60%)"></span>
-    <span><b>${esc(g.nom)}</b><span>/${esc(g.slug)} · ${s.kad + s.ia} foto${g.aktif ? '' : ' · inaktif'}</span></span></button>`; }).join('') || '<p class="sub">Pa gen gwoup ankò. Kreye premye a !</p>';
+    <span><b>${esc(g.nom)}</b><span>${g.galri ? '✨ ' : ''}/${esc(g.slug)} · ${s.kad + s.ia} foto${g.aktif ? '' : ' · inaktif'}</span></span></button>`; }).join('') || '<p class="sub">Pa gen gwoup ankò. Kreye premye a !</p>';
 }
 document.addEventListener('click', (e) => { const b = e.target.closest('[data-gid]'); if (b) editGroup(G.find((g) => g.id === b.dataset.gid)); });
 
@@ -367,6 +384,9 @@ function current() {
   g.ia_gratis = Math.max(0, Math.min(5, parseInt($('ia_gratis').value || '0', 10)));
   g.ia_plafond = Math.max(0, parseInt($('ia_plafond').value || '0', 10));
   g.slug = slugify(g.slug);
+  g.galri = $('galri').checked; g.galri_tem = $('galri_tem').value.trim() || null; g.galri_debi = $('galri_debi').value || null; g.galri_fen = $('galri_fen').value || null;
+  g.galri_chak_ane = $('galri_chak_ane').checked; g.galri_lod = Math.max(0, Math.min(100, parseInt($('galri_lod').value || '0', 10)));
+  g.mod_pey = $('mod_pey').value; g.pri_piblik_htg = Math.max(1, Math.min(2000, parseInt($('pri_piblik_htg').value || '100', 10))); g.konsep_id = $('konsep_id').value || null;
   return g;
 }
 function preview() {
@@ -387,10 +407,18 @@ $('logoF').addEventListener('change', async () => {
 });
 $('logoX').addEventListener('click', () => { LOGO_FILE = null; LOGO_URL = null; LOGO_IMG = null; $('logoF').value = ''; preview(); });
 
+let KOPT = null;
+async function kOpts() {
+  if (KOPT) return; const { data } = await sb.from('konsep').select('id, tit').eq('estati', 'apwouve').order('tit'); KOPT = data || [];
+  $('konsep_id').innerHTML = '<option value="">— Okenn —</option>' + KOPT.map((k) => `<option value="${k.id}">${esc(k.tit)}</option>`).join('');
+}
 function fill(g, k) {
   FIELDS.forEach((f) => ($(f).value = g[f] ?? ''));
   CHECKS.forEach((c) => ($(c).checked = !!g[c]));
   $('ia_gratis').value = g.ia_gratis ?? 0; $('ia_plafond').value = g.ia_plafond ?? 0;
+  $('galri').checked = !!g.galri; $('galri_tem').value = g.galri_tem || ''; $('galri_debi').value = g.galri_debi || ''; $('galri_fen').value = g.galri_fen || '';
+  $('galri_chak_ane').checked = g.galri_chak_ane !== false; $('galri_lod').value = g.galri_lod ?? 0; $('mod_pey').value = g.mod_pey === 'ofri' ? 'ofri' : (g.mod_pey ? 'piblik' : 'ofri'); $('pri_piblik_htg').value = g.pri_piblik_htg ?? 100;
+  kOpts().then(() => { const s = $('konsep_id'); s.querySelectorAll('[data-tmp]').forEach((o) => o.remove()); if (g.konsep_id && !KOPT.some((k) => k.id === g.konsep_id)) s.insertAdjacentHTML('beforeend', `<option value="${esc(g.konsep_id)}" data-tmp="1">(konsèp aktyèl la)</option>`); s.value = g.konsep_id || ''; });
   $('kNon').value = k?.non || ''; $('kTel').value = k?.telefon || ''; $('kImel').value = k?.imel || ''; $('kNota').value = k?.nota || '';
   LOGO_URL = g.logo_url || null; LOGO_FILE = null; $('logoF').value = ''; $('mList').value = '';
   setModel(g.modele || 'sek');
