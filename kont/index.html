@@ -399,7 +399,7 @@ const LIB = [
 ];
 const FIELDS = ['nom', 'slug', 'c1', 'c2', 'c3', 'sou_tit', 'tit', 'riban', 'badj', 'liy', 'lang'];
 const CHECKS = ['mod_kad', 'mod_ia', 'manm_selman', 'nan_klasman', 'aktif'];
-let KONSEP = null, KLIB = [], KLIS = new Set(), KCRE = {};
+let FON_URL = null, KONSEP = null, KLIB = [], KLIS = new Set(), KCRE = {};
 let ME = null, ORG = null, PARAM = null, CAMPS = [], STATS = {}, CUR = null, MODEL = 'sek', LOGO_URL = null, LOGO_FILE = null, LOGO_IMG = null, PV = 'kad', SAMPLE = {}, slugTouched = false;
 const kom = () => +(ORG?.komisyon_pct ?? PARAM?.komisyon_pct ?? 30);
 
@@ -495,7 +495,7 @@ async function loadCamps() {
   const tot = Object.values(STATS).reduce((a, x) => ({ kad: a.kad + x.kad, ia: a.ia + x.ia, d7: a.d7 + x.d7 }), { kad: 0, ia: 0, d7: 0 });
   $('stats').innerHTML = [['Foto an tout', tot.kad + tot.ia], ['Kad gwoup', tot.kad], ['Pòtrè IA', tot.ia], ['7 dènye jou', tot.d7]].map(([a, b]) => `<div class="stat"><span>${a}</span><b>${b.toLocaleString('fr-FR')}</b></div>`).join('');
   const cards = await Promise.all(CAMPS.map(async (c) => {
-    const lg = await K.loadImage(c.logo_url); K.draw($('cv'), c, SAMPLE.kad, { prenom: '', logo: lg, logoPlate: true });
+    const lg = await K.loadImage(c.logo_url); await K.prep(c); K.draw($('cv'), c, SAMPLE.kad, { prenom: '', logo: lg, logoPlate: true });
     const s = STATS[c.id] || { kad: 0, ia: 0, d7: 0 };
     const st = c.aktif ? '<span class="pill ok">🟢 An liy</span>' : ORG.estati === 'apwouve' ? '<span class="pill off">Pa an liy</span>' : '<span class="pill w">⏳ Ap tann apwobasyon</span>';
     return `<div class="camp"><img src="${$('cv').toDataURL('image/jpeg', .7)}" alt="" /><div class="bd"><b>${esc(c.nom)}</b>${st}<span class="sub">/${esc(c.slug)} · ${s.kad + s.ia} foto · ${s.d7} sou 7 jou</span>
@@ -508,11 +508,11 @@ function go(t) { document.querySelector(`[data-tab="${t}"]`).click(); }
 
 /* ---------- Editè ---------- */
 const sub = (s) => String(s || '').replaceAll('{org}', ORG ? ORG.non : '');
-function applyLib(l, kid = null) { KONSEP = kid; $('knSel').textContent = kid ? `⭐ Konsèp : ${(KLIB.find((k) => k.id === kid) || {}).tit || ''}` : ''; MODEL = l.modele; ['c1', 'c2', 'c3'].forEach((k) => ($(k).value = l[k])); ['sou_tit', 'tit', 'riban', 'badj', 'liy'].forEach((k) => ($(k).value = sub(l[k]).slice(0, +$(k).maxLength))); setModel(MODEL); }
+function applyLib(l, kid = null) { KONSEP = kid; FON_URL = l.fon_url || null; if (FON_URL) K.prep({ fon_url: FON_URL }).then(preview); $('knSel').textContent = kid ? `⭐ Konsèp : ${(KLIB.find((k) => k.id === kid) || {}).tit || ''}` : ''; MODEL = l.modele; ['c1', 'c2', 'c3'].forEach((k) => ($(k).value = l[k])); ['sou_tit', 'tit', 'riban', 'badj', 'liy'].forEach((k) => ($(k).value = sub(l[k]).slice(0, +$(k).maxLength))); setModel(MODEL); }
 document.addEventListener('click', (e) => { const b = e.target.closest('[data-lib]'); if (b) applyLib(LIB[+b.dataset.lib]); const kb = e.target.closest('[data-klib]'); if (kb) useKonsep(kb.dataset.klib); const ob = e.target.closest('[data-kof]'); if (ob) ofKonsep(ob.dataset.kof); const m = e.target.closest('[data-m]'); if (m) setModel(m.dataset.m); const p = e.target.closest('[data-pv]'); if (p) { PV = p.dataset.pv; document.querySelectorAll('[data-pv]').forEach((x) => x.setAttribute('aria-pressed', x === p)); preview(); } });
 function setModel(m) { MODEL = m; document.querySelectorAll('[data-m]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.m === m)); preview(); }
 function current() {
-  const g = { modele: MODEL, logo_url: LOGO_URL, org_id: ORG.id, type: G_TYPE[ORG.kalite] || 'lot', konsep_id: KONSEP };
+  const g = { modele: MODEL, logo_url: LOGO_URL, org_id: ORG.id, type: G_TYPE[ORG.kalite] || 'lot', konsep_id: KONSEP, fon_url: FON_URL };
   FIELDS.forEach((f) => (g[f] = $(f).value.trim())); CHECKS.forEach((c) => (g[c] = $(c).checked));
   g.slug = slugify(g.slug); g.mod_pey = ORG.ka_komisyon ? ((document.querySelector('[name=pay]:checked') || {}).value || 'ofri') : 'ofri'; g.pri_piblik_htg = Math.max(25, Math.min(2000, parseInt($('pri').value || '100', 10)));
   return g;
@@ -539,7 +539,7 @@ $('logoX').addEventListener('click', () => { LOGO_FILE = null; LOGO_URL = null; 
 function fill(g) {
   FIELDS.forEach((f) => ($(f).value = g[f] ?? '')); CHECKS.forEach((c) => ($(c).checked = !!g[c]));
   (document.querySelector(`[name=pay][value="${g.mod_pey || 'ofri'}"]`) || {}).checked = true; $('pri').value = g.pri_piblik_htg || 100;
-  LOGO_URL = g.logo_url || null; LOGO_FILE = null; $('logoF').value = ''; $('mList').value = ''; KONSEP = g.konsep_id || null; $('knSel').textContent = KONSEP ? '⭐ Kanpay sa a itilize yon konsèp kreyatè' : ''; setModel(g.modele || 'sek');
+  LOGO_URL = g.logo_url || null; LOGO_FILE = null; $('logoF').value = ''; $('mList').value = ''; KONSEP = g.konsep_id || null; FON_URL = g.fon_url || null; if (FON_URL) K.prep(g).then(preview); $('knSel').textContent = KONSEP ? '⭐ Kanpay sa a itilize yon konsèp kreyatè' : ''; setModel(g.modele || 'sek');
 }
 function newCamp() {
   CUR = null; slugTouched = false; $('edT').textContent = 'Nouvo kanpay'; $('kit').classList.add('hidden'); msg('edMsg', ''); LOGO_IMG = null;
@@ -692,6 +692,7 @@ async function loadKonsep() {
     sb.from('konsep_revni').select('*, konsep(tit)').eq('benefisye_org', ORG.id).order('kreye_le', { ascending: false }),
     sb.rpc('enfliyanse_elijib', { p_org: ORG.id })]);
   KMY = k.data || []; ELIJ = !!el.data;
+  await Promise.all(KMY.map((x) => K.prep(kModel(x))));
   const S2 = Object.fromEntries((st.data || []).map((x) => [x.konsep_id, x]));
   const ids = KMY.map((x) => x.id), ms = ids.length ? (await sb.from('konsep_mesaj').select('*').in('konsep_id', ids).order('kreye_le')).data || [] : [];
   const R = rv.data || [], tot = R.reduce((a, x) => a + x.pati_htg, 0);

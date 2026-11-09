@@ -36,14 +36,27 @@
     x.textAlign = 'center'; x.fillStyle = color; x.globalAlpha = .85; x.font = `500 24px ${FONT.b}`;
     x.fillText(`Kad fèt ak Souriyo · ${window.SOURIYO ? window.SOURIYO.SITE : 'souriyo.com'}/${g.slug || ''}`, W / 2, H - 34); x.globalAlpha = 1;
   }
+  // Imaj fon (Atelye) : kouvri tout kad la, ak yon ti lonbraj anlè/anba pou tèks yo li byen
+  const FON = {};
+  function fon(x, g, o) {
+    const im = o.fon || (g.fon_url && FON[g.fon_url]);
+    if (!im || im === 1) { if (g.fon_url && FON[g.fon_url] === undefined) window.SouriyoKad.prep(g); return false; }
+    const k = Math.max(W / im.width, H / im.height), dw = im.width * k, dh = im.height * k;
+    x.drawImage(im, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    const t = x.createLinearGradient(0, 0, 0, H * 0.28); t.addColorStop(0, 'rgba(0,0,0,.45)'); t.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = t; x.fillRect(0, 0, W, H * 0.28);
+    const b = x.createLinearGradient(0, H * 0.7, 0, H); b.addColorStop(0, 'rgba(0,0,0,0)'); b.addColorStop(1, 'rgba(0,0,0,.6)'); x.fillStyle = b; x.fillRect(0, H * 0.7, W, H * 0.3);
+    return true;
+  }
   function wrap(x, text, max) { const words = String(text).split(/\s+/); const lines = []; let l = ''; for (const w of words) { const t = l ? l + ' ' + w : w; if (x.measureText(t).width > max && l) { lines.push(l); l = w; } else l = t; } if (l) lines.push(l); return lines; }
 
   /* ---------- Modèl 1 : SÈK (lekòl, inivèsite) ---------- */
   function sek(x, g, img, o) {
-    const bg = x.createLinearGradient(0, 0, W * 0.6, H);
-    bg.addColorStop(0, dark(g.c1, 0.12)); bg.addColorStop(0.55, g.c1); bg.addColorStop(1, dark(g.c1, 0.35));
-    x.fillStyle = bg; x.fillRect(0, 0, W, H);
-    x.fillStyle = 'rgba(255,255,255,.08)'; for (let i = 18; i < W; i += 36) for (let j = 18; j < H; j += 36) { x.beginPath(); x.arc(i, j, 2, 0, 7); x.fill(); }
+    if (!fon(x, g, o)) {
+      const bg = x.createLinearGradient(0, 0, W * 0.6, H);
+      bg.addColorStop(0, dark(g.c1, 0.12)); bg.addColorStop(0.55, g.c1); bg.addColorStop(1, dark(g.c1, 0.35));
+      x.fillStyle = bg; x.fillRect(0, 0, W, H);
+      x.fillStyle = 'rgba(255,255,255,.08)'; for (let i = 18; i < W; i += 36) for (let j = 18; j < H; j += 36) { x.beginPath(); x.arc(i, j, 2, 0, 7); x.fill(); }
+    }
     const txt = onColor(g.c1);
     let top = 70;
     if (o.logo) { logo(x, o.logo, W / 2, top + 30, 70, 260, lum(g.c1) < 0.6 && o.logoPlate); top += 80; }
@@ -68,10 +81,12 @@
 
   /* ---------- Modèl 2 : POLAROID (evènman) ---------- */
   function polaroid(x, g, img, o) {
-    x.fillStyle = g.c1; x.fillRect(0, 0, W, H);
-    const b1 = x.createRadialGradient(W * 0.2, H * 0.15, 0, W * 0.2, H * 0.15, W * 0.6); b1.addColorStop(0, light(g.c1, 0.35)); b1.addColorStop(1, 'rgba(0,0,0,0)');
-    const b2 = x.createRadialGradient(W * 0.85, H * 0.8, 0, W * 0.85, H * 0.8, W * 0.6); b2.addColorStop(0, rgb(hex(g.c2), 0.9)); b2.addColorStop(1, 'rgba(0,0,0,0)');
-    x.fillStyle = b1; x.fillRect(0, 0, W, H); x.fillStyle = b2; x.fillRect(0, 0, W, H);
+    if (!fon(x, g, o)) {
+      x.fillStyle = g.c1; x.fillRect(0, 0, W, H);
+      const b1 = x.createRadialGradient(W * 0.2, H * 0.15, 0, W * 0.2, H * 0.15, W * 0.6); b1.addColorStop(0, light(g.c1, 0.35)); b1.addColorStop(1, 'rgba(0,0,0,0)');
+      const b2 = x.createRadialGradient(W * 0.85, H * 0.8, 0, W * 0.85, H * 0.8, W * 0.6); b2.addColorStop(0, rgb(hex(g.c2), 0.9)); b2.addColorStop(1, 'rgba(0,0,0,0)');
+      x.fillStyle = b1; x.fillRect(0, 0, W, H); x.fillStyle = b2; x.fillRect(0, 0, W, H);
+    }
     const txt = onColor(g.c1);
     x.save(); x.translate(W / 2, 560); x.rotate(-0.035);
     const pw = 900, ph = 860;
@@ -100,9 +115,11 @@
 
   /* ---------- Modèl 3 : PWO (pòtrè IA, oswa kad elegan) ---------- */
   function pwo(x, g, img, o) {
-    const bg = x.createLinearGradient(0, 0, W, H); bg.addColorStop(0, light(g.c1, 0.06)); bg.addColorStop(1, dark(g.c1, 0.45));
-    x.fillStyle = bg; x.fillRect(0, 0, W, H);
-    x.globalAlpha = .08; x.strokeStyle = g.c2; x.lineWidth = 2; for (let i = -H; i < W; i += 46) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + H, H); x.stroke(); } x.globalAlpha = 1;
+    if (!fon(x, g, o)) {
+      const bg = x.createLinearGradient(0, 0, W, H); bg.addColorStop(0, light(g.c1, 0.06)); bg.addColorStop(1, dark(g.c1, 0.45));
+      x.fillStyle = bg; x.fillRect(0, 0, W, H);
+      x.globalAlpha = .08; x.strokeStyle = g.c2; x.lineWidth = 2; for (let i = -H; i < W; i += 46) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + H, H); x.stroke(); } x.globalAlpha = 1;
+    }
     const txt = onColor(g.c1);
     if (o.logo) logo(x, o.logo, W / 2, 92, 70, 300, lum(g.c1) < 0.6 && o.logoPlate);
     const pw = 600, ph = 750, px = (W - pw) / 2, py = 190;
@@ -138,6 +155,13 @@
     fontsReady() {
       const f = ['800 50px "Bricolage Grotesque"', '700 50px "DM Sans"', '500 50px "DM Sans"', 'italic 500 50px "Playfair Display"'];
       return Promise.all(f.map((s) => document.fonts.load(s).catch(() => {}))).then(() => document.fonts.ready);
+    },
+    // Chaje imaj fon an davans (rele l anvan draw pou fon an parèt touswit)
+    prep(g) {
+      const u = g && g.fon_url; if (!u) return Promise.resolve(null);
+      if (FON[u] && FON[u] !== 1) return Promise.resolve(FON[u]);
+      if (FON[u] === 1) return new Promise((res) => { const w = () => (FON[u] === 1 ? setTimeout(w, 80) : res(FON[u])); w(); });
+      FON[u] = 1; return this.loadImage(u).then((i) => { FON[u] = i || null; return i; });
     },
     loadImage(src) { return new Promise((res) => { if (!src) return res(null); const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => res(i); i.onerror = () => res(null); i.src = src; }); },
   };

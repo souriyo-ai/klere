@@ -270,7 +270,7 @@ async function boot() {
   if (g.logo_url) { $('glogo').src = g.logo_url; $('glogo').alt = g.nom; $('glogo').classList.remove('hidden'); }
   $('tabs').classList.toggle('hidden', !(g.mod_kad && g.mod_ia));
   st.mode = g.mod_kad ? 'kad' : 'ia';
-  await K.fontsReady(); st.logo = await K.loadImage(g.logo_url);
+  await K.fontsReady(); st.logo = await K.loadImage(g.logo_url); await K.prep(g);
   $('app').classList.remove('hidden');
   restore(); setMode(st.mode); setLang(st.lang);
   if (q.get('code')) { $('code').value = q.get('code').slice(0, 20).toUpperCase(); if (g.mod_ia) { setMode('ia'); $('buy').classList.remove('hidden'); } }

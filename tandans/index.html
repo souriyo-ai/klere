@@ -78,7 +78,7 @@ const MW = ['janvye', 'fevriye', 'mas', 'avril', 'me', 'jen', 'jiyè', 'out', 's
 const fd = (s) => { const d = new Date(s + 'T00:00:00'); return L === 'ht' ? `${d.getDate() === 1 ? '1ye' : d.getDate()} ${MW[d.getMonth()]}` : d.toLocaleDateString(LOC[L], { day: 'numeric', month: 'long' }); };
 function preview(r) {
   if (IMG[r.slug]) return IMG[r.slug];
-  K.draw($('cv'), { modele: r.modele, c1: r.c1, c2: r.c2, c3: r.c3, sou_tit: r.sou_tit, tit: r.tit, riban: r.riban, badj: r.badj, liy: (r.liy || '').replaceAll('{org}', 'Souriyo') }, SAMPLE, { prenom: 'Nadège', logo: null });
+  K.draw($('cv'), { fon_url: r.fon_url, modele: r.modele, c1: r.c1, c2: r.c2, c3: r.c3, sou_tit: r.sou_tit, tit: r.tit, riban: r.riban, badj: r.badj, liy: (r.liy || '').replaceAll('{org}', 'Souriyo') }, SAMPLE, { prenom: 'Nadège', logo: null });
   return (IMG[r.slug] = $('cv').toDataURL('image/jpeg', .72));
 }
 function card(r) {
@@ -112,7 +112,7 @@ if (!T[L]) L = 'ht';
 render();
 (async () => {
   try { ROWS = await S.api('rpc/galri', { method: 'POST', body: '{}' }) || []; } catch { ROWS = []; }
-  await K.fontsReady(); SAMPLE = await K.loadImage('../img/avant-f.jpg'); render();
+  await K.fontsReady(); SAMPLE = await K.loadImage('../img/avant-f.jpg'); await Promise.all(ROWS.map((r) => K.prep(r))); render();
 })();
 </script>
 </body>
