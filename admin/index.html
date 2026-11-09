@@ -873,7 +873,7 @@ async function atelye(box, tg, onUse) {
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="btn main" type="button" data-atl="gen">✨ Jenere yon fon (≈ ${est} G)</button><label class="btn" style="cursor:pointer">📤 Pwòp imaj ou<input type="file" accept="image/png,image/jpeg,image/webp" data-atl="up" hidden /></label>${tg.fon() ? '<button class="btn" type="button" data-atl="x">Retire fon an</button>' : ''}</div>
     <p class="msg" data-atl="m"></p>
     <div class="vgrid">${V.map((x) => `<div class="vc${tg.fon() === x.fon_url ? ' on' : ''}"><img src="${esc(x.fon_url)}" alt="" data-atl-z="${esc(x.fon_url)}" loading="lazy" /><div><b>V${x.nimewo}</b> · ${x.sous === 'ia' ? (+x.kout_usd).toFixed(3) + ' $' : 'enpòte'}<br><span class="sub">${esc((x.deskripsyon || '').slice(0, 60))}</span>
-      <button class="btn${tg.fon() === x.fon_url ? '' : ' main'}" type="button" data-atl-use="${esc(x.fon_url)}">${tg.fon() === x.fon_url ? '✓ Chwazi' : 'Itilize l'}</button></div></div>`).join('')}</div></div>
+      <button class="btn${tg.fon() === x.fon_url ? '' : ' main'}" type="button" data-atl-use="${esc(x.fon_url)}">${tg.fon() === x.fon_url ? '✓ Chwazi' : 'Itilize l'}</button><button class="btn" type="button" data-atl-ed="${esc(x.fon_url)}" data-atl-de="V${x.nimewo}">✏️ Modifye</button></div></div>`).join('')}</div></div>
     <div class="atl"><h3>🤠 Pòtrè IA konsèp la</h3>
     <p class="sub" style="margin:0 0 6px">Sa IA a ap fè ak selfi moun yo : kostim, dekò, pozisyon. Si w mete omwen yon variant, moun yo ap wè yo olye 28 metye yo. Klike « Anrejistre » pou yo pase an liy.</p>
     <div data-atl="tem">${(tg.tem() || []).map((x, i) => `<div style="border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:6px"><div style="display:flex;gap:6px;align-items:center"><input class="t" data-tn="${i}" maxlength="40" placeholder="Non (ex. 🐎 Sou chwal la)" value="${esc(x.non || '')}" /><label class="pill ${x.valide === false ? 'w' : 'ok'}" style="white-space:nowrap;cursor:pointer"><input type="checkbox" data-tv="${i}" ${x.valide === false ? '' : 'checked'} style="vertical-align:middle" /> ${x.valide === false ? '📝 Bouyon' : '✅ Valide'}</label><button class="btn" type="button" data-tx="${i}">✖</button></div>
@@ -882,7 +882,7 @@ async function atelye(box, tg, onUse) {
     <div style="margin-top:10px;background:#f6f3ef;border-radius:12px;padding:10px"><b>🧪 Teste sou yon foto</b>
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px"><input type="file" accept="image/*" data-atl="tf" /><select class="t" data-atl="tv" style="max-width:220px">${(tg.tem() || []).map((x, i) => `<option value="${i}">${esc(x.non || 'Variant ' + (i + 1))}</option>`).join('')}</select><button class="btn main" type="button" data-atl="tgo">Teste (≈ ${est} G)</button></div>
       <p class="msg" data-atl="tm"></p>
-      <div class="vgrid">${VP.map((x) => `<div class="vc"><img src="${esc(x.fon_url)}" alt="" data-atl-z="${esc(x.fon_url)}" loading="lazy" /><div><b>T${x.nimewo}</b> · ${(+x.kout_usd).toFixed(3)} $<br><span class="sub">${esc((x.deskripsyon || '').slice(0, 70))}</span>${tg.onPreview ? `<button class="btn" type="button" data-atl-pv="${esc(x.fon_url)}">👁️ Nan kad la</button>` : ''}</div></div>`).join('')}</div></div></div>`;
+      <div class="vgrid">${VP.map((x) => `<div class="vc"><img src="${esc(x.fon_url)}" alt="" data-atl-z="${esc(x.fon_url)}" loading="lazy" /><div><b>T${x.nimewo}</b> · ${(+x.kout_usd).toFixed(3)} $<br><span class="sub">${esc((x.deskripsyon || '').slice(0, 70))}</span>${tg.onPreview ? `<button class="btn" type="button" data-atl-pv="${esc(x.fon_url)}">👁️ Nan kad la</button>` : ''}<button class="btn" type="button" data-atl-ed="${esc(x.fon_url)}" data-atl-de="T${x.nimewo}">✏️ Modifye</button></div></div>`).join('')}</div></div></div>`;
   const ta = box.querySelector('[data-atl="d"]'); ta.value = draft ?? V[0]?.deskripsyon ?? tg.deskripsyon ?? '';
   const m = (txt, k = 'err') => { const e = box.querySelector('[data-atl="m"]'); e.className = 'msg ' + k; e.textContent = txt; };
   box.querySelector('[data-atl="gen"]').onclick = async (e) => {
@@ -928,6 +928,22 @@ async function atelye(box, tg, onUse) {
   };
   const x = box.querySelector('[data-atl="x"]'); if (x) x.onclick = async () => { onUse(null); await atelye(box, tg, onUse); };
   box.querySelectorAll('[data-atl-use]').forEach((b) => (b.onclick = async () => { onUse(b.dataset.atlUse); await atelye(box, tg, onUse); }));
+  box.querySelectorAll('[data-atl-ed]').forEach((b) => (b.onclick = async () => {
+    const de = b.dataset.atlDe, potre = de.startsWith('T');
+    const ch = (prompt(`Kisa pou IA a chanje nan ${de} ? Ekri yon sèl chanjman, pa egzanp : « mete yon chemiz wouj », « fè chwal la vin blan », « retire moun dèyè yo ».`) || '').trim();
+    if (ch.length < 3) return;
+    const el = box.querySelector(potre ? '[data-atl="tm"]' : '[data-atl="m"]'); const say = (txt, k = 'err') => { el.className = 'msg ' + k; el.textContent = txt; };
+    b.disabled = true; say(`IA a ap modifye ${de}… (15 a 40 segonn)`, 'ok');
+    try {
+      const { data: ss } = await sb.auth.getSession();
+      const r = await fetch(ATL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ss.session.access_token}` }, body: JSON.stringify({ action: 'modifye', sous_url: b.dataset.atlEd, de, deskripsyon: ch, konsep_id: tg.konsep_id, groupe_id: tg.groupe_id }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) { b.disabled = false; return say({ budget: 'Bidjè IA jodi a fini.', paused: 'IA a an pòz.', api: 'IA a pa t ka modifye imaj la. Eseye ankò oswa ekri chanjman an yon lòt jan.' }[j.error] || 'Erè : ' + (j.error || r.status)); }
+      await atelye(box, tg, onUse);
+      const el2 = box.querySelector(potre ? '[data-atl="tm"]' : '[data-atl="m"]'); el2.className = 'msg ok'; el2.textContent = `✓ ${potre ? 'T' : 'V'}${j.vesyon.nimewo} pare : ${de} ak chanjman an (${(+j.vesyon.kout_usd).toFixed(3)} $).`;
+      if (potre && tg.onPreview) tg.onPreview(j.vesyon.fon_url);
+    } catch { b.disabled = false; say('Pa gen koneksyon.'); }
+  }));
   box.querySelectorAll('[data-atl-pv]').forEach((b) => (b.onclick = () => tg.onPreview(b.dataset.atlPv)));
   box.querySelectorAll('[data-atl-z]').forEach((i) => (i.onclick = () => window.open(i.dataset.atlZ, '_blank', 'noopener')));
 }

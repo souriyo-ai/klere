@@ -276,6 +276,12 @@
   };
   // Fraz ak mo ki parèt anndan tèks ki chanje (chif, non…). Pi long yo an premye.
   const F = [
+    ['Kisa pou IA a chanje nan', 'Que doit changer l’IA dans', 'What should the AI change in'],
+    ['Ekri yon sèl chanjman, pa egzanp : « mete yon chemiz wouj », « fè chwal la vin blan », « retire moun dèyè yo ».', 'Écrivez un seul changement, par exemple : « mets une chemise rouge », « rends le cheval blanc », « retire les gens derrière ».', 'Write one change, for example: « put on a red shirt », « make the horse white », « remove the people behind ».'],
+    ['IA a ap modifye', 'L’IA modifie', 'AI is editing'],
+    ['ak chanjman an', 'avec le changement', 'with the change'],
+    ['IA a pa t ka modifye imaj la. Eseye ankò oswa ekri chanjman an yon lòt jan.', 'L’IA n’a pas pu modifier l’image. Réessayez ou formulez autrement.', 'The AI couldn’t edit the image. Try again or phrase it differently.'],
+    ['✏️ Modifye', '✏️ Modifier', '✏️ Edit'],
     ['Chwazi yon konsèp, oswa kreye youn.', 'Choisissez un concept ou créez-en un.', 'Choose a concept, or create one.'],
     ['Non nouvo konsèp la (ex. Miss Ayiti) :', 'Nom du nouveau concept (ex. Miss Haïti) :', 'Name of the new concept (e.g. Miss Haiti):'],
     ['deja pran. Chwazi yon lòt non.', 'déjà pris. Choisissez un autre nom.', 'already taken. Choose another name.'],
