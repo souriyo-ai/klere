@@ -276,6 +276,21 @@
   };
   // Fraz ak mo ki parèt anndan tèks ki chanje (chif, non…). Pi long yo an premye.
   const F = [
+    ['Ekri yon sèl chanjman. IA a ap kenbe tout rès foto a, ak menm figi a.', 'Écrivez un seul changement. L’IA garde tout le reste de la photo, avec le même visage.', 'Write one change. The AI keeps the rest of the photo, with the same face.'],
+    ['Ekri yon sèl chanjman. IA a ap kenbe tout rès foto a.', 'Écrivez un seul changement. L’IA garde tout le reste de l’image.', 'Write one change. The AI keeps the rest of the image.'],
+    ['Fè figi a sanble egzakteman ak foto orijinal la', 'Rendre le visage identique à la photo originale', 'Make the face match the original photo exactly'],
+    ['Chanje koulè rad la an wouj', 'Changer la couleur de la tenue en rouge', 'Change the outfit color to red'],
+    ['Retire moun dèyè yo', 'Retirer les gens derrière', 'Remove the people behind'],
+    ['Fè l souri pi plis', 'Plus de sourire', 'A bigger smile'],
+    ['Pi bon limyè sou figi a', 'Meilleure lumière sur le visage', 'Better light on the face'],
+    ['Fè l kanpe pi dwat', 'Posture plus droite', 'Stand up straighter'],
+    ['Montre tout kò a', 'Montrer tout le corps', 'Show the full body'],
+    ['Plis koulè vivan', 'Couleurs plus vives', 'More vivid colors'],
+    ['Mwens eleman nan mitan an', 'Moins d’éléments au centre', 'Fewer elements in the center'],
+    ['Fè fon an pi fonse', 'Fond plus sombre', 'Darker background'],
+    ['Ajoute ti limyè ki klere', 'Ajouter des petites lumières', 'Add sparkling lights'],
+    ['Retire tout tèks ki parèt', 'Retirer tout texte visible', 'Remove any visible text'],
+    ['Anile', 'Annuler', 'Cancel'],
     ['🧠 Modèl IA pou pòtrè kanpay sa a', '🧠 Modèle IA pour les portraits de cette campagne', '🧠 AI model for this campaign’s portraits'],
     ['🧠 Modèl IA pou pòtrè piblik la', '🧠 Modèle IA pour les portraits du public', '🧠 AI model for public portraits'],
     ['Modèl jeneral la (Rantabilite)', 'Modèle général (Rentabilité)', 'General model (Profitability)'],

@@ -79,6 +79,16 @@
   .vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 10px; }
   .vc { border: 2px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; font-size: 12px; } .vc.on { border-color: var(--coral); }
   .vc img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; cursor: zoom-in; } .vc div { padding: 6px; } .vc button { width: 100%; margin-top: 4px; padding: 5px; font-size: 12px; }
+  .mdl-bg { position: fixed; inset: 0; background: rgba(21,24,72,.55); backdrop-filter: blur(3px); display: grid; place-items: center; z-index: 9999; padding: 16px; animation: mdlf .15s ease; }
+  .mdl { background: #fff; border-radius: 22px; width: 100%; max-width: 560px; box-shadow: 0 30px 80px rgba(0,0,0,.35); overflow: hidden; animation: mdlu .18s ease; }
+  .mdl-h { display: flex; gap: 14px; align-items: center; padding: 18px 20px 12px; } .mdl-h img { width: 74px; aspect-ratio: 4/5; object-fit: cover; border-radius: 12px; box-shadow: 0 6px 16px rgba(0,0,0,.18); }
+  .mdl-h b { display: block; font: 800 19px "Bricolage Grotesque", system-ui, sans-serif; } .mdl-h span { color: var(--ink-2); font-size: 13px; }
+  .mdl-b { padding: 0 20px; } .mdl-b textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); border-radius: 14px; padding: 12px; font: 15px "DM Sans", system-ui, sans-serif; resize: vertical; }
+  .mdl-b textarea:focus { outline: none; border-color: var(--coral); box-shadow: 0 0 0 4px rgba(255,90,54,.15); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; } .chips button { border: 1.5px solid var(--line); background: #fff8f2; border-radius: 999px; padding: 6px 12px; font: 600 13px "DM Sans", system-ui, sans-serif; cursor: pointer; color: var(--ink); }
+  .chips button:hover { border-color: var(--coral); background: #fff; }
+  .mdl-f { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 14px 20px 18px; flex-wrap: wrap; } .mdl-f .sub { font-size: 13px; }
+  @keyframes mdlf { from { opacity: 0 } } @keyframes mdlu { from { transform: translateY(12px); opacity: 0 } }
   .kthread { background: #f6f3ef; border-radius: 12px; padding: 8px 10px; max-height: 240px; overflow: auto; font-size: 14px; margin-top: 6px; } .kthread p { margin: 4px 0; }
   .kods { font-weight: 800; background: #fff4d6; color: #7a5200; padding: 2px 8px; border-radius: 8px; }
   .kgrid { display: grid; grid-template-columns: 1fr 300px; gap: 14px; align-items: start; } .kgrid img { width: 100%; border-radius: 12px; display: block; }
@@ -936,8 +946,8 @@ async function atelye(box, tg, onUse) {
   const ms = box.querySelector('[data-atl="mdl"]'); if (ms) ms.onchange = () => { ATL_M = ms.value; try { localStorage.setItem('souriyo_atl_mdl', ATL_M); } catch {} };
   box.querySelectorAll('[data-atl-ed]').forEach((b) => (b.onclick = async () => {
     const de = b.dataset.atlDe, potre = de.startsWith('T');
-    const ch = b.dataset.atlFig ? 'Make the face look exactly like the person in the original reference photo (same facial features, face shape, eyes, nose, lips, skin tone, age). Change nothing else.' : (prompt(`Kisa pou IA a chanje nan ${de} ? Ekri yon sèl chanjman, pa egzanp : « mete yon chemiz wouj », « fè chwal la vin blan », « retire moun dèyè yo ».`) || '').trim();
     ATL_M = box.querySelector('[data-atl="mdl"]')?.value ?? ATL_M;
+    const ch = b.dataset.atlFig ? 'Make the face look exactly like the person in the original reference photo (same facial features, face shape, eyes, nose, lips, skin tone, age). Change nothing else.' : ((await atlAsk({ img: b.dataset.atlEd, de, potre, est: ATL_M.includes('3-pro') ? 19 : ATL_M.includes('3.1-flash') ? 9 : 5 })) || '');
     if (ch.length < 3) return;
     const el = box.querySelector(potre ? '[data-atl="tm"]' : '[data-atl="m"]'); const say = (txt, k = 'err') => { el.className = 'msg ' + k; el.textContent = txt; };
     b.disabled = true; say(`IA a ap modifye ${de}… (15 a 40 segonn)`, 'ok');
@@ -1036,6 +1046,31 @@ $('aNew').addEventListener('click', async () => {
   if (error) return alert(/duplicate|slug_key/.test(error.message) ? 'Adrès souriyo.com/' + slug + ' deja pran. Chwazi yon lòt non.' : friendly(error));
   AP = { kind: 'g', id: data.id }; await loadAtelyeTab();
 });
+
+/* ---------- Bèl fenèt pou modifye yon vèsyon ---------- */
+function atlAsk({ img, de, potre, est }) {
+  return new Promise((res) => {
+    const CH = potre
+      ? ['Fè figi a sanble egzakteman ak foto orijinal la', 'Chanje koulè rad la an wouj', 'Retire moun dèyè yo', 'Fè l souri pi plis', 'Pi bon limyè sou figi a', 'Fè l kanpe pi dwat', 'Montre tout kò a']
+      : ['Plis koulè vivan', 'Mwens eleman nan mitan an', 'Fè fon an pi fonse', 'Ajoute ti limyè ki klere', 'Retire tout tèks ki parèt'];
+    const bg = document.createElement('div'); bg.className = 'mdl-bg';
+    bg.innerHTML = `<div class="mdl" role="dialog" aria-modal="true">
+      <div class="mdl-h"><img src="${esc(img)}" alt="" /><div><b>✏️ Modifye ${esc(de)}</b><span>Ekri yon sèl chanjman. IA a ap kenbe tout rès foto a${potre ? ', ak menm figi a' : ''}.</span></div></div>
+      <div class="mdl-b"><textarea maxlength="600" placeholder="ex. mete yon chemiz wouj"></textarea>
+        <div class="chips">${CH.map((c) => `<button type="button">${esc(c)}</button>`).join('')}</div></div>
+      <div class="mdl-f"><span class="sub">🧠 ${esc(ATL_MDL[ATL_M] || ATL_MDL[''])} · ≈ ${est} G</span>
+        <div style="display:flex;gap:8px"><button class="btn" type="button" data-m="x">Anile</button><button class="btn main" type="button" data-m="ok">✏️ Modifye</button></div></div></div>`;
+    document.body.appendChild(bg);
+    const ta = bg.querySelector('textarea'); setTimeout(() => ta.focus(), 30);
+    const end = (v) => { document.removeEventListener('keydown', key); bg.remove(); res(v); };
+    const key = (e) => { if (e.key === 'Escape') end(null); if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) end(ta.value.trim() || null); };
+    document.addEventListener('keydown', key);
+    bg.querySelectorAll('.chips button').forEach((b) => (b.onclick = () => { ta.value = b.textContent; ta.focus(); }));
+    bg.querySelector('[data-m="x"]').onclick = () => end(null);
+    bg.querySelector('[data-m="ok"]').onclick = () => { const v = ta.value.trim(); if (v.length < 3) { ta.focus(); ta.style.borderColor = '#b3261e'; return; } end(v); };
+    bg.onclick = (e) => { if (e.target === bg) end(null); };
+  });
+}
 </script>
 </body>
 </html>
