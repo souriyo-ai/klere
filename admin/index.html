@@ -311,6 +311,15 @@ let G = [], STATS = {}, CUR = null, MODEL = 'sek', LOGO_URL = null, LOGO_FILE = 
 /* ---------- Auth ---------- */
 async function showApp(session) {
   $('login').classList.toggle('hidden', !!session); ['app', 'nav', 'logout'].forEach((id) => $(id).classList.toggle('hidden', !session));
+  if (session) {
+    const { data: ad } = await sb.rpc('se_admin');
+    if (!ad) {
+      ['app', 'nav'].forEach((id) => $(id).classList.add('hidden')); $('login').classList.remove('hidden');
+      $('loginMsg').innerHTML = `Kont <b>${esc(session.user.email)}</b> la pa yon kont admin. <a href="#" id="pasAdmin">Dekonekte</a> epi konekte ak kont admin lan.`;
+      $('pasAdmin').onclick = async (e) => { e.preventDefault(); await sb.auth.signOut(); $('loginMsg').textContent = ''; showApp(null); };
+      return;
+    }
+  }
   if (session) { await K.fontsReady(); SAMPLE.kad = await K.loadImage('../img/avant-f.jpg'); SAMPLE.ia = await K.loadImage('../img/apres-f.jpg'); await loadGroups(); newGroup(); loadOrgs(); kBadge(); pBadge(); }
 }
 $('loginForm').addEventListener('submit', async (e) => {
